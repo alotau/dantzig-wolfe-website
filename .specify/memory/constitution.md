@@ -1,50 +1,188 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+## Sync Impact Report
+
+**Version change**: 1.0.0 → 1.1.0
+
+### Amended Principles
+- II. Client-Side Computation: expanded to explicitly designate Pyodide as the Python solver
+  integration mechanism; external solver repository referenced.
+
+### Amended Sections
+- Technology Stack: added Pyodide and external Python solver dependency entries.
+
+### Templates Reviewed
+- `.specify/templates/plan-template.md` ✅ compatible (Constitution Check gate updated to
+  require Pyodide bundle strategy to be documented for solver-related features)
+- `.specify/templates/spec-template.md` ✅ no changes required
+- `.specify/templates/tasks-template.md` ✅ no changes required
+- `.specify/templates/constitution-template.md` ✅ no changes required
+
+### Deferred TODOs
+- None. All placeholders resolved.
+
+---
+
+## Previous Report (v1.0.0 — 2026-03-07)
+
+**Version change**: N/A → 1.0.0 (initial ratification)
+
+### Principles Established
+- I. Specification-First (new)
+- II. Client-Side Computation (new)
+- III. Test-First via BDD (new)
+- IV. Branch-Protection & Pull-Request Workflow (new)
+- V. Security & Quality Gates (new)
+- VI. Pedagogical Clarity (new)
+-->
+
+# Dantzig-Wolfe Decomposition Website Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Specification-First
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+All features MUST be defined as Gherkin `.feature` files before any implementation work begins.
+Gherkin scenarios are the authoritative source of truth for system behavior. No implementation
+task is valid without a corresponding, accepted Gherkin specification.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+**Rationale**: Specification-first discipline ensures shared understanding before code is written,
+reduces rework, and provides a living contract for CI-level acceptance testing.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. Client-Side Computation
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+The Dantzig-Wolfe solver, sub-problem solvers, and all mathematical utilities MUST run
+on the client (browser). Server infrastructure MUST NOT perform optimization computations.
+The server role is strictly limited to static asset delivery and, if unavoidable, lightweight
+coordination services with no algorithmic logic.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+The canonical solver implementation is the Python package maintained at
+`https://github.com/alotau/dantzig-wolfe-python`. This package MUST be integrated into the
+browser via **Pyodide** (Python running on WebAssembly in the browser). It MUST NOT be
+executed on a server. The Pyodide environment and solver package MUST be loaded, initialized,
+and invoked entirely within the user's browser session.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+Any future computation that cannot run through Pyodide client-side MUST be justified and
+ratified as a constitution amendment before implementation.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**Rationale**: Client-side computation scales without server cost, enables offline use, and
+decouples the interactive solver from backend availability. Pyodide provides a standards-
+compliant WASM runtime for Python, preserving the investment in the existing Python solver
+while honoring the no-server-computation constraint.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### III. Test-First via BDD (NON-NEGOTIABLE)
+
+Tests MUST be written and verified to fail (red) before implementation begins at all levels:
+
+- Gherkin acceptance tests derived from `.feature` files drive feature development.
+- Unit tests cover all solver logic, mathematical utilities, and UI components.
+- Coding style checks are enforced before any code is considered reviewable.
+
+The Red → Green → Refactor cycle is strictly enforced. No implementation PR is accepted
+without a prior failing-test record committed on the feature branch.
+
+### IV. Branch-Protection & Pull-Request Workflow
+
+Direct pushes to `main` are NEVER permitted — including documentation, configuration, and
+dependency updates. All changes MUST:
+
+1. Be made on a dedicated feature or fix branch (branch naming: `###-short-description`).
+2. Merge the current `main` into the working branch before pushing.
+3. Pass all CI gates (see Principle V) before merge approval.
+
+**Rationale**: Keeps `main` in a perpetually deployable state and prevents unreviewed changes
+or merge conflicts from reaching production.
+
+### V. Security & Quality Gates
+
+Every CI pipeline run MUST execute all of the following gates, in order:
+
+1. Dependency vulnerability scan (OWASP / supply-chain checks).
+2. Coding style and linting checks (zero tolerance for new violations).
+3. Unit test suite (100% pass required).
+4. Gherkin acceptance test suite (100% pass required).
+
+No PR may be merged if any gate fails. Security vulnerabilities block merge with the same
+severity as test failures. New dependencies MUST pass the vulnerability scan before introduction.
+
+### VI. Pedagogical Clarity
+
+All educational content — algorithm history, technical lessons, worked examples, and literature
+references — MUST be:
+
+- Mathematically accurate and cited where appropriate.
+- Accessible to the target audience: students and practitioners of linear programming and
+  combinatorial optimization.
+- Free of unexplained jargon: every technical term MUST include an inline definition or a
+  link to the site glossary.
+- Approved by at least one contributor with domain knowledge before merge.
+
+**Rationale**: The site's primary purpose is teaching. Correctness and clarity are
+non-negotiable and take precedence over brevity or stylistic preference.
+
+## Technology Stack
+
+- **Platform**: Static web application; client-side-first architecture.
+- **Solver Implementation**: Python package at `https://github.com/alotau/dantzig-wolfe-python`.
+- **Solver Runtime**: Pyodide (Python on WebAssembly in-browser) — no server-side computation.
+- **Specification Format**: Gherkin (`.feature` files) for all behavioral specifications.
+- **Testing**: BDD framework compatible with Gherkin (e.g., Cucumber.js or equivalent);
+  unit test framework appropriate to the chosen stack (e.g., Jest, Vitest); Python-level
+  solver unit tests run via Pyodide in-browser test harness or in CI via standard Python.
+- **CI/CD**: Automated pipeline covering all gates defined in Principle V. The Python solver
+  dependency MUST be pinned to an explicit version/commit to ensure reproducible builds.
+- **Hosting**: Static site host (e.g., GitHub Pages, Netlify, Vercel); no compute backend
+  required unless amended.
+- **Versioning**: Semantic versioning (`MAJOR.MINOR.PATCH`) for all released artifacts.
+
+Specific technology choices within these constraints are resolved at the plan stage per
+feature. Any deviation from client-side-only computation MUST be documented, justified,
+and ratified as a constitution amendment before implementation.
+
+## Development Workflow
+
+1. **Specify**: Author or update Gherkin `.feature` files defining the target behavior.
+2. **Plan**: Create an implementation plan per `.specify/templates/plan-template.md`.
+   The Constitution Check gate MUST pass before Phase 0 research begins.
+3. **Test (Red)**: Write failing unit tests and Gherkin step definitions. Confirm all
+   tests fail in CI before opening an implementation PR.
+4. **Branch**: Create a feature branch. Merge current `main` into the branch before pushing.
+5. **Implement**: Complete implementation targeting green tests. Follow Red → Green → Refactor.
+6. **CI Gates**: All gates defined in Principle V MUST pass.
+7. **PR & Review**: Open a pull request. At least one reviewer MUST approve. Educational
+   content requires domain-knowledge review per Principle VI.
+8. **Merge**: Squash-merge to `main` after approval. Delete the feature branch.
+
+**Constitution Check Gates** (referenced by `plan-template.md`):
+
+- [ ] Gherkin `.feature` file(s) exist and are accepted for this feature.
+- [ ] Failing tests (unit + acceptance step definitions) are committed on the feature branch.
+- [ ] `main` has been merged into the working branch.
+- [ ] Client-side computation strategy is documented; Pyodide bundle/loading strategy confirmed
+      for any solver-related feature; no server computation without amendment.
+- [ ] Security scan baseline recorded for any new dependencies introduced.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other practices, guidelines, and conventions within this
+project. In any conflict, the constitution takes precedence.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Amendment Procedure**:
+
+1. Open a PR modifying `.specify/memory/constitution.md`.
+2. Increment `CONSTITUTION_VERSION` per the versioning policy below.
+3. Prepend an updated Sync Impact Report HTML comment to the file.
+4. Propagate changes to affected templates in the same PR.
+5. Obtain at least one reviewer approval before merge.
+6. Set `LAST_AMENDED_DATE` to the actual merge date.
+
+**Versioning Policy**:
+
+- **MAJOR**: Removal or incompatible redefinition of an existing principle.
+- **MINOR**: New principle or section added; materially expanded guidance.
+- **PATCH**: Clarifications, wording fixes, non-semantic refinements.
+
+**Compliance Review**: Every PR description MUST include a "Constitution Check" section
+confirming compliance with all applicable principles. The plan template enforces this gate
+formally at the planning stage.
+
+**Version**: 1.1.0 | **Ratified**: 2026-03-07 | **Last Amended**: 2026-03-07
