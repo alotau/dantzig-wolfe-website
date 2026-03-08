@@ -253,9 +253,14 @@ static HTML+JS.
 
 **Adapter**: `@astrojs/vercel` in static output mode. Add to `astro.config.mjs`:
 ```ts
-import vercel from '@astrojs/vercel/static';
+import vercel from '@astrojs/vercel';
 export default defineConfig({ output: 'static', adapter: vercel() });
 ```
+
+> **Note**: `@astrojs/vercel` v8+ exports the adapter from the package root (default export).
+> The older `/static` sub-path import is removed in v8+. Pin `@astrojs/vercel` to the version
+> confirmed compatible with Astro 5.x at project initialisation (T001) and verify the import
+> resolves correctly before committing astro.config.mjs.
 
 **Deploy workflow** (automatic via Vercel GitHub App):
 ```
