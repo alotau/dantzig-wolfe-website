@@ -1,4 +1,6 @@
 ---
+import '../../styles/global.css'
+
 interface Props {
   title: string
   description?: string
@@ -55,7 +57,3 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://alotau.g
     <slot name="footer" />
   </body>
 </html>
-
-<style is:global>
-  @import '../styles/global.css';
-</style>

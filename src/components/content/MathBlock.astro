@@ -23,10 +23,12 @@ try {
 }
 ---
 
-<div
-  class="katex-display-wrapper my-4"
-  role="math"
-  aria-label={label ?? formula}
->
-  {renderError ? <pre class="text-red-600 text-sm">[KaTeX error: {renderError}]</pre> : <Fragment set:html={rendered} />}
+<div class="katex-display-wrapper my-4" role="math" aria-label={label ?? formula}>
+  {
+    renderError ? (
+      <pre class="text-red-600 text-sm">[KaTeX error: {renderError}]</pre>
+    ) : (
+      <Fragment set:html={rendered} />
+    )
+  }
 </div>

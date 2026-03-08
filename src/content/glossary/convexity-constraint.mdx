@@ -1,0 +1,24 @@
+---
+term: convexity constraint
+shortDef: >
+  A row added to the master problem for each sub-problem block requiring that the
+  multipliers λ for that block's extreme points sum to one, ensuring the master
+  solution is a valid convex combination of sub-problem feasible points.
+relatedTerms:
+  - master problem
+  - extreme point
+---
+
+For each block $k$ the master problem includes the **convexity constraint**:
+
+$$
+\sum_{j} \lambda_k^j = 1, \quad \lambda_k^j \geq 0
+$$
+
+This ensures that the composite vector $x_k = \sum_j v_k^j \lambda_k^j$ is a
+_convex combination_ of extreme points of the $k$-th sub-problem's feasible set
+$\mathcal{X}_k$, and therefore is itself feasible for the sub-problem constraints.
+
+If $\mathcal{X}_k$ is unbounded the convexity constraints become $\sum_j
+\lambda_k^j \leq 1$ and unbounded directions (extreme rays) must also be
+considered.
