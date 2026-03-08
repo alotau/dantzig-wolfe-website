@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest'
-import { renderToStaticMarkup } from 'astro/runtime/server/index.js'
 
 // Since Citation.astro is a server component, we test its output by checking
 // the expected HTML structure using a lightweight render approach.
