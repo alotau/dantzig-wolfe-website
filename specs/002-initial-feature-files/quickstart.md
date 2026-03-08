@@ -89,6 +89,26 @@ Outputs static files to `dist/`. Preview locally:
 npm run preview
 ```
 
+---
+
+## 4a. Deploy to Vercel
+
+Deployment is automatic via the **Vercel GitHub App** — no manual steps required after
+initial project setup:
+
+1. Connect the repo to a Vercel project at <https://vercel.com/new> (one-time setup).
+2. Every push to any branch triggers a **preview deployment** with a unique URL.
+3. Every merge to `main` triggers a **production deployment**.
+
+For local one-off deploys (optional):
+
+```bash
+npx vercel           # deploy preview
+npx vercel --prod    # deploy to production
+```
+
+The `@astrojs/vercel` adapter (static output mode) is configured in `astro.config.mjs`.
+
 Opens at `http://localhost:4321` serving the built static files.
 
 ---

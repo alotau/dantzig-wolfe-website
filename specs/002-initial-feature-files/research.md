@@ -26,7 +26,7 @@ works without JavaScript for static content" with no special effort.
 **Key Astro features used**:
 - Content Collections (`src/content/`) with typed schemas for history, lessons, examples, glossary.
 - MDX support via `@astrojs/mdx` for rich content authoring with embedded components.
-- Static adapter (`@astrojs/static`) for GitHub Pages / Netlify / Vercel deployment as pure HTML+JS.
+- Static adapter (`@astrojs/vercel`) for Vercel deployment as pure HTML+JS (static output mode).
 - `@astrojs/svelte` integration for Svelte 5 islands.
 
 ---
@@ -242,13 +242,29 @@ merge; require `main` to be up to date; require at least 1 reviewer approval.
 
 ## §10 — Hosting
 
-**Decision**: GitHub Pages via Astro's `@astrojs/static` adapter.
+**Decision**: Vercel (static output mode via `@astrojs/vercel` adapter).
 
-**Rationale**: Free, zero server management, deploys directly from the `main` branch via
-GitHub Actions. The entire site is static. If a custom domain is added later, GitHub Pages
-supports it natively.
+**Rationale**: Vercel offers zero-config GitHub integration — pushing a branch automatically
+triggers a build and produces a unique preview URL per PR, making it straightforward to
+review deployed changes before merge. The global Edge Network provides fast TTFB worldwide.
+The free Hobby tier is appropriate for an open-source educational project. Custom domains
+are supported natively. No server-side functions are used; the site deploys as pure
+static HTML+JS.
 
-**Deploy step** (runs after CI gates pass on merge to `main`):
+**Adapter**: `@astrojs/vercel` in static output mode. Add to `astro.config.mjs`:
+```ts
+import vercel from '@astrojs/vercel/static';
+export default defineConfig({ output: 'static', adapter: vercel() });
 ```
-astro build → upload dist/ to gh-pages branch → GitHub Pages serves from gh-pages
+
+**Deploy workflow** (automatic via Vercel GitHub App):
 ```
+git push origin <branch>  →  Vercel builds preview  →  unique preview URL posted to PR
+git merge main (PR merged)  →  Vercel builds production  →  https://<project>.vercel.app
+```
+
+**Alternatives considered**:
+- GitHub Pages: Requires a separate `gh-pages` branch and a custom Actions job to upload
+  the build artefact. No PR preview URLs. More manual setup.
+- Netlify: Comparable feature set to Vercel; Vercel chosen for its tighter Astro integration
+  (maintained by the same Astro core team) and cleaner dashboard UX.

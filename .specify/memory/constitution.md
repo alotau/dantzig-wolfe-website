@@ -130,7 +130,7 @@ non-negotiable and take precedence over brevity or stylistic preference.
   solver unit tests run via Pyodide in-browser test harness or in CI via standard Python.
 - **CI/CD**: Automated pipeline covering all gates defined in Principle V. The Python solver
   dependency MUST be pinned to an explicit version/commit to ensure reproducible builds.
-- **Hosting**: Static site host (e.g., GitHub Pages, Netlify, Vercel); no compute backend
+- **Hosting**: Vercel (static output mode; `@astrojs/vercel` adapter); no compute backend
   required unless amended.
 - **Versioning**: Semantic versioning (`MAJOR.MINOR.PATCH`) for all released artifacts.
 
