@@ -1,0 +1,126 @@
+---
+title: 'Crew Scheduling'
+problemClass: 'scheduling'
+source: 'Barnhart, C., Johnson, E. L., Nemhauser, G. L., Savelsbergh, M. W. P., & Vance, P. H. (1998). Branch-and-price: Column generation for solving huge integer programs. Operations Research, 46(3), 316–329.'
+doi: '10.1287/opre.46.3.316'
+slug: 'crew-scheduling'
+description: 'Airline crew scheduling formulated as set partitioning. Dantzig-Wolfe Decomposition generates crew pairings for each base via column generation, making a massive integer program tractable.'
+---
+
+import Citation from '../../components/content/Citation.astro'
+import MathBlock from '../../components/content/MathBlock.astro'
+import InlineMath from '../../components/content/InlineMath.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## Problem Description
+
+An airline must assign crews to a set of flight legs. Each crew member starts and ends their duty period at the same **base** airport. A **pairing** is a sequence of flight legs forming a round trip from a crew member's base. Everything is self-contained: this example does not build on any other example on this site.
+
+**Notation** (all symbols defined before first use):
+
+<dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm my-4">
+  <dt>
+    <InlineMath math="F" />
+  </dt>
+  <dd>Set of flight legs to be covered.</dd>
+  <dt>
+    <InlineMath math="B" />
+  </dt>
+  <dd>Number of crew bases.</dd>
+  <dt>
+    <InlineMath math="P^b" />
+  </dt>
+  <dd>
+    Set of all feasible pairings originating from base <InlineMath math="b" />.
+  </dd>
+  <dt>
+    <InlineMath math="a_{fp}" />
+  </dt>
+  <dd>
+    1 if pairing <InlineMath math="p" /> covers flight leg <InlineMath math="f" />, else 0.
+  </dd>
+  <dt>
+    <InlineMath math="c_p" />
+  </dt>
+  <dd>
+    Cost of pairing <InlineMath math="p" /> (e.g., duty time, hotel costs).
+  </dd>
+  <dt>
+    <InlineMath math="x_p" />
+  </dt>
+  <dd>
+    1 if pairing <InlineMath math="p" /> is selected, else 0.
+  </dd>
+</dl>
+
+## Set-Partitioning Formulation
+
+The crew scheduling master formulation is a **set-partitioning** problem: every flight leg must be covered by **exactly one** pairing:
+
+<MathBlock
+  math={`
+\\min \\quad & \\sum_{b=1}^{B} \\sum_{p \\in P^b} c_p x_p \\\\
+\\text{s.t.} \\quad & \\sum_{b=1}^{B} \\sum_{p \\in P^b} a_{fp} x_p = 1 \\quad \\forall f \\in F \\quad \\text{(coupling: coverage constraints)} \\\\
+& \\sum_{p \\in P^b} x_p \\ge 1 \\quad \\forall b = 1, \\ldots, B \\quad \\text{(sub-problem: base feasibility)} \\\\
+& x_p \\in \\{0,1\\} \\quad \\forall p
+`}
+  display={true}
+/>
+
+<Callout type="info">
+**Coupling constraints**: The flight-leg coverage constraints <InlineMath math="\sum_{b,p} a_{fp} x_p = 1" /> are the **coupling constraints** — they link pairings from all bases and must hold globally.
+
+**Sub-problem constraints**: The constraint <InlineMath math="\sum_{p \in P^b} x_p \ge 1" /> is a **per-base sub-problem constraint**, ensuring each base deploys at least one pairing. Crucially, pairings from different bases are otherwise independent — structure enabling decomposition.
+
+</Callout>
+
+## Dantzig-Wolfe Decomposition and Column Generation
+
+The LP relaxation has one variable per feasible pairing. There are exponentially many pairings in <InlineMath math="P^b" /> for each base <InlineMath math="b" />, making explicit enumeration infeasible.
+
+Dantzig-Wolfe Decomposition decomposes along bases: relax the coupling coverage constraints with dual variables <InlineMath math="\pi_f" />.
+
+**Dual variables**: <InlineMath math="\pi_f" /> is the marginal cost saving of covering flight <InlineMath math="f" /> from the master. A pairing is attractive if its cost (duty time plus overheads) is less than the total dual value of the legs it covers.
+
+**Pricing sub-problem for base <InlineMath math="b" />**: Find the minimum reduced-cost pairing from base <InlineMath math="b" />:
+
+<MathBlock math={`\\bar{c}_p = c_p - \\sum_{f \\in F} \\pi_f^* a_{fp}`} display={true} />
+
+<MathBlock
+  math={`
+\\min \\quad & c_p - \\sum_{f \\in F} \\pi_f^* a_{fp} \\\\
+\\text{s.t.} \\quad & p \\in P^b \\quad \\text{(feasible pairing from base } b\\text{)}
+`}
+  display={true}
+/>
+
+This sub-problem is typically solved as a **constrained shortest-path** problem on a time-space network for base <InlineMath math="b" />, incorporating duty-time rules, rest requirements, and airport curfews.
+
+If <InlineMath math="\min_p \bar{c}_p < 0" /> for any base, a new improving pairing (column) is added to the restricted master problem (RMP).
+
+## Column Generation for Crew Pairings
+
+The algorithm iterates:
+
+1. **Solve the RMP** (LP relaxation over the current subset of pairings).
+2. **Extract duals** <InlineMath math="\pi_f^*" /> from coverage constraints.
+3. **For each base <InlineMath math="b" />**: solve the pricing sub-problem to find the most attractive new pairing.
+4. **If any pairing has negative reduced cost**: add it to the RMP and go to step 1.
+5. **Otherwise**: the LP relaxation is optimal. Apply branch-and-price for integrality if needed.
+
+<Callout type="tip">
+  In practice, only a tiny fraction of all feasible pairings ever enter the master problem. Column
+  generation makes what would otherwise be an intractable billion-variable IP into a
+  routinely-solved industrial problem — airline crew scheduling software uses exactly this
+  technique.
+</Callout>
+
+## Citation
+
+<Citation
+  author="Barnhart, C., Johnson, E. L., Nemhauser, G. L., Savelsbergh, M. W. P., & Vance, P. H."
+  title="Branch-and-price: Column generation for solving huge integer programs"
+  year="1998"
+  journal="Operations Research, 46(3), 316–329"
+  doi="10.1287/opre.46.3.316"
+/>

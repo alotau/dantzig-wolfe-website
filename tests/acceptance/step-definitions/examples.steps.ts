@@ -28,13 +28,10 @@ When<CustomWorld>('I am on the Examples index', async function () {
   await this.page.goto(`${this.baseURL}/examples`)
 })
 
-Then<CustomWorld>(
-  'I see an index listing all available worked examples',
-  async function () {
-    const items = this.page.locator('main [data-example-card], main article, main li')
-    expect(await items.count()).toBeGreaterThanOrEqual(1)
-  },
-)
+Then<CustomWorld>('I see an index listing all available worked examples', async function () {
+  const items = this.page.locator('main [data-example-card], main article, main li')
+  expect(await items.count()).toBeGreaterThanOrEqual(1)
+})
 
 Then<CustomWorld>(
   'each entry shows the example title, the problem class, and the source citation',
@@ -47,32 +44,23 @@ Then<CustomWorld>(
   },
 )
 
-Then<CustomWorld>(
-  'I can click an entry to view the full worked example',
-  async function () {
-    const link = this.page.locator('main a[href*="/examples/"]').first()
-    await expect(link).toBeVisible()
-  },
-)
+Then<CustomWorld>('I can click an entry to view the full worked example', async function () {
+  const link = this.page.locator('main a[href*="/examples/"]').first()
+  await expect(link).toBeVisible()
+})
 
-Then<CustomWorld>(
-  'I see a description of the problem in plain language',
-  async function () {
-    // The main content area should have descriptive paragraphs
-    const paragraphs = this.page.locator('main p')
-    expect(await paragraphs.count()).toBeGreaterThanOrEqual(1)
-  },
-)
+Then<CustomWorld>('I see a description of the problem in plain language', async function () {
+  // The main content area should have descriptive paragraphs
+  const paragraphs = this.page.locator('main p')
+  expect(await paragraphs.count()).toBeGreaterThanOrEqual(1)
+})
 
-Then<CustomWorld>(
-  'I see the block-angular LP formulation of the problem',
-  async function () {
-    const content = this.page.locator('main')
-    await expect(content).toContainText(/block.angular/i)
-    const mathEl = this.page.locator('.katex').first()
-    await expect(mathEl).toBeVisible()
-  },
-)
+Then<CustomWorld>('I see the block-angular LP formulation of the problem', async function () {
+  const content = this.page.locator('main')
+  await expect(content).toContainText(/block.angular/i)
+  const mathEl = this.page.locator('.katex').first()
+  await expect(mathEl).toBeVisible()
+})
 
 Then<CustomWorld>(
   'I see the Dantzig-Wolfe master problem derived from that formulation',
@@ -101,13 +89,10 @@ Then<CustomWorld>(
   },
 )
 
-Then<CustomWorld>(
-  'the example cites the canonical Gilmore-Gomory reference',
-  async function () {
-    const content = this.page.locator('main')
-    await expect(content).toContainText(/Gilmore|Gomory/i)
-  },
-)
+Then<CustomWorld>('the example cites the canonical Gilmore-Gomory reference', async function () {
+  const content = this.page.locator('main')
+  await expect(content).toContainText(/Gilmore|Gomory/i)
+})
 
 Then<CustomWorld>(
   'I see how the network structure creates the block-angular LP form',
@@ -236,17 +221,14 @@ Then<CustomWorld>(
   },
 )
 
-Then<CustomWorld>(
-  'the filtered list updates without a full page reload',
-  async function () {
-    // Click first filter button and check page didn't reload (URL stays same, content updates)
-    const url = this.page.url()
-    const filterBtn = this.page.locator('[data-filter-btn]').first()
-    await filterBtn.click()
-    // URL should not have changed to a different page
-    expect(this.page.url()).toBe(url)
-  },
-)
+Then<CustomWorld>('the filtered list updates without a full page reload', async function () {
+  // Click first filter button and check page didn't reload (URL stays same, content updates)
+  const url = this.page.url()
+  const filterBtn = this.page.locator('[data-filter-btn]').first()
+  await filterBtn.click()
+  // URL should not have changed to a different page
+  expect(this.page.url()).toBe(url)
+})
 
 Then<CustomWorld>('the active filter is visually indicated', async function () {
   const activeFilter = this.page.locator(

@@ -29,7 +29,6 @@ const examples = defineCollection({
     problemClass: ProblemClassEnum,
     source: z.string(),
     doi: z.string().optional(),
-    slug: z.string(),
     description: z.string().optional(),
   }),
 })

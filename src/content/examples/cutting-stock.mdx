@@ -1,0 +1,156 @@
+---
+title: 'Cutting Stock Problem'
+problemClass: 'cutting-stock'
+source: 'Gilmore, P. C., & Gomory, R. E. (1961). A linear programming approach to the cutting-stock problem. Operations Research, 9(6), 849–859.'
+doi: '10.1287/opre.9.6.849'
+slug: 'cutting-stock'
+description: 'A classic application of Dantzig-Wolfe Decomposition where the pricing sub-problem is a knapsack problem and column generation produces optimal cutting patterns.'
+---
+
+import Citation from '../../components/content/Citation.astro'
+import MathBlock from '../../components/content/MathBlock.astro'
+import InlineMath from '../../components/content/InlineMath.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## Problem Description
+
+A paper mill receives orders for rolls of paper of varying widths. The mill produces large master rolls of a fixed width $W$. Each master roll must be cut into smaller rolls to fill a set of orders. The goal is to minimise the number of master rolls used (equivalently, to minimise waste) while satisfying all orders.
+
+**Notation** (all symbols defined here, before first use):
+
+<dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm my-4">
+  <dt>
+    <InlineMath math="W" />
+  </dt>
+  <dd>Width of a master roll.</dd>
+  <dt>
+    <InlineMath math="n" />
+  </dt>
+  <dd>Number of distinct order widths.</dd>
+  <dt>
+    <InlineMath math="w_i" />
+  </dt>
+  <dd>
+    Width of order <InlineMath math="i" />, for <InlineMath math="i = 1, \ldots, n" />.
+  </dd>
+  <dt>
+    <InlineMath math="d_i" />
+  </dt>
+  <dd>
+    Demand (number of rolls required) for order <InlineMath math="i" />.
+  </dd>
+  <dt>
+    <InlineMath math="a_{ij}" />
+  </dt>
+  <dd>
+    Number of rolls of width <InlineMath math="w_i" /> produced by cutting pattern{' '}
+    <InlineMath math="j" />.
+  </dd>
+  <dt>
+    <InlineMath math="x_j" />
+  </dt>
+  <dd>
+    Number of times cutting pattern <InlineMath math="j" /> is used.
+  </dd>
+  <dt>
+    <InlineMath math="m" />
+  </dt>
+  <dd>Number of feasible cutting patterns (exponentially large).</dd>
+</dl>
+
+A **cutting pattern** is a feasible assignment of widths to a master roll:
+
+<InlineMath math="\sum_{i=1}^{n} w_i a_{ij} \le W, \quad a_{ij} \in \mathbb{Z}_{\ge 0}" />.
+
+## Block-Angular LP Formulation
+
+The cutting stock problem can be stated as:
+
+<MathBlock
+  math={`
+\\min \\quad & \\sum_{j=1}^{m} x_j \\\\
+\\text{s.t.} \\quad & \\sum_{j=1}^{m} a_{ij} x_j \\ge d_i \\quad \\forall i = 1, \\ldots, n \\quad \\text{(coupling constraints)} \\\\
+& x_j \\ge 0, \\quad x_j \\in \\mathbb{Z}_+ \\quad \\forall j
+`}
+  display={true}
+/>
+
+The LP relaxation sets <InlineMath math="x_j \ge 0" /> (replacing integrality). Because there are exponentially many patterns <InlineMath math="m" />, this LP cannot be solved by enumerating all columns — Dantzig-Wolfe Decomposition via **column generation** is the key technique.
+
+<Callout type="info">
+**Coupling constraints**: The demand constraints <InlineMath math="\sum_j a_{ij} x_j \ge d_i" /> are the **coupling constraints** — they link all patterns together and are retained in the master problem.
+
+There are no explicit sub-problem constraints separating by index in this formulation; instead, the sub-problem is the knapsack feasibility check for generating new columns.
+
+</Callout>
+
+## Dantzig-Wolfe Master Problem
+
+Introduce dual variables <InlineMath math="\pi_i \ge 0" /> for each demand constraint. The restricted master problem (RMP) maintains only a subset of columns <InlineMath math="J \subseteq \{1, \ldots, m\}" />:
+
+<MathBlock
+  math={`
+\\min \\quad & \\sum_{j \\in J} x_j \\\\
+\\text{s.t.} \\quad & \\sum_{j \\in J} a_{ij} x_j \\ge d_i \\quad \\forall i \\\\
+& x_j \\ge 0 \\quad \\forall j \\in J
+`}
+  display={true}
+/>
+
+At each iteration, solve the RMP and obtain dual variables <InlineMath math="\pi_i^*" />.
+
+**Role of dual variables**: <InlineMath math="\pi_i^*" /> is the shadow price of demand <InlineMath math="i" /> — the marginal reduction in total rolls used if demand <InlineMath math="i" /> were increased by one unit. These prices drive the column generation sub-problem.
+
+## Pricing Sub-Problem (Knapsack)
+
+Check whether any currently unlisted pattern can improve the objective. The reduced cost of a new pattern <InlineMath math="a = (a_1, \ldots, a_n)^T" /> is:
+
+<MathBlock math={`\\bar{c}(a) = 1 - \\sum_{i=1}^{n} \\pi_i^* a_i`} display={true} />
+
+We seek a pattern with **negative reduced cost** — i.e., one that reduces total rolls. This is equivalent to solving a **0-1 knapsack problem**:
+
+<MathBlock
+  math={`
+\\max \\quad & \\sum_{i=1}^{n} \\pi_i^* a_i \\\\
+\\text{s.t.} \\quad & \\sum_{i=1}^{n} w_i a_i \\le W \\\\
+& a_i \\in \\mathbb{Z}_{\\ge 0} \\quad \\forall i
+`}
+  display={true}
+/>
+
+If <InlineMath math="\max \sum_i \pi_i^* a_i > 1" />, a new improving column exists and is added to the RMP. Otherwise, the RMP is optimal.
+
+## Numerical Iteration (Example)
+
+Consider <InlineMath math="n = 2" /> order widths, <InlineMath math="W = 10" />, <InlineMath math="w_1 = 4" />, <InlineMath math="w_2 = 3" />, <InlineMath math="d_1 = 3" />, <InlineMath math="d_2 = 5" />.
+
+**Initial patterns**: Let <InlineMath math="p_1 = (2, 0)^T" /> (two rolls of width 4) and <InlineMath math="p_2 = (0, 3)^T" /> (three rolls of width 3).
+
+**Iteration 1**:
+
+- Solve RMP with <InlineMath math="\{p_1, p_2\}" />.
+- Obtain duals <InlineMath math="\pi_1^* = 0.5" />, <InlineMath math="\pi_2^* = 0.333" />.
+- Knapsack: maximise <InlineMath math="0.5 a_1 + 0.333 a_2" /> subject to <InlineMath math="4a_1 + 3a_2 \le 10" />.
+- Optimal solution: <InlineMath math="a_1 = 1, a_2 = 2" /> giving value <InlineMath math="0.5 + 0.667 = 1.167 > 1" />.
+- Add new pattern <InlineMath math="p_3 = (1, 2)^T" />.
+
+**Iteration 2**:
+
+- Re-solve RMP with <InlineMath math="\{p_1, p_2, p_3\}" />.
+- Updated duals and check knapsack again.
+- If no pattern achieves reduced cost <InlineMath math="< 0" />, LP is optimal.
+
+<Callout type="tip">
+  This iterative process — solve RMP, extract duals, solve knapsack, add column — is exactly column
+  generation. In practice, only a small fraction of all possible patterns need ever be generated.
+</Callout>
+
+## Citation
+
+<Citation
+  author="Gilmore, P. C., & Gomory, R. E."
+  title="A linear programming approach to the cutting-stock problem"
+  year="1961"
+  journal="Operations Research, 9(6), 849–859"
+  doi="10.1287/opre.9.6.849"
+/>

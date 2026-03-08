@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../../components/layout/BaseLayout.astro'
+import NavBar from '../../components/layout/NavBar.astro'
+import Footer from '../../components/layout/Footer.astro'
+import GlossaryPanel from '../../components/layout/GlossaryPanel.svelte'
+import ExampleCard from '../../components/examples/ExampleCard.astro'
+import ExampleFilter from '../../components/examples/ExampleFilter.svelte'
+import { getCollection } from 'astro:content'
+
+const exampleEntries = await getCollection('examples')
+const sorted = exampleEntries.sort((a, b) => a.data.title.localeCompare(b.data.title))
+
+const glossaryEntries = await getCollection('glossary')
+const glossaryData = glossaryEntries.map((e) => ({
+  term: e.data.term,
+  shortDef: e.data.shortDef,
+  relatedTerms: e.data.relatedTerms,
+  slug: e.slug,
+}))
+
+// Serialise for the Svelte island
+const examplesData = sorted.map((e) => ({
+  title: e.data.title,
+  problemClass: e.data.problemClass,
+  description: e.data.description ?? '',
+  source: e.data.source,
+  slug: e.slug,
+}))
+---
+
+<BaseLayout
+  title="Worked Examples — Dantzig-Wolfe Decomposition"
+  description="Self-contained worked examples of Dantzig-Wolfe Decomposition applied to cutting stock, network flow, crew scheduling, and more."
+>
+  <NavBar slot="nav" />
+  <GlossaryPanel client:only="svelte" entries={glossaryData} />
+
+  <main id="main-content" class="mx-auto max-w-5xl px-4 py-10">
+    <h1 class="mb-4 text-3xl font-bold text-[var(--color-primary)]">Worked Examples</h1>
+    <p class="mb-8 text-lg text-gray-600 leading-relaxed">
+      Self-contained examples of Dantzig-Wolfe Decomposition in action — from classical cutting
+      stock to network flows and crew scheduling.
+    </p>
+
+    <!-- Interactive filter island (JS enabled) -->
+    <ExampleFilter client:load examples={examplesData} />
+
+    <!-- Static fallback (noscript / no-JS) -->
+    <noscript>
+      <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-4">
+        {
+          sorted.map((entry) => (
+            <li>
+              <ExampleCard
+                title={entry.data.title}
+                problemClass={entry.data.problemClass}
+                description={entry.data.description}
+                source={entry.data.source}
+                slug={entry.slug}
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </noscript>
+  </main>
+
+  <Footer slot="footer" />
+</BaseLayout>
