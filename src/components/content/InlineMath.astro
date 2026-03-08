@@ -1,0 +1,23 @@
+---
+import katex from 'katex'
+
+interface Props {
+  formula: string
+}
+
+const { formula } = Astro.props
+
+let rendered = ''
+
+try {
+  rendered = katex.renderToString(formula, {
+    displayMode: false,
+    throwOnError: false,
+    trust: false,
+  })
+} catch {
+  rendered = `<span class="text-red-600">[KaTeX error]</span>`
+}
+---
+
+<span role="math" aria-label={formula} set:html={rendered} />
