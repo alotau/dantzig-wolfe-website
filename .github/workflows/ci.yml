@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Gate 1 — Security
+      - name: Audit dependencies
+        run: npm audit --audit-level=moderate
+
+      # Gate 2 — Linting & formatting
+      - name: Lint & format check
+        run: npm run lint
+
+      # Gate 3 — Unit tests
+      - name: Unit tests
+        run: npx vitest run
+
+      # Gate 4 — Acceptance tests (build → preview → cucumber)
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Build site
+        run: npm run build
+
+      - name: Start preview server (background)
+        run: npm run preview -- --port 4321 &
+
+      - name: Wait for preview server
+        run: npx wait-on http://localhost:4321 --timeout 60000
+
+      - name: Acceptance tests
+        run: npx cucumber-js
