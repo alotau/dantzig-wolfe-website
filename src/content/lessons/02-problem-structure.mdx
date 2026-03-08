@@ -1,0 +1,58 @@
+---
+title: 'Problem Structure: Block-Angular LP'
+section: 2
+order: 2
+prerequisites: ['01-prerequisites']
+---
+
+import TermLink from '../../components/content/TermLink.astro'
+import MathBlock from '../../components/content/MathBlock.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## Problem Structure
+
+Dantzig-Wolfe Decomposition applies to linear programs with a <TermLink term="block-angular LP" />
+structure: a set of independent sub-problems linked by a small number of shared constraints.
+
+### General Block-Angular LP Formulation
+
+<MathBlock formula="\min \sum_{i=1}^{K} c_i^T x_i" label="Objective" />
+
+<MathBlock
+  formula="\text{subject to} \quad \sum_{i=1}^{K} A_0^i x_i = b_0 \quad \text{(coupling constraints)}"
+  label="Coupling"
+/>
+
+<MathBlock
+  formula="A_i x_i = b_i, \quad x_i \geq 0 \quad \forall i = 1, \ldots, K \quad \text{(sub-problem constraints)}"
+  label="Sub-problems"
+/>
+
+### Symbol Legend
+
+<dl class="my-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+  <dt class="font-mono font-semibold">K</dt>
+  <dd>Number of sub-problems (blocks)</dd>
+  <dt class="font-mono font-semibold">x_i</dt>
+  <dd>Decision variables for sub-problem i</dd>
+  <dt class="font-mono font-semibold">c_i</dt>
+  <dd>Objective coefficient vector for sub-problem i</dd>
+  <dt class="font-mono font-semibold">A_0^i</dt>
+  <dd>Coupling constraint matrix for sub-problem i's variables</dd>
+  <dt class="font-mono font-semibold">b_0</dt>
+  <dd>Right-hand side of the coupling constraints</dd>
+  <dt class="font-mono font-semibold">A_i, b_i</dt>
+  <dd>Constraint matrix and RHS for the i-th sub-problem</dd>
+</dl>
+
+<Callout variant="definition" title="Coupling vs Sub-Problem Constraints">
+  The **coupling constraints** ($\sum_i A_0^i x_i = b_0$) link all sub-problems together and make
+  the problem non-separable. The **sub-problem constraints** ($A_i x_i = b_i$) define the feasible
+  region of each block independently.
+</Callout>
+
+### Why This Structure Matters
+
+If no coupling constraints existed ($A_0^i = 0$ for all $i$), the problem would decompose
+completely into $K$ independent LPs. The coupling constraints are exactly what makes the problem
+hard — and exactly what Dantzig-Wolfe exploits.

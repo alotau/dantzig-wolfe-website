@@ -1,0 +1,36 @@
+---
+title: 'Prerequisites'
+section: 1
+order: 1
+prerequisites: []
+---
+
+import TermLink from '../../components/content/TermLink.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## Prerequisites
+
+Before working through this lesson, you should be comfortable with the following concepts. Each
+link opens a brief refresher or connects to the site glossary.
+
+<Callout variant="info" title="What you should know">
+  This lesson assumes familiarity with linear programming at the level of an undergraduate
+  operations research course.
+</Callout>
+
+### Required Background
+
+- **Linear Programming (LP)**: formulation as $\min c^T x$ subject to $Ax \leq b$, $x \geq 0$;
+  feasibility, optimality, and duality
+- **Simplex Method**: basis, basic feasible solutions, pivoting rules, optimality certificates —
+  <TermLink term="dual variables" /> arise naturally as shadow prices
+- **Matrix algebra**: matrix–vector products, block matrices, linear independence
+- **Convexity**: <TermLink term="extreme point" />s (vertices) of a polyhedron; Minkowski's theorem
+  that every bounded polyhedron is the convex hull of its vertices
+- **LP duality**: the dual problem, complementary slackness, strong duality
+
+If any of these concepts feel unfamiliar, the site glossary provides plain-language definitions.
+External references:
+
+- Bertsimas & Tsitsiklis, _Introduction to Linear Optimization_ (1997) — Chapters 1–5
+- Vanderbei, _Linear Programming: Foundations and Extensions_ (2014) — freely available online
