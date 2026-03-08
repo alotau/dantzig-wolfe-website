@@ -77,10 +77,10 @@
 
 **Independent Test**: Navigate to `/history`; page shows ≥5 chronological sections with citations visible; every citation has an identifiable source; all technical term links open the Glossary panel; page is readable with JS disabled.
 
-- [ ] T018 [US2] Create history page at src/pages/history.astro using BaseLayout: queries `history` content collection ordered by `order` field; renders each MDX article using Astro's `<Content />` with Citation and TermLink components available in scope; page title "History of Dantzig-Wolfe Decomposition"
-- [ ] T019 [P] [US2] Author history MDX articles in src/content/history/: 01-origins.mdx (Dantzig & Wolfe 1960, Operations Research citation, motivation from large-scale LP intractability), 02-simplex-relationship.mdx (block-angular structure, exploitation of LP form), 03-industrial-applications.mdx (≥1 domain: transportation / energy / production planning with citation), 04-column-generation.mdx (pricing sub-problems as origin of modern column generation), 05-citations.mdx (full bibliography); all factual claims cited with author/title/year
-- [ ] T020 [US2] **⚡ RED-FIRST — commit before T018/T019** Write failing Cucumber step definitions for history.feature scenarios in tests/acceptance/step-definitions/history.steps.ts; confirm all steps fail in CI before opening implementation tasks
-- [ ] T021 [P] [US2] Write Vitest unit test for Citation.astro rendering in tests/unit/components/citation.test.ts (validates DOI link href, author display format)
+- [X] T018 [US2] Create history page at src/pages/history.astro using BaseLayout: queries `history` content collection ordered by `order` field; renders each MDX article using Astro's `<Content />` with Citation and TermLink components available in scope; page title "History of Dantzig-Wolfe Decomposition"
+- [X] T019 [P] [US2] Author history MDX articles in src/content/history/: 01-origins.mdx (Dantzig & Wolfe 1960, Operations Research citation, motivation from large-scale LP intractability), 02-simplex-relationship.mdx (block-angular structure, exploitation of LP form), 03-industrial-applications.mdx (≥1 domain: transportation / energy / production planning with citation), 04-column-generation.mdx (pricing sub-problems as origin of modern column generation), 05-citations.mdx (full bibliography); all factual claims cited with author/title/year
+- [X] T020 [US2] **⚡ RED-FIRST — commit before T018/T019** Write failing Cucumber step definitions for history.feature scenarios in tests/acceptance/step-definitions/history.steps.ts; confirm all steps fail in CI before opening implementation tasks
+- [X] T021 [P] [US2] Write Vitest unit test for Citation.astro rendering in tests/unit/components/citation.test.ts (validates DOI link href, author display format)
 
 **Checkpoint**: All history.feature scenarios pass or are pending; `/history` renders correctly with all MDX content.
 

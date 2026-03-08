@@ -1,0 +1,42 @@
+---
+title: 'Origins of Dantzig-Wolfe Decomposition'
+date: '1960-01-01'
+order: 1
+description: 'How the algorithm was conceived to tackle large-scale linear programming problems.'
+---
+
+import Citation from '../../components/content/Citation.astro'
+import TermLink from '../../components/content/TermLink.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## Origins of the Algorithm
+
+In 1960, George Dantzig and Philip Wolfe published a landmark paper introducing the decomposition
+principle for linear programming. Their work appeared in the journal _Operations Research_ and
+addressed a fundamental computational challenge: at the time, many real-world linear programs of
+practical interest were far too large to solve directly by the simplex method.
+
+<Callout variant="definition" title="The Core Problem">
+  Large-scale linear programs arising in planning, logistics, and resource allocation often
+  contained thousands of variables and constraints — far beyond the computational capacity of 1960s
+  computers when treated as monolithic problems.
+</Callout>
+
+The motivation was clear: solving large-scale linear programs that were computationally intractable
+by direct simplex methods required a fundamentally different approach. Dantzig and Wolfe recognised
+that many such problems possessed a special structure — a <TermLink term="block-angular LP" /> form —
+that could be exploited algorithmically.
+
+By decomposing the problem into a <TermLink term="master problem" /> coordinating a set of smaller
+
+<TermLink term="pricing sub-problem" />
+s, they showed that the full optimum could be recovered without ever handling the entire problem at
+once.
+
+<Citation
+  author="Dantzig, G. B. and Wolfe, P."
+  title="Decomposition Principle for Linear Programs"
+  year={1960}
+  journal="Operations Research, 8(1), 101–111"
+  doi="10.1287/opre.8.1.101"
+/>
