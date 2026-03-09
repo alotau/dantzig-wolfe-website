@@ -1,9 +1,6 @@
 <script lang="ts">
   import ProblemInput from './ProblemInput.svelte'
-  import {
-    ProblemInstanceSchema,
-    type ParsedProblemInstance,
-  } from '@/lib/solver/problem-schema.js'
+  import { ProblemInstanceSchema, type ParsedProblemInstance } from '@/lib/solver/problem-schema.js'
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -150,12 +147,7 @@
 <!-- =========================================================================
      Root workspace element — data-workspace attr for Playwright selectors
 ========================================================================== -->
-<div
-  class="mx-auto max-w-5xl px-4 py-8 space-y-6"
-  data-workspace
-  data-solver-status={solverStatus}
->
-
+<div class="mx-auto max-w-5xl px-4 py-8 space-y-6" data-workspace data-solver-status={solverStatus}>
   <!-- -----------------------------------------------------------------------
        INIT_ERROR: browser-compatibility message (populated by Phase 8 worker)
   ----------------------------------------------------------------------- -->
@@ -165,10 +157,11 @@
       role="alert"
       data-browser-compat-message
     >
-      <strong>Browser compatibility notice:</strong> {initError}
+      <strong>Browser compatibility notice:</strong>
+      {initError}
       <br />
-      The interactive solver requires WebAssembly and SharedArrayBuffer. Compatible browsers:
-      Chrome 89+, Firefox 88+, Safari 15.2+, Edge 89+.
+      The interactive solver requires WebAssembly and SharedArrayBuffer. Compatible browsers: Chrome 89+,
+      Firefox 88+, Safari 15.2+, Edge 89+.
     </div>
   {/if}
 
@@ -176,9 +169,7 @@
        Header row: title + example loader + clear button
   ----------------------------------------------------------------------- -->
   <div class="flex flex-wrap items-center gap-3">
-    <h1 class="text-2xl font-bold text-[var(--color-text-primary)] flex-1">
-      Interactive Solver
-    </h1>
+    <h1 class="text-2xl font-bold text-[var(--color-text-primary)] flex-1">Interactive Solver</h1>
 
     <!-- Load Example -->
     <label class="flex items-center gap-2 text-sm">
@@ -223,10 +214,7 @@
        Problem Input form
   ----------------------------------------------------------------------- -->
   <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <ProblemInput
-      bind:this={problemInputRef}
-      onchange={handleProblemChange}
-    />
+    <ProblemInput bind:this={problemInputRef} onchange={handleProblemChange} />
   </div>
 
   <!-- -----------------------------------------------------------------------

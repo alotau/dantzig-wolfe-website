@@ -73,8 +73,7 @@ export const SubProblemBlockSchema = z
       )
     },
     {
-      message:
-        'A column count, c length, bounds length, and variableLabels length must all match',
+      message: 'A column count, c length, bounds length, and variableLabels length must all match',
     },
   )
 

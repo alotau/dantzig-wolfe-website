@@ -15,21 +15,21 @@ Built with [Astro 5](https://astro.build), [Svelte 5](https://svelte.dev), [Tail
   - Multi-Commodity Network Flow (Ford-Fulkerson)
   - Crew Scheduling / Branch-and-Price (Barnhart et al.)
 - **Glossary** — Slide-out panel with filterable definitions; term links throughout content.
-- **Interactive Solver** *(in progress)* — Enter a block-angular LP in the browser, run Dantzig-Wolfe Decomposition via Pyodide (Python in WebAssembly), and visualise the solution.
+- **Interactive Solver** _(in progress)_ — Enter a block-angular LP in the browser, run Dantzig-Wolfe Decomposition via Pyodide (Python in WebAssembly), and visualise the solution.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | [Astro 5](https://astro.build) — static output, content collections, MDX |
-| UI components | [Svelte 5](https://svelte.dev) — runes reactivity (`$state`, `$derived`) |
-| Styling | [Tailwind CSS 4](https://tailwindcss.com) — Vite plugin, `@theme` CSS vars |
-| Math rendering | [KaTeX](https://katex.org) — server-side in Astro, `remark-math` + `rehype-katex` in MDX |
-| Charts | [Chart.js](https://www.chartjs.org) — convergence visualisation |
+| Layer          | Technology                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| Framework      | [Astro 5](https://astro.build) — static output, content collections, MDX                         |
+| UI components  | [Svelte 5](https://svelte.dev) — runes reactivity (`$state`, `$derived`)                         |
+| Styling        | [Tailwind CSS 4](https://tailwindcss.com) — Vite plugin, `@theme` CSS vars                       |
+| Math rendering | [KaTeX](https://katex.org) — server-side in Astro, `remark-math` + `rehype-katex` in MDX         |
+| Charts         | [Chart.js](https://www.chartjs.org) — convergence visualisation                                  |
 | Solver runtime | [Pyodide](https://pyodide.org) + [pako](https://github.com/nodeca/pako) — Python/WASM in-browser |
-| Deployment | [Vercel](https://vercel.com) via `@astrojs/vercel` |
+| Deployment     | [Vercel](https://vercel.com) via `@astrojs/vercel`                                               |
 
 ---
 
@@ -152,11 +152,11 @@ npm run lint:fix   # auto-fix
 
 All written content lives in `src/content/` as MDX files and is validated by Zod schemas defined in `src/content/config.ts`.
 
-| Collection | Fields |
-|---|---|
-| `glossary` | `term`, `shortDef`, `relatedTerms[]` |
-| `history` | `title`, `date`, `order`, `description` |
-| `lessons` | `title`, `section` (number), `order`, `prerequisites[]` |
+| Collection | Fields                                                    |
+| ---------- | --------------------------------------------------------- |
+| `glossary` | `term`, `shortDef`, `relatedTerms[]`                      |
+| `history`  | `title`, `date`, `order`, `description`                   |
+| `lessons`  | `title`, `section` (number), `order`, `prerequisites[]`   |
 | `examples` | `title`, `problemClass`, `source`, `doi?`, `description?` |
 
 ---

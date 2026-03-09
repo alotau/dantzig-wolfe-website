@@ -20,7 +20,7 @@
       "b": [4],
       "constraintSenses": ["leq"],
       "c": [2],
-      "bounds": [{"lower": 0, "upper": null}],
+      "bounds": [{ "lower": 0, "upper": null }],
       "variableLabels": ["Production level"]
     },
     {
@@ -30,7 +30,7 @@
       "b": [4],
       "constraintSenses": ["leq"],
       "c": [2],
-      "bounds": [{"lower": 0, "upper": null}],
+      "bounds": [{ "lower": 0, "upper": null }],
       "variableLabels": ["Production level"]
     },
     {
@@ -44,8 +44,8 @@
       "constraintSenses": ["leq", "leq"],
       "c": [2, 1],
       "bounds": [
-        {"lower": 0, "upper": null},
-        {"lower": 0, "upper": null}
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null }
       ],
       "variableLabels": ["Primary output", "Secondary output"]
     }

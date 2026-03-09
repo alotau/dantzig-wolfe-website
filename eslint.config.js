@@ -27,6 +27,14 @@ export default [
     },
   },
   {
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { varsIgnorePattern: '^_', argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
+      ],
+    },
+  },
+  {
     ignores: ['dist/', 'node_modules/', '.astro/', 'reports/', '.vercel/'],
   },
 ]

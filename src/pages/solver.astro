@@ -34,9 +34,8 @@ const pyodideBase = 'https://cdn.jsdelivr.net/pyodide/v0.29.3/full/'
       Interactive Solver
     </h1>
     <p class="text-[var(--color-text-secondary)] mb-8">
-      Enter a Dantzig-Wolfe decomposed LP — coupling constraints and one or more sub-problem
-      blocks — then click <strong>Solve</strong> to run the column generation algorithm in your
-      browser.
+      Enter a Dantzig-Wolfe decomposed LP — coupling constraints and one or more sub-problem blocks
+      — then click <strong>Solve</strong> to run the column generation algorithm in your browser.
     </p>
 
     <!-- Solver island — requires Svelte + JS -->
@@ -51,8 +50,10 @@ const pyodideBase = 'https://cdn.jsdelivr.net/pyodide/v0.29.3/full/'
         <p class="font-semibold mb-1">JavaScript is required for the Interactive Solver</p>
         <p class="text-sm mb-3">
           The solver runs Dantzig-Wolfe decomposition via
-          <a href="https://pyodide.org" target="_blank" rel="noopener noreferrer" class="underline">Pyodide</a>
-          (Python on WebAssembly) entirely in your browser.  JavaScript must be enabled to use it.
+          <a href="https://pyodide.org" target="_blank" rel="noopener noreferrer" class="underline"
+            >Pyodide</a
+          >
+          (Python on WebAssembly) entirely in your browser. JavaScript must be enabled to use it.
         </p>
         <p class="text-sm">
           <strong>Supported browsers:</strong> Chrome 89+, Firefox 88+, Safari 15.2+, Edge 89+

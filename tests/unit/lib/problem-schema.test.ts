@@ -37,11 +37,17 @@ describe('VariableBoundsSchema', () => {
 describe('SubProblemBlockSchema', () => {
   const minimal: unknown = {
     index: 1,
-    A: [[1, 0], [0, 1]],
+    A: [
+      [1, 0],
+      [0, 1],
+    ],
     b: [4, 4],
     constraintSenses: ['leq', 'leq'],
     c: [1, 1],
-    bounds: [{ lower: 0, upper: null }, { lower: 0, upper: null }],
+    bounds: [
+      { lower: 0, upper: null },
+      { lower: 0, upper: null },
+    ],
   }
 
   it('accepts a valid 2×2 block', () => {
@@ -87,7 +93,13 @@ describe('SubProblemBlockSchema', () => {
   })
 
   it('accepts NaN detection: rejects NaN in A', () => {
-    const bad = { ...(minimal as Record<string, unknown>), A: [[NaN, 0], [0, 1]] }
+    const bad = {
+      ...(minimal as Record<string, unknown>),
+      A: [
+        [NaN, 0],
+        [0, 1],
+      ],
+    }
     expect(SubProblemBlockSchema.safeParse(bad).success).toBe(false)
   })
 
@@ -106,7 +118,10 @@ describe('SubProblemBlockSchema', () => {
 describe('CouplingConstraintsSchema', () => {
   it('accepts valid coupling with 2 rows and 4 columns', () => {
     const coupling = {
-      A: [[1, 0, 1, 0], [0, 1, 0, 1]],
+      A: [
+        [1, 0, 1, 0],
+        [0, 1, 0, 1],
+      ],
       b: [6, 6],
       senses: ['leq', 'leq'],
     }
@@ -130,26 +145,41 @@ describe('ProblemInstanceSchema', () => {
   const twoBlockLP = {
     objectiveDirection: 'max',
     coupling: {
-      A: [[1, 0, 1, 0], [0, 1, 0, 1]],
+      A: [
+        [1, 0, 1, 0],
+        [0, 1, 0, 1],
+      ],
       b: [6, 6],
       senses: ['leq', 'leq'],
     },
     subproblems: [
       {
         index: 1,
-        A: [[1, 0], [0, 1]],
+        A: [
+          [1, 0],
+          [0, 1],
+        ],
         b: [5, 5],
         constraintSenses: ['leq', 'leq'],
         c: [1, 1],
-        bounds: [{ lower: 0, upper: null }, { lower: 0, upper: null }],
+        bounds: [
+          { lower: 0, upper: null },
+          { lower: 0, upper: null },
+        ],
       },
       {
         index: 2,
-        A: [[1, 0], [0, 1]],
+        A: [
+          [1, 0],
+          [0, 1],
+        ],
         b: [5, 5],
         constraintSenses: ['leq', 'leq'],
         c: [1, 1],
-        bounds: [{ lower: 0, upper: null }, { lower: 0, upper: null }],
+        bounds: [
+          { lower: 0, upper: null },
+          { lower: 0, upper: null },
+        ],
       },
     ],
   }
@@ -177,11 +207,17 @@ describe('ProblemInstanceSchema', () => {
       subproblems: [
         {
           index: 1,
-          A: [[1, 0], [0, 1]],
+          A: [
+            [1, 0],
+            [0, 1],
+          ],
           b: [3, 3],
           constraintSenses: ['leq', 'leq'],
           c: [2, 3],
-          bounds: [{ lower: 0, upper: null }, { lower: 0, upper: null }],
+          bounds: [
+            { lower: 0, upper: null },
+            { lower: 0, upper: null },
+          ],
         },
       ],
     }

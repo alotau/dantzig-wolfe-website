@@ -174,7 +174,9 @@
         <span class="ml-1 text-[var(--color-text-secondary)] font-normal">— {block.label}</span>
       {/if}
     </span>
-    <span class="ml-4 flex items-center gap-3 text-sm font-normal text-[var(--color-text-secondary)]">
+    <span
+      class="ml-4 flex items-center gap-3 text-sm font-normal text-[var(--color-text-secondary)]"
+    >
       {#if hasErrors}
         <span class="text-red-600 font-semibold" aria-live="polite">⚠ Errors</span>
       {/if}
@@ -202,7 +204,10 @@
   <div class="px-4 pb-4 pt-1 space-y-5">
     <!-- Label field -->
     <div>
-      <label class="block text-xs font-medium text-[var(--color-text-secondary)] mb-1" for="label-{block.index}">
+      <label
+        class="block text-xs font-medium text-[var(--color-text-secondary)] mb-1"
+        for="label-{block.index}"
+      >
         Block label (optional)
       </label>
       <input
@@ -242,8 +247,19 @@
         <thead>
           <tr class="bg-gray-50">
             {#each Array(cols) as _, j}
-              <th class="border border-gray-200 px-2 py-1 font-normal text-[var(--color-text-secondary)]">
-                x<sub>{j + 1}</sub>
+              <th
+                class="border border-gray-200 px-1 py-1 font-normal text-[var(--color-text-secondary)]"
+              >
+                <div class="flex items-center gap-0.5">
+                  <span>x<sub>{j + 1}</sub></span>
+                  <button
+                    type="button"
+                    onclick={() => removeVariable(j)}
+                    class="text-gray-300 hover:text-red-500 transition-colors leading-none"
+                    aria-label="Remove variable {j + 1}"
+                    data-remove-variable>×</button
+                  >
+                </div>
               </th>
             {/each}
             <th class="border border-gray-200 px-2 py-1 font-normal">≤/≥/=</th>
@@ -256,14 +272,22 @@
             <tr>
               {#each Array(cols) as _, c}
                 {@const key = `A-${r}-${c}`}
-                <td class="border border-gray-200 p-0" data-matrix-cell class:invalid={!!cellErrors[key]}>
+                <td
+                  class="border border-gray-200 p-0"
+                  data-matrix-cell
+                  class:invalid={!!cellErrors[key]}
+                >
                   <input
                     type="number"
                     step="any"
                     value={block.A[r][c]}
                     oninput={(e) => updateACell(r, c, (e.target as HTMLInputElement).value)}
                     aria-invalid={!!cellErrors[key]}
-                    class="w-14 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50 {cellErrors[key] ? 'bg-red-50 text-red-700' : ''}"
+                    class="w-14 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50 {cellErrors[
+                      key
+                    ]
+                      ? 'bg-red-50 text-red-700'
+                      : ''}"
                   />
                   {#if cellErrors[key]}
                     <span class="sr-only" data-validation-message>{cellErrors[key]}</span>
@@ -290,7 +314,11 @@
                   value={block.b[r]}
                   oninput={(e) => updateBCell(r, (e.target as HTMLInputElement).value)}
                   aria-invalid={!!cellErrors[`b-${r}`]}
-                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50 {cellErrors[`b-${r}`] ? 'bg-red-50 text-red-700' : ''}"
+                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50 {cellErrors[
+                    `b-${r}`
+                  ]
+                    ? 'bg-red-50 text-red-700'
+                    : ''}"
                 />
               </td>
               <!-- Remove row button -->
@@ -299,8 +327,8 @@
                   type="button"
                   onclick={() => removeConstraintRow(r)}
                   class="text-gray-400 hover:text-red-500 transition-colors"
-                  aria-label="Remove constraint row {r + 1}"
-                >×</button>
+                  aria-label="Remove constraint row {r + 1}">×</button
+                >
               </td>
             </tr>
           {/each}
@@ -329,7 +357,11 @@
               oninput={(e) => updateCCell(j, (e.target as HTMLInputElement).value)}
               aria-invalid={!!cellErrors[key]}
               data-cell-c
-              class="w-14 rounded border border-gray-300 px-1 py-0.5 text-right text-xs focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] {cellErrors[key] ? 'border-red-400 bg-red-50' : ''}"
+              class="w-14 rounded border border-gray-300 px-1 py-0.5 text-right text-xs focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] {cellErrors[
+                key
+              ]
+                ? 'border-red-400 bg-red-50'
+                : ''}"
             />
             {#if cellErrors[key]}
               <span class="text-red-500 text-xs" data-validation-message>{cellErrors[key]}</span>

@@ -7,10 +7,7 @@
     ],
     "b": [6, 6],
     "senses": ["leq", "leq"],
-    "constraintLabels": [
-      "Shared resource A (capacity ≤ 6)",
-      "Shared resource B (capacity ≤ 6)"
-    ]
+    "constraintLabels": ["Shared resource A (capacity ≤ 6)", "Shared resource B (capacity ≤ 6)"]
   },
   "subproblems": [
     {
@@ -24,8 +21,8 @@
       "constraintSenses": ["leq", "leq"],
       "c": [1, 1],
       "bounds": [
-        {"lower": 0, "upper": null},
-        {"lower": 0, "upper": null}
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null }
       ],
       "variableLabels": ["Product 1", "Product 2"]
     },
@@ -40,8 +37,8 @@
       "constraintSenses": ["leq", "leq"],
       "c": [1, 1],
       "bounds": [
-        {"lower": 0, "upper": null},
-        {"lower": 0, "upper": null}
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null }
       ],
       "variableLabels": ["Product 1", "Product 2"]
     }

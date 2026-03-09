@@ -24,25 +24,19 @@ Given<CustomWorld>('I have entered a valid decomposed problem', async function (
 // Blank workspace
 // ---------------------------------------------------------------------------
 
-When<CustomWorld>(
-  'I arrive at the Interactive Solver for the first time',
-  async function () {
-    await this.page.evaluate(() => sessionStorage.removeItem('dw-problem'))
-    await this.page.reload()
-    await this.page.waitForSelector('[data-workspace]', { timeout: 10000 })
-  },
-)
+When<CustomWorld>('I arrive at the Interactive Solver for the first time', async function () {
+  await this.page.evaluate(() => sessionStorage.removeItem('dw-problem'))
+  await this.page.reload()
+  await this.page.waitForSelector('[data-workspace]', { timeout: 10000 })
+})
 
-Then<CustomWorld>(
-  'I see a workspace with an empty problem input area',
-  async function () {
-    const workspace = this.page.locator('[data-workspace]')
-    await expect(workspace).toBeVisible()
-    // No sub-problem blocks on a fresh load
-    const blocks = this.page.locator('[data-subproblem-block]')
-    await expect(blocks).toHaveCount(0)
-  },
-)
+Then<CustomWorld>('I see a workspace with an empty problem input area', async function () {
+  const workspace = this.page.locator('[data-workspace]')
+  await expect(workspace).toBeVisible()
+  // No sub-problem blocks on a fresh load
+  const blocks = this.page.locator('[data-subproblem-block]')
+  await expect(blocks).toHaveCount(0)
+})
 
 Then<CustomWorld>(
   'I see instructions explaining the expected decomposed problem format',
@@ -81,13 +75,10 @@ When<CustomWorld>(
   },
 )
 
-Then<CustomWorld>(
-  'the input is accepted and displayed in a structured table',
-  async function () {
-    const table = this.page.locator('[data-coupling-table], table[data-coupling]')
-    await expect(table.first()).toBeVisible()
-  },
-)
+Then<CustomWorld>('the input is accepted and displayed in a structured table', async function () {
+  const table = this.page.locator('[data-coupling-table], table[data-coupling]')
+  await expect(table.first()).toBeVisible()
+})
 
 Then<CustomWorld>('the number of coupling constraints is shown', async function () {
   const count = this.page.locator('[data-coupling-count]')
@@ -141,13 +132,10 @@ When<CustomWorld>('I add two or more sub-problem blocks', async function () {
   await expect(this.page.locator('[data-subproblem-block]')).toHaveCount(2)
 })
 
-Then<CustomWorld>(
-  'each block appears as a distinct section in the workspace',
-  async function () {
-    const blocks = this.page.locator('[data-subproblem-block]')
-    await expect(blocks).toHaveCount(2)
-  },
-)
+Then<CustomWorld>('each block appears as a distinct section in the workspace', async function () {
+  const blocks = this.page.locator('[data-subproblem-block]')
+  await expect(blocks).toHaveCount(2)
+})
 
 Then<CustomWorld>('I can expand or collapse individual blocks', async function () {
   const toggleBtn = this.page.locator(
@@ -177,15 +165,12 @@ When<CustomWorld>(
   },
 )
 
-Then<CustomWorld>(
-  'the bounds are stored with the corresponding variable',
-  async function () {
-    const lowerInput = this.page.locator('[data-bound-lower]').first()
-    await expect(lowerInput).toHaveValue('0')
-    const upperInput = this.page.locator('[data-bound-upper]').first()
-    await expect(upperInput).toHaveValue('10')
-  },
-)
+Then<CustomWorld>('the bounds are stored with the corresponding variable', async function () {
+  const lowerInput = this.page.locator('[data-bound-lower]').first()
+  await expect(lowerInput).toHaveValue('0')
+  const upperInput = this.page.locator('[data-bound-upper]').first()
+  await expect(upperInput).toHaveValue('10')
+})
 
 Then<CustomWorld>(
   'variables with default bounds (0, unbounded) are indicated as such without requiring explicit entry',
@@ -201,14 +186,11 @@ Then<CustomWorld>(
 // Load pre-built example
 // ---------------------------------------------------------------------------
 
-When<CustomWorld>(
-  'I select a pre-built example from the examples dropdown',
-  async function () {
-    const select = this.page.locator('[data-example-select]')
-    await expect(select).toBeVisible()
-    await select.selectOption({ index: 1 }) // First real example (not the placeholder)
-  },
-)
+When<CustomWorld>('I select a pre-built example from the examples dropdown', async function () {
+  const select = this.page.locator('[data-example-select]')
+  await expect(select).toBeVisible()
+  await select.selectOption({ index: 1 }) // First real example (not the placeholder)
+})
 
 Then<CustomWorld>(
   'the workspace is populated with the corresponding coupling constraints and sub-problem blocks',
@@ -239,7 +221,10 @@ Then<CustomWorld>('I can modify the loaded data before solving', async function 
 // ---------------------------------------------------------------------------
 
 When<CustomWorld>('I click {string}', async function (label: string) {
-  await this.page.locator(`button[data-action="${label.toLowerCase()}"], button`).filter({ hasText: label }).click()
+  await this.page
+    .locator(`button[data-action="${label.toLowerCase()}"], button`)
+    .filter({ hasText: label })
+    .click()
 })
 
 Then<CustomWorld>('all input fields are reset to empty', async function () {
@@ -274,7 +259,7 @@ Then<CustomWorld>(
 // ---------------------------------------------------------------------------
 
 When<CustomWorld>(
-  "I attempt to solve a problem with incompatible dimensions\\n      (e.g. the number of columns in A0 does not match the total variables across sub-problems)",
+  'I attempt to solve a problem with incompatible dimensions\\n      (e.g. the number of columns in A0 does not match the total variables across sub-problems)',
   async function () {
     // This step matches the multi-line Gherkin string from the feature
     // Set up a coupling matrix with 3 columns but only 1 sub-problem variable
@@ -296,33 +281,27 @@ Then<CustomWorld>(
   },
 )
 
-Then<CustomWorld>(
-  'the solver does not start until the error is resolved',
-  async function () {
-    const solveBtn = this.page.locator('[data-solve]')
-    if ((await solveBtn.count()) > 0) {
-      await expect(solveBtn).toBeDisabled()
-    }
-  },
-)
+Then<CustomWorld>('the solver does not start until the error is resolved', async function () {
+  const solveBtn = this.page.locator('[data-solve]')
+  if ((await solveBtn.count()) > 0) {
+    await expect(solveBtn).toBeDisabled()
+  }
+})
 
 // ---------------------------------------------------------------------------
 // Non-numeric input rejection
 // ---------------------------------------------------------------------------
 
-When<CustomWorld>(
-  'I enter a non-numeric value in a matrix or vector cell',
-  async function () {
-    // Ensure at least one block
-    if ((await this.page.locator('[data-subproblem-block]').count()) === 0) {
-      await this.page.locator('[data-add-block]').click()
-      await this.page.waitForSelector('[data-subproblem-block]', { timeout: 3000 })
-    }
-    const cellInput = this.page.locator('[data-matrix-cell] input, [data-block-c] input').first()
-    await cellInput.fill('abc')
-    await cellInput.blur()
-  },
-)
+When<CustomWorld>('I enter a non-numeric value in a matrix or vector cell', async function () {
+  // Ensure at least one block
+  if ((await this.page.locator('[data-subproblem-block]').count()) === 0) {
+    await this.page.locator('[data-add-block]').click()
+    await this.page.waitForSelector('[data-subproblem-block]', { timeout: 3000 })
+  }
+  const cellInput = this.page.locator('[data-matrix-cell] input, [data-block-c] input').first()
+  await cellInput.fill('abc')
+  await cellInput.blur()
+})
 
 Then<CustomWorld>('the cell is highlighted as invalid', async function () {
   const invalidCell = this.page.locator(
@@ -331,22 +310,16 @@ Then<CustomWorld>('the cell is highlighted as invalid', async function () {
   await expect(invalidCell.first()).toBeVisible()
 })
 
-Then<CustomWorld>(
-  'an inline message explains that a numeric value is required',
-  async function () {
-    const validationMsg = this.page.locator('[data-validation-message], .validation-message')
-    await expect(validationMsg.first()).toBeVisible()
-    const text = await validationMsg.first().textContent()
-    expect(text?.toLowerCase()).toMatch(/numeric|number/)
-  },
-)
+Then<CustomWorld>('an inline message explains that a numeric value is required', async function () {
+  const validationMsg = this.page.locator('[data-validation-message], .validation-message')
+  await expect(validationMsg.first()).toBeVisible()
+  const text = await validationMsg.first().textContent()
+  expect(text?.toLowerCase()).toMatch(/numeric|number/)
+})
 
-Then<CustomWorld>(
-  'the solver does not start while any cell is invalid',
-  async function () {
-    const solveBtn = this.page.locator('[data-solve]')
-    if ((await solveBtn.count()) > 0) {
-      await expect(solveBtn).toBeDisabled()
-    }
-  },
-)
+Then<CustomWorld>('the solver does not start while any cell is invalid', async function () {
+  const solveBtn = this.page.locator('[data-solve]')
+  if ((await solveBtn.count()) > 0) {
+    await expect(solveBtn).toBeDisabled()
+  }
+})

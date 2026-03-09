@@ -24,9 +24,7 @@ export function validateRectangular(matrix: number[][]): Result<void> {
   const cols = matrix[0].length
   for (let i = 1; i < matrix.length; i++) {
     if (matrix[i].length !== cols) {
-      return err(
-        `Row ${i} has ${matrix[i].length} column(s) but expected ${cols} (matching row 0)`,
-      )
+      return err(`Row ${i} has ${matrix[i].length} column(s) but expected ${cols} (matching row 0)`)
     }
   }
   return ok(undefined)

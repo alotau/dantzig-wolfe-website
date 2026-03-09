@@ -7,10 +7,7 @@
     ],
     "b": [4, 2],
     "senses": ["geq", "geq"],
-    "constraintLabels": [
-      "Width-4 demand: need ≥ 4 pieces",
-      "Width-6 demand: need ≥ 2 pieces"
-    ]
+    "constraintLabels": ["Width-4 demand: need ≥ 4 pieces", "Width-6 demand: need ≥ 2 pieces"]
   },
   "subproblems": [
     {
@@ -21,9 +18,9 @@
       "constraintSenses": ["leq"],
       "c": [1, 1, 1],
       "bounds": [
-        {"lower": 0, "upper": null},
-        {"lower": 0, "upper": null},
-        {"lower": 0, "upper": null}
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null }
       ],
       "variableLabels": ["Pattern [2×w4]", "Pattern [1×w4, 1×w6]", "Pattern [1×w6]"]
     },
@@ -35,9 +32,9 @@
       "constraintSenses": ["leq"],
       "c": [1, 1, 1],
       "bounds": [
-        {"lower": 0, "upper": null},
-        {"lower": 0, "upper": null},
-        {"lower": 0, "upper": null}
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null }
       ],
       "variableLabels": ["Pattern [2×w4]", "Pattern [1×w4, 1×w6]", "Pattern [1×w6]"]
     }

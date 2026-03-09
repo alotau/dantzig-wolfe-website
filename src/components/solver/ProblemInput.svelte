@@ -6,7 +6,7 @@
     type ParsedSubProblemBlock,
     type ConstraintSense,
   } from '@/lib/solver/problem-schema.js'
-  import { validateCouplingDimensions, createEmptyMatrix } from '@/lib/math/matrix-utils.js'
+  import { createEmptyMatrix } from '@/lib/math/matrix-utils.js'
 
   // ---------------------------------------------------------------------------
   // Props
@@ -107,9 +107,7 @@
   function updateCouplingACell(r: number, c: number, raw: string) {
     const n = parseFloat(raw)
     if (isNaN(n)) return
-    couplingA = couplingA.map((row, ri) =>
-      row.map((v, ci) => (ri === r && ci === c ? n : v)),
-    )
+    couplingA = couplingA.map((row, ri) => row.map((v, ci) => (ri === r && ci === c ? n : v)))
   }
 
   // Extend couplingA columns when sub-problem variables change
@@ -188,8 +186,8 @@
       Add <em>coupling constraints</em> — these link the sub-problem blocks (the A₀x = b₀ part).
     </li>
     <li>
-      Add one or more <em>sub-problem blocks</em> — each block has its own constraint matrix, RHS,
-      and objective cost vector.
+      Add one or more <em>sub-problem blocks</em> — each block has its own constraint matrix, RHS, and
+      objective cost vector.
     </li>
     <li>
       The column count of the coupling matrix must equal the total variable count across all blocks.
@@ -216,10 +214,7 @@
   <div class="flex items-center justify-between mb-3">
     <h2 id="coupling-heading" class="text-lg font-semibold text-[var(--color-text-primary)]">
       Coupling Constraints
-      <span
-        class="ml-2 text-sm font-normal text-[var(--color-text-secondary)]"
-        data-coupling-count
-      >
+      <span class="ml-2 text-sm font-normal text-[var(--color-text-secondary)]" data-coupling-count>
         ({couplingCount} row{couplingCount === 1 ? '' : 's'})
       </span>
     </h2>
@@ -244,7 +239,9 @@
         <thead>
           <tr class="bg-gray-50">
             {#each Array(totalVars) as _, j}
-              <th class="border border-gray-200 px-2 py-1 font-normal text-[var(--color-text-secondary)] tabular-nums">
+              <th
+                class="border border-gray-200 px-2 py-1 font-normal text-[var(--color-text-secondary)] tabular-nums"
+              >
                 x<sub>{j + 1}</sub>
               </th>
             {/each}
@@ -295,8 +292,8 @@
                   type="button"
                   onclick={() => removeCouplingRow(r)}
                   class="text-gray-400 hover:text-red-500 transition-colors"
-                  aria-label="Remove coupling row {r + 1}"
-                >×</button>
+                  aria-label="Remove coupling row {r + 1}">×</button
+                >
               </td>
             </tr>
           {/each}
@@ -344,10 +341,7 @@
     <div class="space-y-3">
       {#each subproblems as sp, idx (sp.index)}
         <div class="relative">
-          <SubProblemBlock
-            block={sp}
-            onchange={(updated) => updateBlock(idx, updated)}
-          />
+          <SubProblemBlock block={sp} onchange={(updated) => updateBlock(idx, updated)} />
           <button
             type="button"
             onclick={() => removeBlock(idx)}

@@ -16,7 +16,10 @@ describe('validateRectangular', () => {
   })
 
   it('returns ok for a 2×3 matrix', () => {
-    const result = validateRectangular([[1, 2, 3], [4, 5, 6]])
+    const result = validateRectangular([
+      [1, 2, 3],
+      [4, 5, 6],
+    ])
     expect(result.ok).toBe(true)
   })
 
