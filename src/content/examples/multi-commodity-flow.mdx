@@ -80,8 +80,8 @@ where <InlineMath formula="b_i^k = d^k" /> if <InlineMath formula="i = s^k" />, 
 <Callout type="info">
   **Block-angular structure**: The **coupling constraints** are the shared capacity constraints on
   each arc — they couple all commodities together. The **sub-problem constraints** are the
-  flow-balance equations for each individual commodity <InlineMath formula="k" />, which are completely
-  independent across commodities when capacity constraints are relaxed.
+  flow-balance equations for each individual commodity <InlineMath formula="k" />, which are
+  completely independent across commodities when capacity constraints are relaxed.
 </Callout>
 
 ## Dantzig-Wolfe Decomposition Applied
@@ -112,8 +112,8 @@ This is a **shortest path problem** — solvable in polynomial time for each com
 
 <Callout type="tip">
   The power of Dantzig-Wolfe here: instead of solving a single monolithic LP with{' '}
-  <InlineMath formula="|A| \times K" /> flow variables coupled by capacity constraints, we iteratively
-  solve <InlineMath formula="K" /> cheap shortest-path problems.
+  <InlineMath formula="|A| \times K" /> flow variables coupled by capacity constraints, we
+  iteratively solve <InlineMath formula="K" /> cheap shortest-path problems.
 </Callout>
 
 ## Citation

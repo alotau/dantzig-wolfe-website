@@ -1,0 +1,47 @@
+{
+  "objectiveDirection": "min",
+  "coupling": {
+    "A": [
+      [2, 1, 0, 2, 1, 0],
+      [0, 1, 1, 0, 1, 1]
+    ],
+    "b": [4, 2],
+    "senses": ["geq", "geq"],
+    "constraintLabels": ["Width-4 demand: need ≥ 4 pieces", "Width-6 demand: need ≥ 2 pieces"]
+  },
+  "subproblems": [
+    {
+      "index": 1,
+      "label": "Machine 1",
+      "A": [[1, 1, 1]],
+      "b": [3],
+      "constraintSenses": ["leq"],
+      "c": [1, 1, 1],
+      "bounds": [
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null }
+      ],
+      "variableLabels": ["Pattern [2×w4]", "Pattern [1×w4, 1×w6]", "Pattern [1×w6]"]
+    },
+    {
+      "index": 2,
+      "label": "Machine 2",
+      "A": [[1, 1, 1]],
+      "b": [3],
+      "constraintSenses": ["leq"],
+      "c": [1, 1, 1],
+      "bounds": [
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null }
+      ],
+      "variableLabels": ["Pattern [2×w4]", "Pattern [1×w4, 1×w6]", "Pattern [1×w6]"]
+    }
+  ],
+  "metadata": {
+    "name": "Cutting Stock (2-width)",
+    "description": "Two-machine cutting stock LP relaxation. Roll width W=10; item widths 4 and 6; demands 4 and 2 respectively. Each machine can cut at most 3 rolls. Optimal LP relaxation value = 3.0 (achieved by: 1 roll of pattern [2×w4] + 2 rolls of pattern [1×w4,1×w6] on machine 1, machine 2 idle).",
+    "sourceExample": "cutting-stock"
+  }
+}
