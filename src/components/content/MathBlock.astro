@@ -9,11 +9,22 @@ interface Props {
 
 const { formula, label } = Astro.props
 
+// If the formula contains bare & (alignment tabs) not already inside a \begin{}
+// environment, wrap it in \begin{aligned}...\end{aligned} so KaTeX can parse it.
+function prepareFormula(f: string): string {
+  if (!f) return f
+  const hasAlignment = /(?<!\\begin\{[^}]*\})&/.test(f) || (f.includes('&') && !/\\begin\{/.test(f))
+  if (hasAlignment && !/\\begin\{/.test(f)) {
+    return `\\begin{aligned}${f}\\end{aligned}`
+  }
+  return f
+}
+
 let rendered = ''
 let renderError = ''
 
 try {
-  rendered = katex.renderToString(formula, {
+  rendered = katex.renderToString(prepareFormula(formula), {
     displayMode: true,
     throwOnError: false,
     trust: false,

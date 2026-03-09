@@ -20,44 +20,44 @@ A **multi-commodity network flow** problem routes several distinct commodities t
 
 <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm my-4">
   <dt>
-    <InlineMath math="G = (V, A)" />
+    <InlineMath formula="G = (V, A)" />
   </dt>
   <dd>
-    Directed graph with nodes <InlineMath math="V" /> and arcs <InlineMath math="A" />.
+    Directed graph with nodes <InlineMath formula="V" /> and arcs <InlineMath formula="A" />.
   </dd>
   <dt>
-    <InlineMath math="K" />
+    <InlineMath formula="K" />
   </dt>
   <dd>Number of commodities.</dd>
   <dt>
-    <InlineMath math="s^k, t^k" />
+    <InlineMath formula="s^k, t^k" />
   </dt>
   <dd>
-    Source and sink node for commodity <InlineMath math="k" />.
+    Source and sink node for commodity <InlineMath formula="k" />.
   </dd>
   <dt>
-    <InlineMath math="d^k" />
+    <InlineMath formula="d^k" />
   </dt>
   <dd>
-    Demand for commodity <InlineMath math="k" />.
+    Demand for commodity <InlineMath formula="k" />.
   </dd>
   <dt>
-    <InlineMath math="u_{ij}" />
+    <InlineMath formula="u_{ij}" />
   </dt>
   <dd>
-    Capacity of arc <InlineMath math="(i,j) \in A" /> (shared across all commodities).
+    Capacity of arc <InlineMath formula="(i,j) \in A" /> (shared across all commodities).
   </dd>
   <dt>
-    <InlineMath math="c_{ij}^k" />
+    <InlineMath formula="c_{ij}^k" />
   </dt>
   <dd>
-    Unit cost of routing commodity <InlineMath math="k" /> on arc <InlineMath math="(i,j)" />.
+    Unit cost of routing commodity <InlineMath formula="k" /> on arc <InlineMath formula="(i,j)" />.
   </dd>
   <dt>
-    <InlineMath math="f_{ij}^k" />
+    <InlineMath formula="f_{ij}^k" />
   </dt>
   <dd>
-    Flow of commodity <InlineMath math="k" /> on arc <InlineMath math="(i,j)" />.
+    Flow of commodity <InlineMath formula="k" /> on arc <InlineMath formula="(i,j)" />.
   </dd>
 </dl>
 
@@ -66,7 +66,7 @@ A **multi-commodity network flow** problem routes several distinct commodities t
 The LP can be written as:
 
 <MathBlock
-  math={`
+  formula={`
 \\min \\quad & \\sum_{k=1}^{K} \\sum_{(i,j)\\in A} c_{ij}^k f_{ij}^k \\\\
 \\text{s.t.} \\quad & \\sum_{k=1}^{K} f_{ij}^k \\le u_{ij} \\quad \\forall (i,j) \\in A \\quad \\text{(coupling: capacity constraints)} \\\\
 & \\sum_{j:(i,j)\\in A} f_{ij}^k - \\sum_{j:(j,i)\\in A} f_{ji}^k = b_i^k \\quad \\forall i \\in V, \\, k = 1,\\ldots,K \\quad \\text{(sub-problem: flow balance for commodity } k\\text{)} \\\\
@@ -75,25 +75,25 @@ The LP can be written as:
   display={true}
 />
 
-where <InlineMath math="b_i^k = d^k" /> if <InlineMath math="i = s^k" />, <InlineMath math="b_i^k = -d^k" /> if <InlineMath math="i = t^k" />, else <InlineMath math="0" />.
+where <InlineMath formula="b_i^k = d^k" /> if <InlineMath formula="i = s^k" />, <InlineMath formula="b_i^k = -d^k" /> if <InlineMath formula="i = t^k" />, else <InlineMath formula="0" />.
 
 <Callout type="info">
   **Block-angular structure**: The **coupling constraints** are the shared capacity constraints on
   each arc — they couple all commodities together. The **sub-problem constraints** are the
-  flow-balance equations for each individual commodity <InlineMath math="k" />, which are completely
+  flow-balance equations for each individual commodity <InlineMath formula="k" />, which are completely
   independent across commodities when capacity constraints are relaxed.
 </Callout>
 
 ## Dantzig-Wolfe Decomposition Applied
 
-By relaxing the capacity constraints with dual multipliers <InlineMath math="\mu_{ij} \ge 0" />, the Lagrangian breaks into <InlineMath math="K" /> independent single-commodity minimum-cost flow problems.
+By relaxing the capacity constraints with dual multipliers <InlineMath formula="\mu_{ij} \ge 0" />, the Lagrangian breaks into <InlineMath formula="K" /> independent single-commodity minimum-cost flow problems.
 
-**Dual variables**: <InlineMath math="\mu_{ij}" /> represents the congestion price on arc <InlineMath math="(i,j)" />. It penalises each unit of flow on a congested arc, effectively redistributing commodities away from bottlenecks.
+**Dual variables**: <InlineMath formula="\mu_{ij}" /> represents the congestion price on arc <InlineMath formula="(i,j)" />. It penalises each unit of flow on a congested arc, effectively redistributing commodities away from bottlenecks.
 
 **Master problem**: The RMP aggregates convex combinations of extreme flows for each commodity:
 
 <MathBlock
-  math={`
+  formula={`
 \\min \\quad & \\sum_{k=1}^K \\sum_{p \\in P^k} c^{kp} \\lambda^{kp} \\\\
 \\text{s.t.} \\quad & \\sum_{k=1}^K \\sum_{p \\in P^k} a_{ij}^{kp} \\lambda^{kp} \\le u_{ij} \\quad \\forall (i,j) \\in A \\quad \\text{(coupling)} \\\\
 & \\sum_{p \\in P^k} \\lambda^{kp} = 1 \\quad \\forall k \\quad \\text{(convexity)} \\\\
@@ -102,18 +102,18 @@ By relaxing the capacity constraints with dual multipliers <InlineMath math="\mu
   display={true}
 />
 
-where <InlineMath math="P^k" /> is the set of paths from <InlineMath math="s^k" /> to <InlineMath math="t^k" />, <InlineMath math="a_{ij}^{kp} = 1" /> if path <InlineMath math="p" /> uses arc <InlineMath math="(i,j)" />, else <InlineMath math="0" />.
+where <InlineMath formula="P^k" /> is the set of paths from <InlineMath formula="s^k" /> to <InlineMath formula="t^k" />, <InlineMath formula="a_{ij}^{kp} = 1" /> if path <InlineMath formula="p" /> uses arc <InlineMath formula="(i,j)" />, else <InlineMath formula="0" />.
 
-**Pricing sub-problem for commodity <InlineMath math="k" />**: Find the minimum reduced-cost path from <InlineMath math="s^k" /> to <InlineMath math="t^k" /> under the modified arc costs:
+**Pricing sub-problem for commodity <InlineMath formula="k" />**: Find the minimum reduced-cost path from <InlineMath formula="s^k" /> to <InlineMath formula="t^k" /> under the modified arc costs:
 
-<MathBlock math={`\\hat{c}_{ij}^k = c_{ij}^k + \\mu_{ij}^*`} display={true} />
+<MathBlock formula={`\\hat{c}_{ij}^k = c_{ij}^k + \\mu_{ij}^*`} display={true} />
 
 This is a **shortest path problem** — solvable in polynomial time for each commodity independently.
 
 <Callout type="tip">
   The power of Dantzig-Wolfe here: instead of solving a single monolithic LP with{' '}
-  <InlineMath math="|A| \times K" /> flow variables coupled by capacity constraints, we iteratively
-  solve <InlineMath math="K" /> cheap shortest-path problems.
+  <InlineMath formula="|A| \times K" /> flow variables coupled by capacity constraints, we iteratively
+  solve <InlineMath formula="K" /> cheap shortest-path problems.
 </Callout>
 
 ## Citation
