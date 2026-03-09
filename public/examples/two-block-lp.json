@@ -1,0 +1,51 @@
+{
+  "objectiveDirection": "max",
+  "coupling": {
+    "A": [
+      [1, 0, 1, 0],
+      [0, 1, 0, 1]
+    ],
+    "b": [6, 6],
+    "senses": ["leq", "leq"],
+    "constraintLabels": ["Shared resource A (capacity ≤ 6)", "Shared resource B (capacity ≤ 6)"]
+  },
+  "subproblems": [
+    {
+      "index": 1,
+      "label": "Plant A",
+      "A": [
+        [1, 0],
+        [0, 1]
+      ],
+      "b": [5, 5],
+      "constraintSenses": ["leq", "leq"],
+      "c": [1, 1],
+      "bounds": [
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null }
+      ],
+      "variableLabels": ["Product 1", "Product 2"]
+    },
+    {
+      "index": 2,
+      "label": "Plant B",
+      "A": [
+        [1, 0],
+        [0, 1]
+      ],
+      "b": [5, 5],
+      "constraintSenses": ["leq", "leq"],
+      "c": [1, 1],
+      "bounds": [
+        { "lower": 0, "upper": null },
+        { "lower": 0, "upper": null }
+      ],
+      "variableLabels": ["Product 1", "Product 2"]
+    }
+  ],
+  "metadata": {
+    "name": "Two-block LP (Textbook ex. 1)",
+    "description": "Two independent production plants (blocks) sharing two coupling resource constraints. Each plant can produce at most 5 units of each product. Maximise total output subject to shared resource limits. LP optimal = 12.0 (Plant A: 5+1, Plant B: 1+5 or similar symmetric solution).",
+    "sourceExample": "two-block-lp"
+  }
+}
