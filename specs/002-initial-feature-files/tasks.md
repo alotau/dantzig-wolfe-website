@@ -7,7 +7,7 @@
 ## Format: `- [ ] [ID] [P?] [Story?] Description with file path`
 
 - **[P]**: Parallelisable — touches distinct files, no incomplete dependency
-- **[Story]**: User story label (US1–US7); omitted in Setup, Foundation, and Polish phases
+- **[Story]**: User story label (US1–US8); omitted in Setup, Foundation, and Polish phases
 
 ---
 
@@ -22,6 +22,7 @@
 | US5 | `interactive-solver.feature` (Feature 1) | P1 | Solver: Problem Input |
 | US6 | `interactive-solver.feature` (Feature 2) + `solver-engine.feature` | P1 | Solver: Engine + Running |
 | US7 | `interactive-solver.feature` (Feature 3) | P2 | Solver: Solution Visualisation |
+| US8 | `about.feature` | P3 | About page: contact info, GitHub links, motivation section |
 
 ---
 
@@ -174,7 +175,22 @@
 
 ---
 
-## Phase 10: Polish & Cross-Cutting Concerns
+## Phase 10: US8 — About Page (P3)
+
+**Goal**: A static About page with contact information, GitHub repository links, and a motivation section — discoverable from both the navigation bar and site footer.
+
+**Independent Test**: Navigate to `/about`; page title is "About"; Contact section contains a working email or contact-form link; GitHub/Links section shows two repository links (website source and Python solver) each opening in a new tab with descriptive labels; Motivation section contains ≥1 paragraph of author-supplied text; NavBar contains an About link; Footer contains an About link.
+
+- [X] T061 [US8] **⚡ RED-FIRST — commit before T062–T064** Write failing Cucumber step definitions for about.feature in tests/acceptance/step-definitions/about.steps.ts: steps for navigate-to-about via nav and footer links, Contact section with working link, GitHub section with two new-tab repository links, Motivation section ≥1 paragraph, About link present in nav bar, About link present in footer; confirm all steps fail in CI before opening implementation tasks
+- [X] T062 [US8] Create src/pages/about.astro using BaseLayout: page `<title>` "About"; `<h1>About</h1>`; **Contact** section with author email or contact-form link clearly labelled; **Links** section with two repository links — website source (`https://github.com/alotau/dantzig-wolfe-website`, label "Website Source on GitHub", `target="_blank" rel="noopener noreferrer"`) and Python solver (`https://github.com/alotau/dantzig-wolfe-python`, label "Dantzig-Wolfe Python Solver on GitHub", `target="_blank" rel="noopener noreferrer"`); **Motivation** section with PLACEHOLDER comment indicating author must supply text (minimum 1 paragraph); page must be fully readable without JS
+- [X] T063 [P] [US8] Update src/components/layout/NavBar.astro to add "About" link pointing to `/about`, positioned after "Examples" in the nav order
+- [X] T064 [P] [US8] Update src/components/layout/Footer.astro to add "About" link pointing to `/about`
+
+**Checkpoint**: All about.feature scenarios pass or are pending; `/about` renders with Contact, Links/GitHub, and Motivation sections; About link appears in NavBar and Footer on every page.
+
+---
+
+## Phase 11: Polish & Cross-Cutting Concerns
 
 **Purpose**: Accessibility hardening, mobile UX, solver security, and final CI validation across all features.
 
@@ -186,7 +202,7 @@
 - [ ] T059 [P] Measure static page LCP performance: run `npx lighthouse` (or Playwright `page.evaluate(() => performance.getEntriesByType('navigation'))` + PerformanceObserver for LCP) against the `astro preview` build output for the History, Lesson, and Examples pages; assert LCP ≤ 1000 ms per plan.md performance goal; fail CI (or flag as a warning) if any static page exceeds the threshold
 - [ ] T060 Domain-knowledge review gate (Principle VI): before this PR is merged, at least one contributor with LP/optimization background MUST review and approve all educational MDX content in src/content/history/, src/content/lessons/, and src/content/examples/ for mathematical accuracy and citation completeness; record approval as a PR comment or review approval; this task is NEVER marked done by the implementor — it requires an external approver
 
-**Checkpoint**: All 6 feature files have ≥1 passing Cucumber scenario; `astro build` clean; CI green; LCP ≤ 1 s on all static pages; educational content domain-approved; no console errors in production build.
+**Checkpoint**: All 7 feature files have ≥1 passing Cucumber scenario; `astro build` clean; CI green; LCP ≤ 1 s on all static pages; educational content domain-approved; no console errors in production build.
 
 ---
 
@@ -201,7 +217,8 @@ Phase 1 (Setup)
             ├─► Phase 7 (US5 Solver Input)
             │       └─► Phase 8 (US6 Solver Engine)
             │               └─► Phase 9 (US7 Visualisation)
-            └─► Phase 10 (Polish) ← depends on all phases complete
+            │                            ──► Phase 10 (US8 About)
+            └─► Phase 11 (Polish) ← depends on all phases complete
 ```
 
 US2, US3, US4 are independent after Foundation; US5 → US6 → US7 are sequential (solver output depends on solver running, which depends on input).
@@ -221,7 +238,9 @@ US2, US3, US4 are independent after Foundation; US5 → US6 → US7 are sequenti
 - T044 (SolverControls) and T045 (IterationLog) can run in parallel
 - T046 (pyodide-lock update) can run at any point in Phase 8
 
-**Static content phases (4, 5, 6)** can run fully in parallel with each other after Phase 3 is complete.
+**Within Phase 10 (About Page)** — T063 and T064 can run in parallel (NavBar and Footer are distinct files).
+
+**Static content phases (4, 5, 6, 10)** can run fully in parallel with each other after Phase 3 is complete.
 
 ---
 
@@ -230,7 +249,7 @@ US2, US3, US4 are independent after Foundation; US5 → US6 → US7 are sequenti
 **Suggested MVP** (phases 1 + 2 + 3 + 7 + 8): gives a working site with navigation and a functional solver — the core value proposition. All other phases add educational depth.
 
 **Increment 1** — MVP: `npm run dev` shows a navigable shell + glossary + interactive solver that accepts input, solves, and shows the iteration log with a final result.  
-**Increment 2** — Educational content: History + Lesson + Examples pages authored in MDX.  
+**Increment 2** — Educational content: History + Lesson + Examples pages authored in MDX; About page added.  
 **Increment 3** — Rich output: Convergence chart, export, URL sharing.  
 **Increment 4** — Polish: Accessibility audit, mobile hardening, CI green.
 
@@ -249,7 +268,8 @@ US2, US3, US4 are independent after Foundation; US5 → US6 → US7 are sequenti
 | Phase 7 — Solver Input | US5 | 9 (T033–T033a, T034–T040) | P1 |
 | Phase 8 — Solver Engine + Running | US6 | 7 (T041–T047) | P1 |
 | Phase 9 — Solution Visualisation | US7 | 6 (T048–T053) | P2 |
-| Phase 10 — Polish | — | 7 (T054–T060) | |
-| **Total** | | **61** | |
+| Phase 10 — About Page | US8 | 4 (T061–T064) | P3 |
+| Phase 11 — Polish | — | 7 (T054–T060) | |
+| **Total** | | **65** | |
 
 Parallel opportunities identified across all phases. Step-definition tasks (T017, T020, T025, T032, T040, T047, T053) carry an explicit RED-FIRST ordering constraint and must be committed before their sibling implementation tasks within the same phase (per Constitution Principle III). Tasks added during analysis remediation: T033a (C2), T059 (E1 — LCP measurement), T060 (D2 — domain review gate).
