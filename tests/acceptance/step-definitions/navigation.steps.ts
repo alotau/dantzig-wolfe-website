@@ -52,11 +52,11 @@ When<CustomWorld>('I am on any page of the site', async function () {
 })
 
 Then<CustomWorld>(
-  'I see a navigation bar containing links to: Home, History, Lesson, Examples, and Solver',
+  'I see a navigation bar containing links to: Home, History, Lesson, Examples, Solver, and About',
   async function () {
     const nav = this.page.locator('nav')
     await expect(nav).toBeVisible()
-    for (const label of ['Home', 'History', 'Lesson', 'Examples', 'Solver']) {
+    for (const label of ['Home', 'History', 'Lesson', 'Examples', 'Solver', 'About']) {
       await expect(nav.getByRole('link', { name: label })).toBeVisible()
     }
   },
@@ -97,6 +97,11 @@ Then<CustomWorld>('I am taken to the Examples index', async function () {
 Then<CustomWorld>('I am taken to the Interactive Solver', async function () {
   await this.page.waitForURL(/\/solver/)
   await expect(this.page.locator('h1')).toContainText(/solver/i)
+})
+
+Then<CustomWorld>('I am taken to the About page', async function () {
+  await this.page.waitForURL(/\/about/)
+  await expect(this.page.locator('h1')).toContainText(/about/i)
 })
 
 When<CustomWorld>('I click the {string} link', async function (label: string) {
