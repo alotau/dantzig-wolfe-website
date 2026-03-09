@@ -1,0 +1,23 @@
+---
+term: Dantzig-Wolfe Decomposition
+shortDef: >
+  A reformulation technique for large-scale linear programmes with block-angular
+  coefficient structure, decomposing the original problem into a master problem
+  and independent sub-problems that communicate through column generation.
+relatedTerms:
+  - master problem
+  - pricing sub-problem
+  - column generation
+  - block-angular LP
+  - coupling constraints
+---
+
+**Dantzig-Wolfe Decomposition** (Dantzig & Wolfe, 1960) reformulates a large
+linear programme whose constraint matrix has _block-angular_ structure into a
+**restricted master problem** (RMP) augmented by a **column generation** procedure.
+
+At each iteration the master problem selects a convex combination of extreme
+points from each sub-problem's feasible region; the sub-problems (one per block)
+identify improving columns by solving a pricing problem using the master's current
+dual variables. Optimality is reached when no sub-problem can generate a column
+with negative reduced cost.

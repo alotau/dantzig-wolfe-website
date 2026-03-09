@@ -1,0 +1,27 @@
+# Build output
+dist/
+.astro/
+.vercel/
+
+# Dependencies
+node_modules/
+
+# Environment variables — never commit secrets
+.env
+.env.*
+!.env.example
+
+# Test reports & coverage
+reports/
+coverage/
+
+# macOS & editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/extensions.json
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,21 @@
+---
+term: coupling constraints
+shortDef: >
+  The rows of a block-angular LP that link variables from different sub-problem
+  blocks; they prevent each block from being solved in complete isolation.
+relatedTerms:
+  - block-angular LP
+  - master problem
+  - dual variables
+---
+
+**Coupling constraints** (also called _linking constraints_) are the rows of the
+block-angular constraint matrix that involve variables from more than one block:
+
+$$
+A_0 x \leq b_0, \quad x = (x_1, \ldots, x_K)
+$$
+
+In Dantzig-Wolfe Decomposition the coupling constraints are handled by the
+**master problem**. Their associated dual variables $\pi$ serve as price signals
+passed to the sub-problems during column generation.

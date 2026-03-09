@@ -1,0 +1,27 @@
+---
+term: restricted master problem
+shortDef: >
+  The working LP at any point during column generation, containing only the
+  subset of extreme-point columns generated so far; it is re-solved after each
+  new column is added.
+relatedTerms:
+  - master problem
+  - column generation
+  - convexity constraint
+---
+
+The **restricted master problem** (RMP) is the master problem restricted to the
+columns generated so far. At iteration $t$ the RMP has columns
+$\{v_k^j\}_{j \leq J_k^t}$ for each block $k$:
+
+$$
+\min \sum_{k,j} (c_k^{\top} v_k^j)\,\lambda_k^j \quad \text{s.t.} \quad
+A_0 \sum_{k,j} v_k^j \lambda_k^j \leq b_0, \;
+\sum_j \lambda_k^j = 1 \; \forall k, \;
+\lambda \geq 0.
+$$
+
+After solving the RMP the dual variables $\pi$ are passed to the pricing
+sub-problems. If any sub-problem finds a new column with negative reduced cost it
+is appended to the RMP, which is then re-solved. The process repeats until no
+improving column can be found.

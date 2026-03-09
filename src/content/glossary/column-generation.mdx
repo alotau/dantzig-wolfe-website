@@ -1,0 +1,25 @@
+---
+term: column generation
+shortDef: >
+  An iterative LP solution strategy where columns (variables) are added to the
+  working LP one at a time by solving a pricing sub-problem, rather than
+  enumerating all possible columns upfront.
+relatedTerms:
+  - pricing sub-problem
+  - restricted master problem
+  - reduced cost
+---
+
+**Column generation** is the mechanism at the heart of Dantzig-Wolfe
+Decomposition. Instead of explicitly including all extreme-point columns in the
+master problem from the start (which could be exponentially many), the algorithm
+starts with a small feasible set and generates improving columns on demand.
+
+The procedure is:
+
+1. Solve the **restricted master problem** (RMP).
+2. Extract dual variables $\pi$.
+3. Solve each **pricing sub-problem** to find the column with the most negative
+   reduced cost.
+4. If any reduced cost $<0$: add that column to the RMP and return to step 1.
+5. If all reduced costs $\geq 0$: the current RMP solution is optimal.

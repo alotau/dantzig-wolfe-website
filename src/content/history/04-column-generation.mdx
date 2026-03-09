@@ -1,0 +1,59 @@
+---
+title: 'Column Generation and Its Origins'
+date: '1961-01-02'
+order: 4
+description: 'How pricing sub-problems in Dantzig-Wolfe became the foundation of modern column generation.'
+---
+
+import Citation from '../../components/content/Citation.astro'
+import TermLink from '../../components/content/TermLink.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## Column Generation and Its Origins
+
+One of the most important legacies of Dantzig-Wolfe Decomposition is the technique of
+
+<TermLink term="column generation" />, which has since become a foundational tool across integer
+programming and combinatorial optimisation.
+
+### Pricing Sub-Problems as the Conceptual Origin
+
+In Dantzig-Wolfe's original formulation, the algorithm iterates between a
+
+<TermLink term="master problem" /> and a set of <TermLink term="pricing sub-problem" />
+s. At each iteration, the sub-problems are solved using the <TermLink term="dual variables" /> from
+the master problem to determine whether any new column (extreme point) can improve the master
+objective. This is determined by computing the <TermLink term="reduced cost" /> of candidate
+columns.
+
+<Callout variant="definition" title="The Column Generation Idea">
+  The pricing sub-problems in Dantzig-Wolfe Decomposition are the conceptual origin of modern column
+  generation techniques: only generate columns that have the potential to improve the current
+  solution, avoiding the need to enumerate all extreme points in advance.
+</Callout>
+
+The recognition that sub-problems need only generate _improving_ columns — those with negative
+reduced cost in a minimisation problem — meant that exponentially large master problems could be
+solved by implicitly maintaining the column pool.
+
+### Legacy: Cutting Stock and Crew Scheduling
+
+Gilmore and Gomory formalised this insight for the cutting-stock problem in 1961–1963, explicitly
+citing the Dantzig-Wolfe decomposition principle as their inspiration. Their work spawned a vast
+literature on column generation for combinatorial optimisation.
+
+<Citation
+  author="Gilmore, P. C. and Gomory, R. E."
+  title="A Linear Programming Approach to the Cutting Stock Problem"
+  year={1961}
+  journal="Operations Research, 9(6), 849–859"
+  doi="10.1287/opre.9.6.849"
+/>
+
+<Citation
+  author="Barnhart, C. et al."
+  title="Branch-and-Price: Column Generation for Solving Huge Integer Programs"
+  year={1998}
+  journal="Operations Research, 46(3), 316–329"
+  doi="10.1287/opre.46.3.316"
+/>

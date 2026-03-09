@@ -1,0 +1,63 @@
+---
+title: 'Pricing Sub-Problems'
+section: 4
+order: 4
+prerequisites: ['03-master-problem']
+---
+
+import TermLink from '../../components/content/TermLink.astro'
+import MathBlock from '../../components/content/MathBlock.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## Sub-Problems
+
+At each iteration of the Dantzig-Wolfe algorithm, the <TermLink term="pricing sub-problem" />s
+determine whether any new column can improve the current master solution.
+
+### Pricing Sub-Problem Formulation
+
+Let $\pi \in \mathbb{R}^m$ be the <TermLink term="dual variables" /> of the coupling constraints
+and $\sigma_i \in \mathbb{R}$ be the dual of the convexity constraint for sub-problem $i$.
+
+The i-th pricing sub-problem is:
+
+<MathBlock
+  formula="\min_{x_i \in P_i} \; (c_i - (A_0^i)^T \pi)^T x_i - \sigma_i"
+  label="Pricing sub-problem i"
+/>
+
+The expression $(c_i - (A_0^i)^T \pi)^T x_i^* - \sigma_i$ is the <TermLink term="reduced cost" />
+of the column corresponding to extreme point $x_i^*$.
+
+### The Bounded Case
+
+If the sub-problem is **bounded** (i.e., $P_i$ is bounded or the objective is bounded below on
+$P_i$), then the optimal solution is an extreme point $v_{ij}^*$. If its reduced cost is
+**negative**, it becomes a candidate column for the master problem:
+
+<MathBlock
+  formula="\bar{c}_{ij} = (c_i^T - \pi^T A_0^i) v_{ij}^* - \sigma_i < 0 \implies \text{enter column}"
+  label="Entering condition"
+/>
+
+### The Unbounded Case
+
+If the sub-problem is **unbounded** (the minimisation has no lower bound), then the optimal
+direction is an extreme ray $r_{ik}$ along which the objective decreases without bound. This
+extreme ray becomes an entering column for the master problem:
+
+<MathBlock
+  formula="(c_i^T - \pi^T A_0^i) r_{ik} < 0 \implies \text{the original LP is unbounded}"
+  label="Unbounded direction"
+/>
+
+<Callout variant="warning" title="Unbounded Sub-Problem">
+  An unbounded sub-problem indicates that the original LP is itself **unbounded**. The algorithm
+  terminates immediately with this certificate.
+</Callout>
+
+### Infeasibility Detection
+
+If the master RMP is infeasible (e.g., the initial basis has no feasible solution), a Phase I
+approach or big-M method must be used first. Sub-problem infeasibility cannot occur because each
+$P_i$ is assumed non-empty by the problem assumptions.

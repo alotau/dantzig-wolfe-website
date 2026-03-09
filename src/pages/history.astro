@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../components/layout/BaseLayout.astro'
+import NavBar from '../components/layout/NavBar.astro'
+import Footer from '../components/layout/Footer.astro'
+import GlossaryPanel from '../components/layout/GlossaryPanel.svelte'
+import { getCollection } from 'astro:content'
+
+const historyEntries = await getCollection('history')
+const sorted = historyEntries.sort((a, b) => a.data.order - b.data.order)
+
+const glossaryEntries = await getCollection('glossary')
+const glossaryData = glossaryEntries.map((e) => ({
+  term: e.data.term,
+  shortDef: e.data.shortDef,
+  relatedTerms: e.data.relatedTerms,
+  slug: e.slug,
+}))
+---
+
+<BaseLayout
+  title="History of Dantzig-Wolfe Decomposition"
+  description="The origins, context, and lasting legacy of the Dantzig-Wolfe Decomposition algorithm."
+>
+  <NavBar slot="nav" />
+  <GlossaryPanel client:only="svelte" entries={glossaryData} />
+
+  <main id="main-content" class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="mb-6 text-3xl font-bold text-[var(--color-primary)]">
+      History of Dantzig-Wolfe Decomposition
+    </h1>
+    <p class="mb-10 text-lg text-gray-600 leading-relaxed">
+      Trace the development of Dantzig-Wolfe Decomposition from its 1960 origins through to its
+      lasting influence on modern column generation and large-scale optimisation.
+    </p>
+
+    {
+      sorted.map(async (entry) => {
+        const { Content } = await entry.render()
+        return (
+          <section class="mb-12 border-b border-gray-200 pb-10 last:border-0">
+            <Content />
+          </section>
+        )
+      })
+    }
+  </main>
+
+  <Footer slot="footer" />
+</BaseLayout>

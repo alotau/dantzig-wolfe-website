@@ -1,0 +1,56 @@
+---
+title: 'Relationship to the Simplex Method'
+date: '1960-01-02'
+order: 2
+description: 'How Dantzig-Wolfe Decomposition exploits block-angular LP structure.'
+---
+
+import Citation from '../../components/content/Citation.astro'
+import TermLink from '../../components/content/TermLink.astro'
+import Callout from '../../components/content/Callout.astro'
+import MathBlock from '../../components/content/MathBlock.astro'
+
+## Relationship to the Simplex Method
+
+The simplex method, developed by George Dantzig in 1947, remains the dominant algorithm for linear
+programming. Dantzig-Wolfe Decomposition is not a replacement — it is a structured application of
+simplex to problems with a particular geometry.
+
+### Block-Angular Structure
+
+Many real-world LP formulations exhibit <TermLink term="block-angular LP" /> structure: a set of
+
+<TermLink term="coupling constraints" /> linking otherwise independent sub-problems. This arises
+naturally in multi-divisional planning, transportation networks, and scheduling problems.
+
+<Callout variant="definition" title="Block-Angular Form">
+  A linear program is in block-angular form when its constraint matrix consists of a set of
+  independent diagonal blocks (one per sub-problem) and a set of coupling rows that connect all
+  blocks.
+</Callout>
+
+Dantzig-Wolfe exploits this structure by representing feasible solutions to each sub-problem as
+
+<TermLink term="extreme point" />s (or extreme rays) of the sub-problem's feasible region. The
+<TermLink term="master problem" /> then selects a convex combination of these extreme points that
+satisfies the coupling constraints and minimises the objective.
+
+This is precisely the simplex method applied to a reformulated problem — but working in the space
+of extreme points rather than original variables. The column generation procedure that drives
+Dantzig-Wolfe decomposition adds new extreme points (columns) to the master problem on demand,
+guided by the <TermLink term="dual variables" /> of the coupling constraints.
+
+<Citation
+  author="Dantzig, G. B."
+  title="Linear Programming and Extensions"
+  year={1963}
+  journal="Princeton University Press"
+/>
+
+<Citation
+  author="Dantzig, G. B. and Wolfe, P."
+  title="Decomposition Principle for Linear Programs"
+  year={1960}
+  journal="Operations Research, 8(1), 101–111"
+  doi="10.1287/opre.8.1.101"
+/>

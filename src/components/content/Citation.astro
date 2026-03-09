@@ -1,0 +1,31 @@
+---
+interface Props {
+  author: string
+  title: string
+  year: number | string
+  journal?: string
+  doi?: string
+}
+
+const { author, title, year, journal, doi } = Astro.props
+---
+
+<cite class="block my-2 text-sm text-gray-600 not-italic border-l-2 border-gray-300 pl-3">
+  <span class="font-medium">{author}</span> ({year}).
+  {
+    doi ? (
+      <a
+        href={`https://doi.org/${doi}`}
+        rel="noopener noreferrer"
+        target="_blank"
+        class="italic underline hover:text-[var(--color-accent)]"
+      >
+        {title}
+      </a>
+    ) : (
+      <em>{title}</em>
+    )
+  }.
+  {journal && <span> {journal}.</span>}
+  {doi && <span class="text-xs text-gray-400"> doi:{doi}</span>}
+</cite>

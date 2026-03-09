@@ -1,0 +1,68 @@
+---
+title: 'The Master Problem'
+section: 3
+order: 3
+prerequisites: ['02-problem-structure']
+---
+
+import TermLink from '../../components/content/TermLink.astro'
+import MathBlock from '../../components/content/MathBlock.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## The Master Problem
+
+The key insight of Dantzig-Wolfe Decomposition is to reformulate the original block-angular LP
+by expressing each sub-problem's feasible region using its <TermLink term="extreme point" />s and
+extreme rays.
+
+### Deriving the Dantzig-Wolfe Master Problem
+
+Let $P_i$ (the feasible region of sub-problem $i$, defined by $A_i x_i = b_i,\, x_i \geq 0$) be
+a polyhedron. By Minkowski's theorem, every point in $P_i$ can be written as:
+
+<MathBlock
+  formula="x_i = \sum_{j \in J_i} \lambda_{ij} v_{ij} + \sum_{k \in R_i} \mu_{ik} r_{ik}"
+  label="Convex combination"
+/>
+
+where $v_{ij}$ are the <TermLink term="extreme point" />s of $P_i$, $r_{ik}$ are the extreme rays,
+$\lambda_{ij} \geq 0$, $\mu_{ik} \geq 0$, and $\sum_j \lambda_{ij} = 1$.
+
+Substituting into the original problem gives the **Dantzig-Wolfe Master Problem**:
+
+<MathBlock
+  formula="\min \sum_{i=1}^{K} \sum_{j \in J_i} (c_i^T v_{ij}) \lambda_{ij} + \sum_{i=1}^K \sum_{k \in R_i} (c_i^T r_{ik}) \mu_{ik}"
+  label="Master objective"
+/>
+
+<MathBlock
+  formula="\text{s.t.} \quad \sum_{i=1}^{K} \sum_{j \in J_i} (A_0^i v_{ij}) \lambda_{ij} + \sum_{i=1}^K \sum_{k \in R_i} (A_0^i r_{ik}) \mu_{ik} = b_0"
+  label="Coupling"
+/>
+
+<MathBlock
+  formula="\sum_{j \in J_i} \lambda_{ij} = 1 \quad \forall i \quad \text{(convexity constraints)}"
+  label="Convexity"
+/>
+
+<MathBlock formula="\lambda_{ij} \geq 0, \quad \mu_{ik} \geq 0" label="Non-negativity" />
+
+### The Role of Convexity Constraints
+
+The <TermLink term="convexity constraint" />s ($\sum_j \lambda_{ij} = 1$ for each $i$) ensure that
+the chosen combination of extreme points forms a **convex combination** — i.e., a point in $P_i$.
+Without them, the feasible set of the master problem would not correspond to the original LP.
+
+<Callout variant="definition" title="Why the Reformulation is Exact">
+  The master problem reformulation is an exact reformulation: the set of feasible $x_i$ values
+  representable by the master problem convex combinations is precisely $P_i$. The optimal value of
+  the master problem equals the optimal value of the original LP.
+</Callout>
+
+### The Restricted Master Problem
+
+In practice, the full master problem has _exponentially many_ columns (one per extreme point/ray).
+The algorithm never constructs it explicitly. Instead, it works with the
+
+<TermLink term="restricted master problem" /> (RMP): a master problem that includes only a subset of
+columns, adding new ones one at a time via the <TermLink term="column generation" /> process.
