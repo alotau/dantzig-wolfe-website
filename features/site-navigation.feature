@@ -1,7 +1,7 @@
 Feature: Site Navigation
   As a visitor to the Dantzig-Wolfe Decomposition website
   I want clear and consistent navigation between all site sections
-  So that I can move freely between history, lessons, examples, and the solver
+  So that I can move freely between history, lessons, examples, the solver, and the about page
 
   Background:
     Given I am on the Dantzig-Wolfe Decomposition website
@@ -14,7 +14,7 @@ Feature: Site Navigation
 
   Scenario: Primary navigation is visible on every page
     When I am on any page of the site
-    Then I see a navigation bar containing links to: Home, History, Lesson, Examples, and Solver
+    Then I see a navigation bar containing links to: Home, History, Lesson, Examples, Solver, and About
     And the link for the current section is visually highlighted
 
   Scenario: Navigate between sections
@@ -26,6 +26,8 @@ Feature: Site Navigation
     Then I am taken to the Examples index
     When I click the "Solver" link
     Then I am taken to the Interactive Solver
+    When I click the "About" link
+    Then I am taken to the About page
 
   Scenario: Glossary is accessible from any page
     When I am on any page of the site
