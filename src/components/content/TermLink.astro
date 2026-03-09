@@ -1,0 +1,19 @@
+---
+interface Props {
+  term: string
+  /** Display text — defaults to `term` if omitted */
+  label?: string
+}
+
+const { term, label } = Astro.props
+---
+
+<button
+  type="button"
+  class="inline underline decoration-dotted cursor-pointer text-[var(--color-accent)] hover:text-[var(--color-primary)] focus-visible:outline-2 focus-visible:outline-offset-2"
+  data-term={term}
+  onclick={`window.dispatchEvent(new CustomEvent('open-glossary', { detail: { term: '${term.replace(/'/g, "\\'")}' } }))`}
+  aria-label={`Open glossary entry for ${term}`}
+>
+  {label ?? term}
+</button>

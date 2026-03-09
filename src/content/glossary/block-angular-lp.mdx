@@ -1,0 +1,28 @@
+---
+term: block-angular LP
+shortDef: >
+  A linear programme whose constraint matrix has a staircase or block-diagonal
+  structure with a set of linking (coupling) rows that connect otherwise
+  independent sub-matrices.
+relatedTerms:
+  - coupling constraints
+  - Dantzig-Wolfe Decomposition
+  - pricing sub-problem
+---
+
+A **block-angular linear programme** has a coefficient matrix of the form
+
+$$
+\begin{pmatrix}
+A_0 \\
+A_1 &        \\
+    & A_2    \\
+    &        & \ddots \\
+    &        &        & A_K
+\end{pmatrix}
+$$
+
+where $A_0$ contains the _coupling constraints_ shared by all blocks, and each
+$A_k$ ($k = 1, \ldots, K$) is the constraint matrix of an otherwise independent
+sub-problem. This structure arises naturally in multi-commodity flow, production
+planning, and cutting-stock problems.

@@ -1,0 +1,23 @@
+---
+term: reduced cost
+shortDef: >
+  The net change in the objective function per unit increase of a non-basic
+  variable, accounting for the shadow prices (dual variables) of the constraints
+  it participates in. A negative reduced cost indicates a potentially improving column.
+relatedTerms:
+  - dual variables
+  - column generation
+  - pricing sub-problem
+---
+
+For a column $x_k$ with objective coefficient $c_k$ and constraint coefficient
+$A_k$ in the master problem, the **reduced cost** is:
+
+$$
+\bar{c}_k = c_k - \pi^{\top} A_k
+$$
+
+where $\pi$ are the dual variables of the current restricted master problem.
+
+- If $\bar{c}_k < 0$: introducing $x_k$ decreases the objective → add the column.
+- If $\bar{c}_k \geq 0$ for all columns: the current solution is LP-optimal.

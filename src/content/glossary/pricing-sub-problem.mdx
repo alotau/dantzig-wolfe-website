@@ -1,0 +1,28 @@
+---
+term: pricing sub-problem
+shortDef: >
+  One of the K independent sub-problems solved at each Dantzig-Wolfe iteration
+  to find an extreme point (column) with negative reduced cost, potentially
+  improving the master problem objective.
+relatedTerms:
+  - reduced cost
+  - column generation
+  - dual variables
+  - master problem
+---
+
+At each iteration of Dantzig-Wolfe Decomposition each **pricing sub-problem**
+(one per block $k$) solves:
+
+$$
+\min_{x_k \in \mathcal{X}_k} \; (c_k - A_k^{\top} \pi)^{\top} x_k
+$$
+
+where $\pi$ are the dual variables of the current RMP solution and
+$\mathcal{X}_k = \{x_k : A_k x_k \leq b_k, x_k \geq 0\}$ is the $k$-th
+sub-problem's feasible region.
+
+If the optimal value is negative the corresponding extreme point $v_k^*$ has a
+negative **reduced cost** and is added as a new column to the RMP. If no
+sub-problem can improve ($\bar{c}_k \geq 0$ for all $k$), the current RMP
+solution is optimal for the full LP.

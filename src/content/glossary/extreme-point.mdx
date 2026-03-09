@@ -1,0 +1,22 @@
+---
+term: extreme point
+shortDef: >
+  A vertex of a convex feasible region that cannot be expressed as a convex
+  combination of two other distinct feasible points; the LP optimal always lies
+  at an extreme point (if one exists).
+relatedTerms:
+  - convexity constraint
+  - master problem
+  - column generation
+---
+
+A point $v \in \mathcal{X}$ is an **extreme point** (vertex) of the convex set
+$\mathcal{X}$ if there do not exist distinct points $v^1, v^2 \in \mathcal{X}$
+and $\theta \in (0,1)$ such that $v = \theta v^1 + (1-\theta) v^2$.
+
+The **fundamental theorem of linear programming** states that if an LP has an
+optimal solution, it has one at an extreme point of the feasible polyhedron.
+
+Dantzig-Wolfe Decomposition exploits this: the master problem selects a convex
+combination of sub-problem extreme points, and column generation searches for the
+extreme point with the most negative reduced cost (most improving direction).

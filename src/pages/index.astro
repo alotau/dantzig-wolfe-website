@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../components/layout/BaseLayout.astro'
+import NavBar from '../components/layout/NavBar.astro'
+import Footer from '../components/layout/Footer.astro'
+import GlossaryPanel from '../components/layout/GlossaryPanel.svelte'
+import { getCollection } from 'astro:content'
+
+const glossaryEntries = await getCollection('glossary')
+const glossaryData = glossaryEntries.map((e) => ({
+  term: e.data.term,
+  shortDef: e.data.shortDef,
+  relatedTerms: e.data.relatedTerms,
+  slug: e.slug,
+}))
+
+const sections = [
+  {
+    href: '/history',
+    label: 'History',
+    icon: '📜',
+    teaser:
+      'Discover the origins of Dantzig-Wolfe Decomposition, its relationship to the Simplex method, and its landmark industrial applications.',
+  },
+  {
+    href: '/lesson',
+    label: 'Lesson',
+    icon: '📐',
+    teaser:
+      'Work through a structured technical lesson covering the master problem, sub-problems, column generation, and convergence — with full KaTeX notation.',
+  },
+  {
+    href: '/examples',
+    label: 'Examples',
+    icon: '📊',
+    teaser:
+      'Explore three worked examples from the literature — cutting stock, multi-commodity flow, and crew scheduling — with explicit iteration traces.',
+  },
+  {
+    href: '/solver',
+    label: 'Solver',
+    icon: '⚡',
+    teaser:
+      'Run Dantzig-Wolfe decomposition on your own problem directly in your browser. No server required — the solver runs via Pyodide (Python on WebAssembly).',
+  },
+]
+---
+
+<BaseLayout
+  title="Dantzig-Wolfe Decomposition"
+  description="An interactive educational resource for Dantzig-Wolfe Decomposition — history, lesson, worked examples, and an in-browser solver."
+>
+  <NavBar slot="nav" />
+
+  <!-- Hero -->
+  <section class="bg-[var(--color-surface-dark)] text-[var(--color-text-inverse)] py-16 px-4">
+    <div class="mx-auto max-w-3xl text-center">
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
+        Dantzig-Wolfe Decomposition
+      </h1>
+      <p class="text-lg text-gray-300 leading-relaxed">
+        A technique for solving large-scale linear programmes with block-angular structure by
+        decomposing them into a <strong class="text-white">master problem</strong> and a set of independent
+        <strong class="text-white">sub-problems</strong>, communicating through column generation.
+      </p>
+    </div>
+  </section>
+
+  <!-- Section cards -->
+  <section class="py-12 px-4" aria-label="Site sections">
+    <div class="mx-auto max-w-5xl">
+      <h2 class="sr-only">Explore the site</h2>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6" role="list">
+        {
+          sections.map(({ href, label, icon, teaser }) => (
+            <li>
+              <a
+                href={href}
+                class="block h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-[var(--color-accent)] transition-all"
+              >
+                <p class="text-2xl mb-2" aria-hidden="true">
+                  {icon}
+                </p>
+                <h3 class="text-lg font-semibold text-[var(--color-primary)] mb-1">{label}</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">{teaser}</p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+
+  <!-- Glossary island — listens for open-glossary events site-wide -->
+  <GlossaryPanel client:only="svelte" entries={glossaryData} />
+</BaseLayout>

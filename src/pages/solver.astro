@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../components/layout/BaseLayout.astro'
+import NavBar from '../components/layout/NavBar.astro'
+import Footer from '../components/layout/Footer.astro'
+import GlossaryPanel from '../components/layout/GlossaryPanel.svelte'
+import SolverWorkspace from '../components/solver/SolverWorkspace.svelte'
+import { getCollection } from 'astro:content'
+
+const glossaryEntries = await getCollection('glossary')
+const glossaryData = glossaryEntries.map((e) => ({
+  term: e.data.term,
+  shortDef: e.data.shortDef,
+  relatedTerms: e.data.relatedTerms,
+  slug: e.slug,
+}))
+
+// CDN base URL for Pyodide 0.29.3 — consumed by solver.worker.ts via the
+// data attribute on <main> to avoid hard-coding the URL in the worker bundle.
+const pyodideBase = 'https://cdn.jsdelivr.net/pyodide/v0.29.3/full/'
+---
+
+<BaseLayout
+  title="Interactive Solver — Dantzig-Wolfe"
+  description="Run Dantzig-Wolfe decomposition on a user-supplied block-angular LP directly in your browser. No server required — the solver uses Pyodide (Python on WebAssembly)."
+>
+  <NavBar slot="nav" />
+
+  <main
+    id="main-content"
+    class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8"
+    data-pyodide-base={pyodideBase}
+  >
+    <h1 class="text-3xl font-bold tracking-tight text-[var(--color-text-primary)] mb-2">
+      Interactive Solver
+    </h1>
+    <p class="text-[var(--color-text-secondary)] mb-8">
+      Enter a Dantzig-Wolfe decomposed LP — coupling constraints and one or more sub-problem blocks
+      — then click <strong>Solve</strong> to run the column generation algorithm in your browser.
+    </p>
+
+    <!-- Solver island — requires Svelte + JS -->
+    <SolverWorkspace client:load />
+
+    <!-- Fallback for browsers with JS disabled -->
+    <noscript>
+      <div
+        class="rounded-lg border border-yellow-300 bg-yellow-50 px-6 py-5 text-yellow-900"
+        role="alert"
+      >
+        <p class="font-semibold mb-1">JavaScript is required for the Interactive Solver</p>
+        <p class="text-sm mb-3">
+          The solver runs Dantzig-Wolfe decomposition via
+          <a href="https://pyodide.org" target="_blank" rel="noopener noreferrer" class="underline"
+            >Pyodide</a
+          >
+          (Python on WebAssembly) entirely in your browser. JavaScript must be enabled to use it.
+        </p>
+        <p class="text-sm">
+          <strong>Supported browsers:</strong> Chrome 89+, Firefox 88+, Safari 15.2+, Edge 89+
+        </p>
+      </div>
+    </noscript>
+  </main>
+
+  <GlossaryPanel client:only="svelte" terms={glossaryData} />
+  <Footer slot="footer" />
+</BaseLayout>

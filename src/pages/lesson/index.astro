@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../../components/layout/BaseLayout.astro'
+import NavBar from '../../components/layout/NavBar.astro'
+import Footer from '../../components/layout/Footer.astro'
+import GlossaryPanel from '../../components/layout/GlossaryPanel.svelte'
+import { getCollection } from 'astro:content'
+
+const lessonEntries = await getCollection('lessons')
+const sorted = lessonEntries.sort((a, b) => {
+  if (a.data.section !== b.data.section) return a.data.section - b.data.section
+  return a.data.order - b.data.order
+})
+
+const glossaryEntries = await getCollection('glossary')
+const glossaryData = glossaryEntries.map((e) => ({
+  term: e.data.term,
+  shortDef: e.data.shortDef,
+  relatedTerms: e.data.relatedTerms,
+  slug: e.slug,
+}))
+
+// Build TOC entries from lesson titles — use slug as anchor
+const tocEntries = sorted.map((entry) => ({
+  title: entry.data.title,
+  anchor: entry.slug,
+}))
+---
+
+<BaseLayout
+  title="Dantzig-Wolfe Decomposition: A Technical Lesson"
+  description="A structured, self-contained technical lesson covering the master problem, sub-problems, column generation, and convergence."
+>
+  <NavBar slot="nav" />
+  <GlossaryPanel client:only="svelte" entries={glossaryData} />
+
+  <main id="main-content" class="mx-auto max-w-4xl px-4 py-10">
+    <h1 class="mb-4 text-3xl font-bold text-[var(--color-primary)]">
+      Dantzig-Wolfe Decomposition: A Technical Lesson
+    </h1>
+    <p class="mb-8 text-lg text-gray-600 leading-relaxed">
+      A step-by-step walkthrough of the Dantzig-Wolfe decomposition algorithm — from problem
+      structure to convergence — with full mathematical notation.
+    </p>
+
+    <!-- Table of Contents -->
+    <nav
+      aria-label="Table of contents"
+      class="mb-10 rounded-lg border border-gray-200 bg-gray-50 p-4"
+      data-toc
+    >
+      <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">Contents</h2>
+      <ol class="space-y-1 text-sm">
+        {
+          tocEntries.map((entry, i) => (
+            <li>
+              <a href={`#${entry.anchor}`} class="text-[var(--color-accent)] hover:underline">
+                {i + 1}. {entry.title}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <!-- Lesson sections -->
+    {
+      sorted.map(async (entry) => {
+        const { Content } = await entry.render()
+        return (
+          <section id={entry.slug} class="mb-14 border-b border-gray-200 pb-10 last:border-0">
+            <Content />
+          </section>
+        )
+      })
+    }
+  </main>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<script>
+  // T024: session-persistent scroll position
+  const SCROLL_KEY = 'lesson-scroll'
+
+  // Restore scroll position on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const saved = sessionStorage.getItem(SCROLL_KEY)
+    if (saved !== null) {
+      window.scrollTo({ top: parseInt(saved, 10), behavior: 'instant' })
+    }
+  })
+
+  // Save scroll position on unload
+  window.addEventListener('beforeunload', () => {
+    sessionStorage.setItem(SCROLL_KEY, String(Math.round(window.scrollY)))
+  })
+</script>

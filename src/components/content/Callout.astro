@@ -1,0 +1,47 @@
+---
+type Variant = 'info' | 'warning' | 'definition'
+
+interface Props {
+  variant?: Variant
+  title?: string
+}
+
+const { variant = 'info', title } = Astro.props
+
+const variantStyles: Record<Variant, { border: string; bg: string; icon: string }> = {
+  info: {
+    border: 'border-[var(--color-accent)]',
+    bg: 'bg-sky-50',
+    icon: 'ℹ',
+  },
+  warning: {
+    border: 'border-[var(--color-constraint)]',
+    bg: 'bg-orange-50',
+    icon: '⚠',
+  },
+  definition: {
+    border: 'border-[var(--color-optimal)]',
+    bg: 'bg-emerald-50',
+    icon: '📖',
+  },
+}
+
+const { border, bg, icon } = variantStyles[variant]
+---
+
+<aside
+  class={`my-4 rounded-md border-l-4 px-4 py-3 ${border} ${bg}`}
+  role={variant === 'warning' ? 'alert' : 'note'}
+>
+  {
+    title && (
+      <p class="mb-1 font-semibold text-sm">
+        <span aria-hidden="true">{icon} </span>
+        {title}
+      </p>
+    )
+  }
+  <div class="text-sm leading-relaxed">
+    <slot />
+  </div>
+</aside>

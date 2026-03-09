@@ -1,0 +1,127 @@
+---
+title: 'Multi-Commodity Network Flow'
+problemClass: 'network-flow'
+source: 'Ford, L. R., & Fulkerson, D. R. (1958). A suggested computation for maximal multi-commodity network flows. Management Science, 5(1), 97–101.'
+doi: '10.1287/mnsc.5.1.97'
+slug: 'multi-commodity-flow'
+description: 'Network structure gives a natural block-angular LP. Dantzig-Wolfe Decomposition exploits commodity-level independence to decompose into per-commodity shortest-path sub-problems.'
+---
+
+import Citation from '../../components/content/Citation.astro'
+import MathBlock from '../../components/content/MathBlock.astro'
+import InlineMath from '../../components/content/InlineMath.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## Problem Description
+
+A **multi-commodity network flow** problem routes several distinct commodities through a shared network. Each commodity has its own origin, destination, and demand, but all commodities share the same arc capacities. The objective is to satisfy all demands at minimum total cost.
+
+**Notation** (all symbols defined before first use):
+
+<dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm my-4">
+  <dt>
+    <InlineMath formula="G = (V, A)" />
+  </dt>
+  <dd>
+    Directed graph with nodes <InlineMath formula="V" /> and arcs <InlineMath formula="A" />.
+  </dd>
+  <dt>
+    <InlineMath formula="K" />
+  </dt>
+  <dd>Number of commodities.</dd>
+  <dt>
+    <InlineMath formula="s^k, t^k" />
+  </dt>
+  <dd>
+    Source and sink node for commodity <InlineMath formula="k" />.
+  </dd>
+  <dt>
+    <InlineMath formula="d^k" />
+  </dt>
+  <dd>
+    Demand for commodity <InlineMath formula="k" />.
+  </dd>
+  <dt>
+    <InlineMath formula="u_{ij}" />
+  </dt>
+  <dd>
+    Capacity of arc <InlineMath formula="(i,j) \in A" /> (shared across all commodities).
+  </dd>
+  <dt>
+    <InlineMath formula="c_{ij}^k" />
+  </dt>
+  <dd>
+    Unit cost of routing commodity <InlineMath formula="k" /> on arc <InlineMath formula="(i,j)" />.
+  </dd>
+  <dt>
+    <InlineMath formula="f_{ij}^k" />
+  </dt>
+  <dd>
+    Flow of commodity <InlineMath formula="k" /> on arc <InlineMath formula="(i,j)" />.
+  </dd>
+</dl>
+
+## Block-Angular Structure
+
+The LP can be written as:
+
+<MathBlock
+  formula={`
+\\min \\quad & \\sum_{k=1}^{K} \\sum_{(i,j)\\in A} c_{ij}^k f_{ij}^k \\\\
+\\text{s.t.} \\quad & \\sum_{k=1}^{K} f_{ij}^k \\le u_{ij} \\quad \\forall (i,j) \\in A \\quad \\text{(coupling: capacity constraints)} \\\\
+& \\sum_{j:(i,j)\\in A} f_{ij}^k - \\sum_{j:(j,i)\\in A} f_{ji}^k = b_i^k \\quad \\forall i \\in V, \\, k = 1,\\ldots,K \\quad \\text{(sub-problem: flow balance for commodity } k\\text{)} \\\\
+& f_{ij}^k \\ge 0 \\quad \\forall (i,j) \\in A, \\, k
+`}
+  display={true}
+/>
+
+where <InlineMath formula="b_i^k = d^k" /> if <InlineMath formula="i = s^k" />, <InlineMath formula="b_i^k = -d^k" /> if <InlineMath formula="i = t^k" />, else <InlineMath formula="0" />.
+
+<Callout type="info">
+  **Block-angular structure**: The **coupling constraints** are the shared capacity constraints on
+  each arc — they couple all commodities together. The **sub-problem constraints** are the
+  flow-balance equations for each individual commodity <InlineMath formula="k" />, which are
+  completely independent across commodities when capacity constraints are relaxed.
+</Callout>
+
+## Dantzig-Wolfe Decomposition Applied
+
+By relaxing the capacity constraints with dual multipliers <InlineMath formula="\mu_{ij} \ge 0" />, the Lagrangian breaks into <InlineMath formula="K" /> independent single-commodity minimum-cost flow problems.
+
+**Dual variables**: <InlineMath formula="\mu_{ij}" /> represents the congestion price on arc <InlineMath formula="(i,j)" />. It penalises each unit of flow on a congested arc, effectively redistributing commodities away from bottlenecks.
+
+**Master problem**: The RMP aggregates convex combinations of extreme flows for each commodity:
+
+<MathBlock
+  formula={`
+\\min \\quad & \\sum_{k=1}^K \\sum_{p \\in P^k} c^{kp} \\lambda^{kp} \\\\
+\\text{s.t.} \\quad & \\sum_{k=1}^K \\sum_{p \\in P^k} a_{ij}^{kp} \\lambda^{kp} \\le u_{ij} \\quad \\forall (i,j) \\in A \\quad \\text{(coupling)} \\\\
+& \\sum_{p \\in P^k} \\lambda^{kp} = 1 \\quad \\forall k \\quad \\text{(convexity)} \\\\
+& \\lambda^{kp} \\ge 0
+`}
+  display={true}
+/>
+
+where <InlineMath formula="P^k" /> is the set of paths from <InlineMath formula="s^k" /> to <InlineMath formula="t^k" />, <InlineMath formula="a_{ij}^{kp} = 1" /> if path <InlineMath formula="p" /> uses arc <InlineMath formula="(i,j)" />, else <InlineMath formula="0" />.
+
+**Pricing sub-problem for commodity <InlineMath formula="k" />**: Find the minimum reduced-cost path from <InlineMath formula="s^k" /> to <InlineMath formula="t^k" /> under the modified arc costs:
+
+<MathBlock formula={`\\hat{c}_{ij}^k = c_{ij}^k + \\mu_{ij}^*`} display={true} />
+
+This is a **shortest path problem** — solvable in polynomial time for each commodity independently.
+
+<Callout type="tip">
+  The power of Dantzig-Wolfe here: instead of solving a single monolithic LP with{' '}
+  <InlineMath formula="|A| \times K" /> flow variables coupled by capacity constraints, we
+  iteratively solve <InlineMath formula="K" /> cheap shortest-path problems.
+</Callout>
+
+## Citation
+
+<Citation
+  author="Ford, L. R., & Fulkerson, D. R."
+  title="A suggested computation for maximal multi-commodity network flows"
+  year="1958"
+  journal="Management Science, 5(1), 97–101"
+  doi="10.1287/mnsc.5.1.97"
+/>

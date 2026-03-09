@@ -1,0 +1,14 @@
+dist/
+node_modules/
+.astro/
+.vercel/
+reports/
+package-lock.json
+
+# speckit tooling and spec documentation — not formatted by Prettier
+.specify/
+specs/
+features/
+.github/agents/
+.github/prompts/
+.vscode/

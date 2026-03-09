@@ -1,0 +1,53 @@
+---
+title: 'Convergence and Termination'
+section: 6
+order: 6
+prerequisites: ['05-column-generation']
+---
+
+import TermLink from '../../components/content/TermLink.astro'
+import MathBlock from '../../components/content/MathBlock.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## Convergence
+
+### Termination Criterion
+
+The Dantzig-Wolfe algorithm terminates when all pricing sub-problems return a non-negative reduced
+cost:
+
+<MathBlock
+  formula="\bar{c}_i^* = \min_{x_i \in P_i}(c_i - (A_0^i)^T \pi^*)^T x_i - \sigma_i^* \geq 0 \quad \forall i"
+  label="Termination condition"
+/>
+
+At this point, the current RMP solution is certified optimal for the original LP. Under
+non-degeneracy, the algorithm terminates in **finite** iterations because each new column improves
+the objective strictly, and there are only finitely many extreme points.
+
+### Practical Issues: Degeneracy
+
+In the presence of degeneracy (multiple optimal dual solutions to the RMP), the same column may be
+added repeatedly or the objective may fail to improve at each iteration. This is the LP analogue of
+**cycling** in the simplex method.
+
+<Callout variant="warning" title="Tailing-Off Effect">
+  In practice, the Dantzig-Wolfe algorithm often exhibits a **tailing-off** effect: rapid initial
+  improvement followed by very slow progress as the solution approaches optimality. This is a known
+  practical limitation.
+</Callout>
+
+### Stabilisation Strategies
+
+Several techniques address tailing-off and degeneracy:
+
+- **Restricted master heuristics**: restrict the set of candidate entering columns at each
+  iteration to improve numerical stability
+- **Dual stabilisation / proximal methods**: add a regularisation term to the RMP to smooth the
+  dual trajectory (e.g., bundle methods)
+- **Kelley cuts / cutting planes**: add cutting planes to the master problem's feasible region to
+  tighten the lower bound more aggressively
+- **Interior-point pricing**: use interior-point duals rather than simplex duals to reduce
+  oscillation
+
+These stabilisation strategies are active research topics in large-scale LP and integer programming.

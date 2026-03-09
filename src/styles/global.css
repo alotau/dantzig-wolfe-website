@@ -1,0 +1,52 @@
+@import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
+
+@theme {
+  /* Brand colours */
+  --color-primary: #1e3a5f; /* Navy — headers, navlinks */
+  --color-accent: #0ea5e9; /* Sky blue — interactive elements */
+  --color-optimal: #059669; /* Emerald — optimal solutions, success */
+  --color-constraint: #ea580c; /* Orange — constraints, warnings */
+  --color-surface: #f8fafc; /* Slate-50 — page background */
+  --color-surface-dark: #0f172a; /* Slate-950 — hero sections, footer */
+  --color-text: #0f172a; /* Primary text on light */
+  --color-text-inverse: #f8fafc; /* Primary text on dark */
+  --color-math-bg: #f1f5f9; /* Math block background */
+
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Crimson Pro', 'STIX Two Math', ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, 'Cascadia Code', monospace;
+}
+
+/* Base resets */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+/* Focus ring — never suppress for accessibility (WCAG 2.1 AA) */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* KaTeX display math block background */
+.katex-display {
+  background-color: var(--color-math-bg);
+  border-radius: 0.375rem;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+}

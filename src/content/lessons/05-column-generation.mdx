@@ -1,0 +1,62 @@
+---
+title: 'Column Generation Iteration'
+section: 5
+order: 5
+prerequisites: ['04-sub-problems']
+---
+
+import TermLink from '../../components/content/TermLink.astro'
+import MathBlock from '../../components/content/MathBlock.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## Column Generation
+
+The Dantzig-Wolfe algorithm is a column generation procedure: it builds the master problem one
+column at a time, guided by the dual solution of the current
+
+<TermLink term="restricted master problem" />.
+
+### One Complete Iteration
+
+<ol class="my-4 space-y-4 text-sm leading-relaxed">
+  <li>
+    <strong>Solve the Restricted Master Problem (RMP).</strong> Using only the columns currently in
+    the RMP, find the optimal primal and dual solutions. Let $\pi^*$ be the optimal dual variables
+    for the coupling constraints and $\sigma_i^*$ the dual variables for the convexity constraints.
+  </li>
+  <li>
+    <strong>Obtain dual variables.</strong> Extract $\pi^*$ and $\sigma^*_i$ from the RMP optimal
+    basis. These act as prices that value each unit of coupling constraint resource.
+  </li>
+  <li>
+    <strong>Solve each pricing sub-problem.</strong> For each $i = 1, \ldots, K$, solve:
+    <MathBlock formula="\min_{x_i \in P_i} \; (c_i - (A_0^i)^T \pi^*)^T x_i" label="Pricing" />
+    Let $\bar{c}_i^* = \text{optimal value} - \sigma_i^*$ be the minimum reduced cost for
+    sub-problem $i$.
+  </li>
+  <li>
+    <strong>Check optimality.</strong> If $\bar{c}_i^* \geq 0$ for all $i$, the current RMP
+    solution is optimal for the original LP — no improving column exists.
+  </li>
+</ol>
+
+### The Optimality Condition
+
+<Callout variant="definition" title="Optimality Condition">
+  The current solution is **optimal** if and only if all reduced costs are non-negative: $\bar{c}
+  _i^* \geq 0$ for every sub-problem $i = 1, \ldots, K$.
+</Callout>
+
+If any $\bar{c}_i^* < 0$, the corresponding extreme point (or ray) is added to the RMP as a new
+column, and the next iteration begins.
+
+### Adding the Entering Column
+
+The new column added to the RMP for sub-problem $i$ corresponds to the extreme point $x_i^*$ and has:
+
+- **Coupling block**: $A_0^i x_i^*$
+- **Convexity block**: $e_i$ (unit vector selecting row $i$ of the convexity constraints)
+- **Objective coefficient**: $c_i^T x_i^*$
+
+The RMP is re-solved with this additional column to obtain a new dual solution, and the iteration
+repeats.

@@ -1,0 +1,60 @@
+---
+title: 'Early Industrial Applications'
+date: '1961-01-01'
+order: 3
+description: 'Real-world domains where Dantzig-Wolfe Decomposition was first applied.'
+---
+
+import Citation from '../../components/content/Citation.astro'
+import TermLink from '../../components/content/TermLink.astro'
+import Callout from '../../components/content/Callout.astro'
+
+## Early Industrial Applications
+
+Following its 1960 introduction, Dantzig-Wolfe Decomposition was rapidly adopted in industrial
+planning contexts where large-scale LP problems were endemic.
+
+### Transportation and Logistics
+
+The multi-commodity flow problem — routing multiple commodities through a shared network subject
+to capacity constraints — is a natural fit for decomposition. Each commodity's flow can form an
+independent sub-problem, with the coupling constraints enforcing shared capacity limits. This
+formulation was studied extensively in the 1960s by Ford, Fulkerson, and others.
+
+<Citation
+  author="Ford, L. R. and Fulkerson, D. R."
+  title="Flows in Networks"
+  year={1962}
+  journal="Princeton University Press"
+/>
+
+### Energy Systems Planning
+
+Electric utility planning in the 1960s and 1970s involved large LP models for generation dispatch
+and capacity expansion. The block-angular structure arising from multi-period, multi-region models
+made decomposition methods attractive.
+
+<Citation
+  author="Manne, A. S."
+  title="Scheduling of Petroleum Refinery Operations"
+  year={1956}
+  journal="Harvard University Press"
+/>
+
+### Production Planning
+
+Multi-product, multi-period production planning problems provided another early application domain.
+Each product line or time period could be treated as a sub-problem, with shared resource constraints
+acting as <TermLink term="coupling constraints" />.
+
+<Callout variant="info" title="Impact on Operations Research">
+  The success of decomposition methods in these industrial applications established the field of
+  large-scale linear programming as a major research area throughout the 1970s and beyond.
+</Callout>
+
+<Citation
+  author="Lasdon, L. S."
+  title="Optimization Theory for Large Systems"
+  year={1970}
+  journal="Macmillan"
+/>

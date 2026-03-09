@@ -1,6 +1,32 @@
 <!--
 ## Sync Impact Report
 
+**Version change**: 1.1.0 → 1.2.0
+
+### Amended Principles
+- IV. Branch-Protection & Pull-Request Workflow: expanded with explicit branch-per-task
+  naming convention; specifies that each distinct feature, phase, or independent task MUST
+  land on its own branch and MUST NOT accumulate unrelated work.
+
+### Amended Sections
+- Development Workflow step 4: expanded with concrete branch-naming examples and the
+  requirement to create a new branch before starting any new task.
+- Constitution Check Gates: added gate confirming the working branch name matches the
+  task being implemented.
+
+### Templates Reviewed
+- `.specify/templates/tasks-template.md` ✅ compatible
+- `.specify/templates/plan-template.md` ✅ compatible
+- `.specify/templates/spec-template.md` ✅ no changes required
+- `.specify/templates/constitution-template.md` ✅ no changes required
+
+### Deferred TODOs
+- None.
+
+---
+
+## Previous Report (v1.1.0 — 2026-03-07)
+
 **Version change**: 1.0.0 → 1.1.0
 
 ### Amended Principles
@@ -85,11 +111,25 @@ without a prior failing-test record committed on the feature branch.
 Direct pushes to `main` are NEVER permitted — including documentation, configuration, and
 dependency updates. All changes MUST:
 
-1. Be made on a dedicated feature or fix branch (branch naming: `###-short-description`).
-2. Merge the current `main` into the working branch before pushing.
-3. Pass all CI gates (see Principle V) before merge approval.
+1. Be made on a **dedicated branch scoped to that specific work item**. One branch per
+   feature, phase, or independent task. Unrelated work MUST NOT accumulate on a single
+   long-lived branch.
+2. Follow the branch naming convention: `###-short-kebab-description`, where `###` is the
+   relevant task ID or feature number and the description summarises the work.
+   Examples:
+   - `033-solver-input-page` (a single phase or feature)
+   - `040-solver-engine-pyodide` (a discrete implementation unit)
+   - `fix-katex-ssr-crash` (a bug fix with no task number)
+3. Merge the current `main` into the working branch before pushing.
+4. Pass all CI gates (see Principle V) before merge approval.
 
-**Rationale**: Keeps `main` in a perpetually deployable state and prevents unreviewed changes
+**Branch lifecycle rule**: A branch MUST be created (or switched to) before the first commit
+of its associated work. Retroactively moving commits from an incorrect branch via rebase or
+cherry-pick is permitted only if `main` has not yet been compromised. The agent or developer
+MUST verify the active branch before making any commit.
+
+**Rationale**: Keeps `main` in a perpetually deployable state, produces a clean and
+reviewable commit history aligned to discrete work items, and prevents unreviewed changes
 or merge conflicts from reaching production.
 
 ### V. Security & Quality Gates
@@ -130,7 +170,7 @@ non-negotiable and take precedence over brevity or stylistic preference.
   solver unit tests run via Pyodide in-browser test harness or in CI via standard Python.
 - **CI/CD**: Automated pipeline covering all gates defined in Principle V. The Python solver
   dependency MUST be pinned to an explicit version/commit to ensure reproducible builds.
-- **Hosting**: Static site host (e.g., GitHub Pages, Netlify, Vercel); no compute backend
+- **Hosting**: Vercel (static output mode; `@astrojs/vercel` adapter); no compute backend
   required unless amended.
 - **Versioning**: Semantic versioning (`MAJOR.MINOR.PATCH`) for all released artifacts.
 
@@ -145,7 +185,10 @@ and ratified as a constitution amendment before implementation.
    The Constitution Check gate MUST pass before Phase 0 research begins.
 3. **Test (Red)**: Write failing unit tests and Gherkin step definitions. Confirm all
    tests fail in CI before opening an implementation PR.
-4. **Branch**: Create a feature branch. Merge current `main` into the branch before pushing.
+4. **Branch**: Before writing a single line of implementation, create (or switch to) a
+   branch named `###-short-kebab-description` scoped to this specific task or phase.
+   Check the active branch with `git branch --show-current` before the first commit.
+   Merge current `main` into the branch before pushing.
 5. **Implement**: Complete implementation targeting green tests. Follow Red → Green → Refactor.
 6. **CI Gates**: All gates defined in Principle V MUST pass.
 7. **PR & Review**: Open a pull request. At least one reviewer MUST approve. Educational
@@ -155,6 +198,8 @@ and ratified as a constitution amendment before implementation.
 **Constitution Check Gates** (referenced by `plan-template.md`):
 
 - [ ] Gherkin `.feature` file(s) exist and are accepted for this feature.
+- [ ] A dedicated branch named `###-short-kebab-description` has been created for this work
+      item; active branch confirmed with `git branch --show-current` before first commit.
 - [ ] Failing tests (unit + acceptance step definitions) are committed on the feature branch.
 - [ ] `main` has been merged into the working branch.
 - [ ] Client-side computation strategy is documented; Pyodide bundle/loading strategy confirmed
@@ -185,4 +230,4 @@ project. In any conflict, the constitution takes precedence.
 confirming compliance with all applicable principles. The plan template enforces this gate
 formally at the planning stage.
 
-**Version**: 1.1.0 | **Ratified**: 2026-03-07 | **Last Amended**: 2026-03-07
+**Version**: 1.2.0 | **Ratified**: 2026-03-07 | **Last Amended**: 2026-03-08

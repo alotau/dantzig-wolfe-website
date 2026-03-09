@@ -1,0 +1,27 @@
+---
+term: master problem
+shortDef: >
+  The top-level linear programme in Dantzig-Wolfe Decomposition that selects a
+  convex combination of extreme points from sub-problem feasible regions while
+  satisfying the coupling constraints.
+relatedTerms:
+  - restricted master problem
+  - dual variables
+  - coupling constraints
+  - column generation
+---
+
+The **master problem** (MP) is the reformulated LP obtained by replacing each
+sub-problem's variable block with a convex combination of its extreme points
+$\{v_k^j\}$:
+
+$$
+\min_{(\lambda_k^j)} \sum_{k=1}^{K} \sum_j (c_k^{\top} v_k^j)\, \lambda_k^j
+\quad \text{s.t.} \quad
+A_0 \sum_{k,j} v_k^j \lambda_k^j \leq b_0, \;
+\sum_j \lambda_k^j = 1 \; \forall k, \;
+\lambda_k^j \geq 0.
+$$
+
+In practice only a small subset of extreme points is kept at any time; this is
+the **restricted master problem** (RMP).
