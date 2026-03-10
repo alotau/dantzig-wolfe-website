@@ -19,7 +19,7 @@ When<CustomWorld>(
 
 Then<CustomWorld>('I am taken to the About page', async function () {
   await this.page.waitForURL(/\/about/)
-  await expect(this.page.locator('h1')).toContainText(/about/i)
+  await expect(this.page.locator('main h1').first()).toContainText(/about/i)
 })
 
 Then<CustomWorld>('the page is titled {string}', async function (expectedTitle: string) {

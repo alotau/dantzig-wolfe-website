@@ -30,7 +30,7 @@ Then<CustomWorld>(
   'I see clear signposts to the four main sections: History, Lesson, Examples, and Solver',
   async function () {
     for (const label of ['History', 'Lesson', 'Examples', 'Solver']) {
-      await expect(this.page.getByRole('link', { name: label })).toBeVisible()
+      await expect(this.page.getByRole('link', { name: label }).first()).toBeVisible()
     }
   },
 )
@@ -54,7 +54,7 @@ When<CustomWorld>('I am on any page of the site', async function () {
 Then<CustomWorld>(
   'I see a navigation bar containing links to: Home, History, Lesson, Examples, Solver, and About',
   async function () {
-    const nav = this.page.locator('nav')
+    const nav = this.page.locator('nav[aria-label="Primary navigation"]')
     await expect(nav).toBeVisible()
     for (const label of ['Home', 'History', 'Lesson', 'Examples', 'Solver', 'About']) {
       await expect(nav.getByRole('link', { name: label })).toBeVisible()
@@ -64,8 +64,10 @@ Then<CustomWorld>(
 
 Then<CustomWorld>('the link for the current section is visually highlighted', async function () {
   // The active link should carry an aria-current attribute or a data-active attribute
-  const activeLink = this.page.locator('nav [aria-current="page"], nav [data-active]')
-  await expect(activeLink).toBeVisible()
+  const activeLink = this.page.locator(
+    'nav[aria-label="Primary navigation"] [aria-current="page"], nav[aria-label="Primary navigation"] [data-active]',
+  )
+  await expect(activeLink.first()).toBeVisible()
 })
 
 // ---------------------------------------------------------------------------
@@ -75,32 +77,35 @@ Then<CustomWorld>('the link for the current section is visually highlighted', as
 When<CustomWorld>(
   'I click the {string} link in the navigation bar',
   async function (label: string) {
-    await this.page.locator('nav').getByRole('link', { name: label }).click()
+    await this.page
+      .locator('nav[aria-label="Primary navigation"]')
+      .getByRole('link', { name: label })
+      .click()
   },
 )
 
 Then<CustomWorld>('I am taken to the History page', async function () {
   await this.page.waitForURL(/\/history/)
-  await expect(this.page.locator('h1')).toContainText(/history/i)
+  await expect(this.page.locator('main h1').first()).toContainText(/history/i)
 })
 
 Then<CustomWorld>('I am taken to the Lesson page', async function () {
   await this.page.waitForURL(/\/lesson/)
-  await expect(this.page.locator('h1')).toContainText(/lesson/i)
+  await expect(this.page.locator('main h1').first()).toContainText(/lesson/i)
 })
 
 Then<CustomWorld>('I am taken to the Examples index', async function () {
   await this.page.waitForURL(/\/examples/)
-  await expect(this.page.locator('h1')).toContainText(/examples/i)
+  await expect(this.page.locator('main h1').first()).toContainText(/examples/i)
 })
 
 Then<CustomWorld>('I am taken to the Interactive Solver', async function () {
   await this.page.waitForURL(/\/solver/)
-  await expect(this.page.locator('h1')).toContainText(/solver/i)
+  await expect(this.page.locator('main h1').first()).toContainText(/solver/i)
 })
 
 When<CustomWorld>('I click the {string} link', async function (label: string) {
-  await this.page.getByRole('link', { name: label }).click()
+  await this.page.getByRole('link', { name: label }).first().click()
 })
 
 // ---------------------------------------------------------------------------
@@ -124,7 +129,7 @@ Then<CustomWorld>(
       'nav button[aria-label*="lossary"], footer button[aria-label*="lossary"]',
     )
     await trigger.first().click()
-    await expect(this.page.locator('[aria-label*="lossary"], [role="dialog"]')).toBeVisible()
+    await expect(this.page.locator('[data-glossary-panel]')).toHaveAttribute('aria-hidden', 'false')
     // URL should not have navigated away from home
     expect(this.page.url()).toMatch(/^http:\/\/localhost:4321\/?$/)
   },
@@ -193,8 +198,7 @@ Then<CustomWorld>('all text content is readable without horizontal scrolling', a
 
 Then<CustomWorld>(/the navigation is usable \(e\.g\., collapsed into a menu\)/, async function () {
   // Nav should exist and either show links or a toggle button
-  const nav = this.page.locator('nav')
-  await expect(nav).toBeVisible()
+  await expect(this.page.locator('nav').first()).toBeVisible()
 })
 
 Then<CustomWorld>('the Interactive Solver input is usable on a touch screen', async function () {
@@ -221,7 +225,9 @@ Then<CustomWorld>('the text content of those pages is fully readable', async fun
 Then<CustomWorld>(
   'navigation between those pages works via standard HTML links',
   async function () {
-    const historyLink = this.page.locator('nav a[href="/history"]')
+    const historyLink = this.page
+      .locator('nav[aria-label="Primary navigation"] a[href="/history"]')
+      .first()
     await expect(historyLink).toBeVisible()
   },
 )
@@ -261,7 +267,15 @@ Then<CustomWorld>(
 )
 
 When<CustomWorld>('I click on a term in the Glossary', async function () {
-  const term = this.page.locator('[data-glossary-term]').first()
+  // Open the glossary panel if not already open
+  const panel = this.page.locator('[data-glossary-panel]')
+  const isOpen = (await panel.getAttribute('aria-hidden')) === 'false'
+  if (!isOpen) {
+    await this.page.locator('nav button[aria-label*="lossary"]').first().click()
+    await expect(panel).toHaveAttribute('aria-hidden', 'false')
+  }
+  const term = this.page.locator('[data-glossary-panel] [data-glossary-term]').first()
+  await term.waitFor({ state: 'visible', timeout: 5000 })
   await term.click()
 })
 
@@ -303,18 +317,18 @@ When<CustomWorld>('I click the inline glossary link for a term', async function 
 Then<CustomWorld>(
   "the Glossary opens with that term's definition already displayed",
   async function () {
-    const panel = this.page.locator('[role="dialog"], [data-glossary-panel]')
-    await expect(panel).toBeVisible()
+    await expect(this.page.locator('[data-glossary-panel]')).toHaveAttribute('aria-hidden', 'false')
   },
 )
 
 Then<CustomWorld>(
   'I can close the Glossary and return to my position on the original page',
   async function () {
-    const closeBtn = this.page.locator('[data-glossary-panel] button[aria-label*="lose"]').first()
+    const panel = this.page.locator('[data-glossary-panel]')
+    await expect(panel).toHaveAttribute('aria-hidden', 'false')
+    const closeBtn = panel.getByRole('button', { name: /close/i })
     await closeBtn.click()
-    const panel = this.page.locator('[role="dialog"], [data-glossary-panel]')
-    await expect(panel).not.toBeVisible()
+    await expect(panel).toHaveAttribute('aria-hidden', 'true')
   },
 )
 

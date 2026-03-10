@@ -42,7 +42,7 @@
   // ---------------------------------------------------------------------------
   // Derived: dimension error
   // ---------------------------------------------------------------------------
-  let dimensionError = $derived<string | null>(() => {
+  let dimensionError = $derived.by<string | null>(() => {
     if (couplingRows.length === 0 || subproblems.length === 0) return null
     if (couplingA.length === 0) return null
     const couplingCols = couplingA[0]?.length ?? 0

@@ -1,10 +1,12 @@
-import { BeforeAll, Before, After, AfterAll, setWorldConstructor } from '@cucumber/cucumber'
+import { BeforeAll, Before, After, AfterAll, setWorldConstructor, setDefaultTimeout } from '@cucumber/cucumber'
 import { chromium } from '@playwright/test'
 import { CustomWorld } from './world.js'
 import * as path from 'path'
 import * as fs from 'fs'
 
 setWorldConstructor(CustomWorld)
+
+setDefaultTimeout(15000)
 
 let sharedBrowser: import('@playwright/test').Browser
 

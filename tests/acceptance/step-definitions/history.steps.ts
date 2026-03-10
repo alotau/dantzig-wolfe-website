@@ -28,7 +28,7 @@ Then<CustomWorld>(
 )
 
 Then<CustomWorld>('I see a section describing the origins of the algorithm', async function () {
-  const heading = this.page.locator('main h2, main h3').filter({ hasText: /origin/i })
+  const heading = this.page.locator('main h2, main h3').filter({ hasText: /origin/i }).first()
   await expect(heading).toBeVisible()
 })
 
