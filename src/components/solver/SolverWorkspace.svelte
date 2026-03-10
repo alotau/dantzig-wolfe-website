@@ -1,9 +1,13 @@
 <script lang="ts">
   import ProblemInput from './ProblemInput.svelte'
   import SolverControls from './SolverControls.svelte'
+  import SolutionPanel from './SolutionPanel.svelte'
+  import ConvergenceChart from './ConvergenceChart.svelte'
   import IterationLog from './IterationLog.svelte'
   import { ProblemInstanceSchema, type ParsedProblemInstance } from '@/lib/solver/problem-schema.js'
   import { WorkerClient, type SolverIteration, type SolverResult } from '@/lib/solver/worker-client.js'
+  import { buildExportPayload, downloadJson } from '@/lib/solver/export.js'
+  import { buildShareURL, decodeProblem } from '@/lib/sharing/url-codec.js'
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -83,9 +87,9 @@
       const url = new URL(window.location.href)
       const urlParam = url.searchParams.get('p')
       if (urlParam) {
-        const parsed = ProblemInstanceSchema.safeParse(JSON.parse(atob(urlParam)))
-        if (parsed.success && problemInputRef) {
-          problemInputRef.loadProblem(parsed.data)
+        const decoded = decodeProblem(urlParam)
+        if (decoded && problemInputRef) {
+          problemInputRef.loadProblem(decoded)
           hasEnteredData = true
         }
         return
@@ -204,6 +208,26 @@
   function handleCancel() {
     workerClient?.cancel()
   }
+
+  function handleExport() {
+    if (!solverResult || !problem) return
+    const payload = buildExportPayload(problem, solverResult, iterations)
+    downloadJson(payload)
+  }
+
+  function handleShare() {
+    if (!problem) return
+    const url = buildShareURL(problem)
+    if (!url) {
+      alert('The problem is too large to share via URL (exceeds 64 KB).')
+      return
+    }
+    window.history.replaceState(null, '', url.toString())
+    // Copy to clipboard as a convenience if the API is available
+    navigator.clipboard?.writeText(url.toString()).catch(() => {
+      // Clipboard unavailable — URL is still updated in the address bar
+    })
+  }
 </script>
 
 <!-- =========================================================================
@@ -288,8 +312,11 @@
     <SolverControls
       status={solverStatus}
       {problem}
+      hasResult={solverResult !== null}
       onsolve={handleSolve}
       oncancel={handleCancel}
+      onexport={handleExport}
+      onshare={handleShare}
     />
 
     {#if problem === null && hasEnteredData}
@@ -313,95 +340,24 @@
 
   <!-- -----------------------------------------------------------------------
        Results panel (shown after a completed solve)
+       Uses SolutionPanel for the summary + ConvergenceChart for the chart.
   ----------------------------------------------------------------------- -->
   {#if solverResult !== null}
-    <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-4">
-      <!-- Status summary -->
-      {#if solverResult.status === 'optimal'}
-        <div class="space-y-1">
-          <p class="text-lg font-bold text-green-700">Solved — Optimal</p>
-          <p class="text-sm text-gray-500">
-            Solve time: {solverResult.solveTimeMs.toFixed(0)} ms ·
-            {iterations.length} iteration{iterations.length !== 1 ? 's' : ''}
+    <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-6">
+      <SolutionPanel
+        result={solverResult}
+        {problem}
+        iterationCount={iterations.length}
+      />
+
+      <!-- Convergence chart — only meaningful when there are iterations -->
+      {#if iterations.length > 0}
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+            Convergence
           </p>
+          <ConvergenceChart {iterations} />
         </div>
-
-        <!-- Objective value -->
-        {#if solverResult.objectiveValue !== undefined}
-          <div>
-            <p class="text-sm font-semibold text-gray-700">Objective value</p>
-            <p class="text-2xl font-mono font-bold text-[var(--color-accent)]" data-result-objective>
-              {solverResult.objectiveValue.toFixed(6)}
-            </p>
-          </div>
-        {/if}
-
-        <!-- Primal solution -->
-        {#if solverResult.primalSolution}
-          <div data-primal-solution>
-            <p class="text-sm font-semibold text-gray-700 mb-2">Primal solution</p>
-            <div class="overflow-auto">
-              <table class="text-xs font-mono border-collapse w-full">
-                <thead>
-                  <tr class="bg-gray-50">
-                    <th class="border border-gray-200 px-3 py-1 text-left">Block</th>
-                    <th class="border border-gray-200 px-3 py-1 text-left">Variable</th>
-                    <th class="border border-gray-200 px-3 py-1 text-right">Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {#each solverResult.primalSolution.variableValues as blockVars, blockIdx}
-                    {#each blockVars as val, varIdx}
-                      <tr class="odd:bg-white even:bg-gray-50">
-                        <td class="border border-gray-200 px-3 py-1">
-                          {problem?.subproblems[blockIdx]?.label ?? `Block ${blockIdx + 1}`}
-                        </td>
-                        <td class="border border-gray-200 px-3 py-1">
-                          {problem?.subproblems[blockIdx]?.variableLabels?.[varIdx] ?? `x${varIdx + 1}`}
-                        </td>
-                        <td class="border border-gray-200 px-3 py-1 text-right">
-                          {val.toFixed(6)}
-                        </td>
-                      </tr>
-                    {/each}
-                  {/each}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        {/if}
-
-      {:else if solverResult.status === 'infeasible'}
-        <p class="text-lg font-bold text-amber-700">Solved — Infeasible</p>
-        <p class="text-sm text-gray-700" data-infeasibility-explanation>
-          The problem has no feasible solution. The constraints cannot all be satisfied simultaneously.
-          This typically means the coupling constraints require more resources than the sub-problems
-          can collectively provide.
-        </p>
-
-      {:else if solverResult.status === 'unbounded'}
-        <p class="text-lg font-bold text-amber-700">Solved — Unbounded</p>
-        <p class="text-sm text-gray-700" data-unbounded-subproblem>
-          {#if solverResult.unboundedSubproblemIndex !== undefined}
-            The problem is unbounded — sub-problem block {solverResult.unboundedSubproblemIndex + 1}
-            ({problem?.subproblems[solverResult.unboundedSubproblemIndex]?.label ?? `block ${solverResult.unboundedSubproblemIndex + 1}`})
-            has an unbounded feasible region in the pricing direction.
-          {:else}
-            The problem is unbounded — at least one sub-problem has an unbounded feasible region.
-          {/if}
-        </p>
-
-      {:else if solverResult.status === 'cancelled'}
-        <p class="text-base font-semibold text-gray-600">Solve cancelled.</p>
-        <p class="text-sm text-gray-500">
-          {iterations.length} iteration{iterations.length !== 1 ? 's' : ''} completed before cancellation.
-        </p>
-
-      {:else if solverResult.status === 'error'}
-        <p class="text-base font-bold text-red-600">Solver error</p>
-        {#if solverResult.errorMessage}
-          <p class="text-sm text-red-700 font-mono">{solverResult.errorMessage}</p>
-        {/if}
       {/if}
     </div>
   {/if}

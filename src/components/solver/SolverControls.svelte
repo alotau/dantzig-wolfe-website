@@ -19,11 +19,14 @@
   interface Props {
     status: SolverUiStatus
     problem: ParsedProblemInstance | null
+    hasResult: boolean
     onsolve: () => void
     oncancel: () => void
+    onexport: () => void
+    onshare: () => void
   }
 
-  const { status, problem, onsolve, oncancel }: Props = $props()
+  const { status, problem, hasResult, onsolve, oncancel, onexport, onshare }: Props = $props()
 
   // ---------------------------------------------------------------------------
   // Derived
@@ -115,6 +118,32 @@
 {:else}
   <!-- Empty placeholder keeps layout stable -->
   <span data-status-message class="hidden" aria-hidden="true"></span>
+{/if}
+
+<!-- Export Solution button (visible when there is a completed result) -->
+{#if hasResult}
+  <button
+    type="button"
+    onclick={onexport}
+    data-action="export-solution"
+    class="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700
+           hover:bg-gray-100 transition-colors"
+  >
+    Export Solution
+  </button>
+{/if}
+
+<!-- Share button (visible when there is a valid problem) -->
+{#if problem !== null}
+  <button
+    type="button"
+    onclick={onshare}
+    data-action="share"
+    class="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700
+           hover:bg-gray-100 transition-colors"
+  >
+    Share
+  </button>
 {/if}
 
 <!-- Validation hint when problem is null but user has typed something -->
