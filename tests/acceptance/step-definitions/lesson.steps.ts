@@ -27,13 +27,6 @@ When<CustomWorld>('I am on the Lesson page', async function () {
 })
 
 Then<CustomWorld>(
-  'I see a page titled {string}',
-  async function (this: CustomWorld, title: string) {
-    await expect(this.page).toHaveTitle(new RegExp(title, 'i'))
-  },
-)
-
-Then<CustomWorld>(
   'the lesson is divided into numbered sections I can navigate between',
   async function () {
     // Expects a TOC nav or multiple headings

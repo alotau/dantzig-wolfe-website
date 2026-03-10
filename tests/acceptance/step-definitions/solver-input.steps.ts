@@ -173,7 +173,7 @@ Then<CustomWorld>('the bounds are stored with the corresponding variable', async
 })
 
 Then<CustomWorld>(
-  'variables with default bounds (0, unbounded) are indicated as such without requiring explicit entry',
+  /variables with default bounds \(0, unbounded\) are indicated as such without requiring explicit entry/,
   async function () {
     const defaultBound = this.page.locator(
       '[data-bound-default], [data-bound-upper][placeholder*="∞"], [data-bound-upper][placeholder*="inf"]',
@@ -259,7 +259,7 @@ Then<CustomWorld>(
 // ---------------------------------------------------------------------------
 
 When<CustomWorld>(
-  'I attempt to solve a problem with incompatible dimensions\\n      (e.g. the number of columns in A0 does not match the total variables across sub-problems)',
+  'I attempt to solve a problem with incompatible dimensions',
   async function () {
     // This step matches the multi-line Gherkin string from the feature
     // Set up a coupling matrix with 3 columns but only 1 sub-problem variable

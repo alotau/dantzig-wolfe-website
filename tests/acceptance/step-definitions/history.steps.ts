@@ -1,10 +1,6 @@
-import { Given, When, Then } from '@cucumber/cucumber'
+import { When, Then } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 import type { CustomWorld } from '../support/world.js'
-
-Given<CustomWorld>('I am on the Dantzig-Wolfe Decomposition website', async function () {
-  await this.page.goto(this.baseURL)
-})
 
 When<CustomWorld>('I navigate to the History section', async function () {
   await this.page.goto(`${this.baseURL}/history`)

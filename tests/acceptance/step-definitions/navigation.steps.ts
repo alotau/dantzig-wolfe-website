@@ -99,11 +99,6 @@ Then<CustomWorld>('I am taken to the Interactive Solver', async function () {
   await expect(this.page.locator('h1')).toContainText(/solver/i)
 })
 
-Then<CustomWorld>('I am taken to the About page', async function () {
-  await this.page.waitForURL(/\/about/)
-  await expect(this.page.locator('h1')).toContainText(/about/i)
-})
-
 When<CustomWorld>('I click the {string} link', async function (label: string) {
   await this.page.getByRole('link', { name: label }).click()
 })
@@ -123,7 +118,7 @@ Then<CustomWorld>(
 )
 
 Then<CustomWorld>(
-  'the Glossary opens without leaving the current page (e.g., as a panel or modal)',
+  /the Glossary opens without leaving the current page \(e\.g\., as a panel or modal\)/,
   async function () {
     const trigger = this.page.locator(
       'nav button[aria-label*="lossary"], footer button[aria-label*="lossary"]',
@@ -196,7 +191,7 @@ Then<CustomWorld>('all text content is readable without horizontal scrolling', a
   expect(scrollWidth).toBeLessThanOrEqual(viewportWidth)
 })
 
-Then<CustomWorld>('the navigation is usable (e.g., collapsed into a menu)', async function () {
+Then<CustomWorld>(/the navigation is usable \(e\.g\., collapsed into a menu\)/, async function () {
   // Nav should exist and either show links or a toggle button
   const nav = this.page.locator('nav')
   await expect(nav).toBeVisible()
@@ -322,10 +317,6 @@ Then<CustomWorld>(
     await expect(panel).not.toBeVisible()
   },
 )
-
-When<CustomWorld>('I visit any page of the site', async function () {
-  await this.page.goto(this.baseURL)
-})
 
 Then<CustomWorld>(
   'every term that carries an inline glossary link resolves to a defined entry in the Glossary',

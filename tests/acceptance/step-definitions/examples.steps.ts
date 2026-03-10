@@ -192,7 +192,7 @@ Then<CustomWorld>(
 )
 
 Then<CustomWorld>(
-  'the source citation includes at minimum the author(s), publication title, and year',
+  /the source citation includes at minimum the author\(s\), publication title, and year/,
   async function () {
     const citations = this.page.locator('main cite')
     expect(await citations.count()).toBeGreaterThanOrEqual(1)
@@ -214,7 +214,7 @@ Then<CustomWorld>(
 )
 
 Then<CustomWorld>(
-  'I can filter the list by problem class (e.g., network flow, scheduling, cutting stock, other)',
+  /I can filter the list by problem class \(e\.g\., network flow, scheduling, cutting stock, other\)/,
   async function () {
     const filterButtons = this.page.locator('[data-filter-btn], button[data-problem-class]')
     expect(await filterButtons.count()).toBeGreaterThanOrEqual(2)
