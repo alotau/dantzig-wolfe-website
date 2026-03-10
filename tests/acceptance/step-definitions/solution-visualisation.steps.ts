@@ -1,5 +1,4 @@
 import { Given, When, Then, DataTable } from '@cucumber/cucumber'
-import { expect } from '@playwright/test'
 import type { CustomWorld } from '../support/world.js'
 
 // ---------------------------------------------------------------------------
@@ -63,9 +62,12 @@ Then<CustomWorld>(
   },
 )
 
-Then<CustomWorld>('the chart shows the monotone improvement towards the optimal value', async function () {
-  return 'pending'
-})
+Then<CustomWorld>(
+  'the chart shows the monotone improvement towards the optimal value',
+  async function () {
+    return 'pending'
+  },
+)
 
 Then<CustomWorld>('hovering over a data point shows the iteration detail', async function () {
   return 'pending'
@@ -101,6 +103,9 @@ Then<CustomWorld>(
   },
 )
 
-Then<CustomWorld>('the URL does not contain any personally identifiable information', async function () {
-  return 'pending'
-})
+Then<CustomWorld>(
+  'the URL does not contain any personally identifiable information',
+  async function () {
+    return 'pending'
+  },
+)

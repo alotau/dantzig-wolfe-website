@@ -1,5 +1,4 @@
 import { Given, When, Then } from '@cucumber/cucumber'
-import { expect } from '@playwright/test'
 import type { CustomWorld } from '../support/world.js'
 
 // ---------------------------------------------------------------------------
@@ -10,9 +9,12 @@ import type { CustomWorld } from '../support/world.js'
 // Start the solver
 // ---------------------------------------------------------------------------
 
-Then<CustomWorld>('the solver initialises in the browser using the Pyodide runtime', async function () {
-  return 'pending'
-})
+Then<CustomWorld>(
+  'the solver initialises in the browser using the Pyodide runtime',
+  async function () {
+    return 'pending'
+  },
+)
 
 Then<CustomWorld>('a progress indicator is shown while the solver is running', async function () {
   return 'pending'
@@ -26,13 +28,19 @@ Then<CustomWorld>('the interface remains responsive during solving', async funct
 // First-time Pyodide initialisation
 // ---------------------------------------------------------------------------
 
-Given<CustomWorld>('the Pyodide runtime has not yet been loaded in this session', async function () {
-  return 'pending'
-})
+Given<CustomWorld>(
+  'the Pyodide runtime has not yet been loaded in this session',
+  async function () {
+    return 'pending'
+  },
+)
 
-When<CustomWorld>('I click {string} for the first time', async function (this: CustomWorld, label: string) {
-  await this.page.getByRole('button', { name: label }).click()
-})
+When<CustomWorld>(
+  'I click {string} for the first time',
+  async function (this: CustomWorld, label: string) {
+    await this.page.getByRole('button', { name: label }).click()
+  },
+)
 
 Then<CustomWorld>(
   'I see a loading message indicating the solver environment is being prepared',
@@ -86,9 +94,12 @@ Then<CustomWorld>('the final objective value is prominently displayed', async fu
   return 'pending'
 })
 
-Then<CustomWorld>('the optimal primal solution values for all variables are shown', async function () {
-  return 'pending'
-})
+Then<CustomWorld>(
+  'the optimal primal solution values for all variables are shown',
+  async function () {
+    return 'pending'
+  },
+)
 
 // ---------------------------------------------------------------------------
 // Infeasible
@@ -129,9 +140,12 @@ Then<CustomWorld>(/I see a "Solved — Unbounded" status message/, async functio
   return 'pending'
 })
 
-Then<CustomWorld>('the sub-problem that produced the unbounded ray is identified', async function () {
-  return 'pending'
-})
+Then<CustomWorld>(
+  'the sub-problem that produced the unbounded ray is identified',
+  async function () {
+    return 'pending'
+  },
+)
 
 // ---------------------------------------------------------------------------
 // Cancel

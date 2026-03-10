@@ -258,20 +258,17 @@ Then<CustomWorld>(
 // Dimension validation
 // ---------------------------------------------------------------------------
 
-When<CustomWorld>(
-  'I attempt to solve a problem with incompatible dimensions',
-  async function () {
-    // This step matches the multi-line Gherkin string from the feature
-    // Set up a coupling matrix with 3 columns but only 1 sub-problem variable
-    const addBlockBtn = this.page.locator('[data-add-block]')
-    if ((await addBlockBtn.count()) > 0) {
-      await addBlockBtn.click()
-      await this.page.waitForSelector('[data-subproblem-block]', { timeout: 3000 })
-    }
-    // Try to trigger a dimension mismatch error via the validate trigger
-    await this.page.locator('[data-validate], [data-solve]').first().click()
-  },
-)
+When<CustomWorld>('I attempt to solve a problem with incompatible dimensions', async function () {
+  // This step matches the multi-line Gherkin string from the feature
+  // Set up a coupling matrix with 3 columns but only 1 sub-problem variable
+  const addBlockBtn = this.page.locator('[data-add-block]')
+  if ((await addBlockBtn.count()) > 0) {
+    await addBlockBtn.click()
+    await this.page.waitForSelector('[data-subproblem-block]', { timeout: 3000 })
+  }
+  // Try to trigger a dimension mismatch error via the validate trigger
+  await this.page.locator('[data-validate], [data-solve]').first().click()
+})
 
 Then<CustomWorld>(
   'I see a clear error message identifying the dimension mismatch',

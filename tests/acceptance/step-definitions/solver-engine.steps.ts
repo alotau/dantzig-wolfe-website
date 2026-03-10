@@ -1,5 +1,4 @@
 import { Given, When, Then } from '@cucumber/cucumber'
-import { expect } from '@playwright/test'
 import type { CustomWorld } from '../support/world.js'
 
 // ---------------------------------------------------------------------------
@@ -103,13 +102,16 @@ Then<CustomWorld>(
   },
 )
 
-Given<CustomWorld>("I enter a problem whose feasible region is empty", async function () {
+Given<CustomWorld>('I enter a problem whose feasible region is empty', async function () {
   return 'pending'
 })
 
-Then<CustomWorld>('the solver reports {string}', async function (this: CustomWorld, _status: string) {
-  return 'pending'
-})
+Then<CustomWorld>(
+  'the solver reports {string}',
+  async function (this: CustomWorld, _status: string) {
+    return 'pending'
+  },
+)
 
 Then<CustomWorld>('it does not report a finite objective value', async function () {
   return 'pending'
@@ -122,9 +124,12 @@ Given<CustomWorld>(
   },
 )
 
-Then<CustomWorld>('it identifies the sub-problem that produced the unbounded ray', async function () {
-  return 'pending'
-})
+Then<CustomWorld>(
+  'it identifies the sub-problem that produced the unbounded ray',
+  async function () {
+    return 'pending'
+  },
+)
 
 Given<CustomWorld>('the solver has produced an optimal solution', async function () {
   return 'pending'
@@ -144,12 +149,9 @@ Then<CustomWorld>(
   },
 )
 
-Given<CustomWorld>(
-  'I enter a decomposed LP with exactly one sub-problem block',
-  async function () {
-    return 'pending'
-  },
-)
+Given<CustomWorld>('I enter a decomposed LP with exactly one sub-problem block', async function () {
+  return 'pending'
+})
 
 Then<CustomWorld>(
   /the solver produces a solution equivalent to solving the original LP directly/,
@@ -201,12 +203,9 @@ Then<CustomWorld>(
   },
 )
 
-Given<CustomWorld>(
-  'a decomposed LP that requires more than 10 iterations',
-  async function () {
-    return 'pending'
-  },
-)
+Given<CustomWorld>('a decomposed LP that requires more than 10 iterations', async function () {
+  return 'pending'
+})
 
 Then<CustomWorld>(
   /the iteration log updates at least once every 2 seconds throughout the solve/,
@@ -262,12 +261,9 @@ Then<CustomWorld>('no Pyodide computation is initiated', async function () {
   return 'pending'
 })
 
-Given<CustomWorld>(
-  'a user enters NaN or Infinity in any matrix or vector cell',
-  async function () {
-    return 'pending'
-  },
-)
+Given<CustomWorld>('a user enters NaN or Infinity in any matrix or vector cell', async function () {
+  return 'pending'
+})
 
 Then<CustomWorld>('the cell is marked invalid', async function () {
   return 'pending'
