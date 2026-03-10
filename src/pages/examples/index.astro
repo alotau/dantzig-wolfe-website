@@ -35,7 +35,7 @@ const examplesData = sorted.map((e) => ({
   <NavBar slot="nav" />
   <GlossaryPanel client:only="svelte" entries={glossaryData} />
 
-  <main id="main-content" class="mx-auto max-w-5xl px-4 py-10">
+  <div class="mx-auto max-w-5xl px-4 py-10">
     <h1 class="mb-4 text-3xl font-bold text-[var(--color-primary)]">Worked Examples</h1>
     <p class="mb-8 text-lg text-gray-600 leading-relaxed">
       Self-contained examples of Dantzig-Wolfe Decomposition in action — from classical cutting
@@ -63,7 +63,7 @@ const examplesData = sorted.map((e) => ({
         }
       </ul>
     </noscript>
-  </main>
+  </div>
 
   <Footer slot="footer" />
 </BaseLayout>

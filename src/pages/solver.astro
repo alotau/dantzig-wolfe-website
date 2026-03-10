@@ -25,8 +25,7 @@ const pyodideBase = 'https://cdn.jsdelivr.net/pyodide/v0.29.3/full/'
 >
   <NavBar slot="nav" />
 
-  <main
-    id="main-content"
+  <div
     class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8"
     data-pyodide-base={pyodideBase}
   >
@@ -60,7 +59,7 @@ const pyodideBase = 'https://cdn.jsdelivr.net/pyodide/v0.29.3/full/'
         </p>
       </div>
     </noscript>
-  </main>
+  </div>
 
   <GlossaryPanel client:only="svelte" terms={glossaryData} />
   <Footer slot="footer" />
