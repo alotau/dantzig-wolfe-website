@@ -1,7 +1,30 @@
 <!--
 ## Sync Impact Report
 
-**Version change**: 1.1.0 → 1.2.0
+**Version change**: 1.2.0 → 1.2.1
+
+### Amended Principles
+- IV. Branch-Protection & Pull-Request Workflow: added explicit rule requiring the agent/developer
+  to return to `main` immediately after a branch is pushed, and to create or switch to a
+  new appropriately named branch before beginning any subsequent work.
+
+### Amended Sections
+- Development Workflow step 8: added mandatory `git checkout main` after merge/push.
+- Development Workflow: added new step 9 for "start next task" to make the return-to-main
+  checkpoint explicit in the linear workflow.
+
+### Templates Reviewed
+- `.specify/templates/tasks-template.md` ✅ compatible
+- `.specify/templates/plan-template.md` ✅ compatible
+- `.specify/templates/spec-template.md` ✅ no changes required
+- `.specify/templates/constitution-template.md` ✅ no changes required
+
+### Deferred TODOs
+- None.
+
+---
+
+## Previous Report (v1.2.0 — 2026-03-08)
 
 ### Amended Principles
 - IV. Branch-Protection & Pull-Request Workflow: expanded with explicit branch-per-task
@@ -128,6 +151,12 @@ of its associated work. Retroactively moving commits from an incorrect branch vi
 cherry-pick is permitted only if `main` has not yet been compromised. The agent or developer
 MUST verify the active branch before making any commit.
 
+**Return-to-main rule**: After a branch has been pushed to the remote (or merged into `main`),
+the agent or developer MUST immediately run `git checkout main && git pull` to return to an
+up-to-date `main`. All subsequent work MUST start from `main` on a new, appropriately named
+branch. Continuing to commit new, unrelated work on a branch that has already been pushed or
+merged is NEVER permitted.
+
 **Rationale**: Keeps `main` in a perpetually deployable state, produces a clean and
 reviewable commit history aligned to discrete work items, and prevents unreviewed changes
 or merge conflicts from reaching production.
@@ -193,7 +222,11 @@ and ratified as a constitution amendment before implementation.
 6. **CI Gates**: All gates defined in Principle V MUST pass.
 7. **PR & Review**: Open a pull request. At least one reviewer MUST approve. Educational
    content requires domain-knowledge review per Principle VI.
-8. **Merge**: Squash-merge to `main` after approval. Delete the feature branch.
+8. **Merge & Clean up**: Squash-merge to `main` after approval. Delete the feature branch.
+   Immediately run `git checkout main && git pull` to return to an up-to-date `main`.
+9. **Next task**: Before beginning any subsequent work, create or switch to a new branch
+   named `###-short-kebab-description` scoped to that next task. Never reuse a pushed branch
+   for unrelated work.
 
 **Constitution Check Gates** (referenced by `plan-template.md`):
 
@@ -230,4 +263,4 @@ project. In any conflict, the constitution takes precedence.
 confirming compliance with all applicable principles. The plan template enforces this gate
 formally at the planning stage.
 
-**Version**: 1.2.0 | **Ratified**: 2026-03-07 | **Last Amended**: 2026-03-08
+**Version**: 1.2.1 | **Ratified**: 2026-03-07 | **Last Amended**: 2026-03-09
