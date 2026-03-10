@@ -260,7 +260,8 @@
                     step="any"
                     value={couplingA[r]?.[c] ?? 0}
                     oninput={(e) => updateCouplingACell(r, c, (e.target as HTMLInputElement).value)}
-                    class="w-14 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50"
+                    aria-label="Coupling row {r + 1}, column {c + 1}"
+                    class="w-14 px-1 py-0.5 text-right focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] focus:bg-blue-50"
                   />
                 </td>
               {/each}
@@ -269,7 +270,8 @@
                 <select
                   value={row.sense}
                   onchange={(e) => updateCouplingSense(r, (e.target as HTMLSelectElement).value)}
-                  class="px-1 py-0.5 bg-transparent focus:outline-none"
+                  aria-label="Coupling constraint {r + 1} sense"
+                  class="px-1 py-0.5 bg-transparent focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
                 >
                   <option value="leq">≤</option>
                   <option value="geq">≥</option>
@@ -283,7 +285,8 @@
                   step="any"
                   value={row.b}
                   oninput={(e) => updateCouplingB(r, (e.target as HTMLInputElement).value)}
-                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50"
+                  aria-label="Coupling constraint {r + 1} right-hand side"
+                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] focus:bg-blue-50"
                 />
               </td>
               <!-- Remove -->

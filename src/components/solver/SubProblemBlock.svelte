@@ -283,7 +283,8 @@
                     value={block.A[r][c]}
                     oninput={(e) => updateACell(r, c, (e.target as HTMLInputElement).value)}
                     aria-invalid={!!cellErrors[key]}
-                    class="w-14 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50 {cellErrors[
+                    aria-label="Constraint {r + 1} coefficient for variable {c + 1}"
+                    class="w-14 px-1 py-0.5 text-right focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] focus:bg-blue-50 {cellErrors[
                       key
                     ]
                       ? 'bg-red-50 text-red-700'
@@ -299,7 +300,8 @@
                 <select
                   value={block.constraintSenses[r]}
                   onchange={(e) => updateSense(r, (e.target as HTMLSelectElement).value)}
-                  class="px-1 py-0.5 bg-transparent focus:outline-none"
+                  aria-label="Constraint {r + 1} sense"
+                  class="px-1 py-0.5 bg-transparent focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
                 >
                   <option value="leq">≤</option>
                   <option value="geq">≥</option>
@@ -314,7 +316,8 @@
                   value={block.b[r]}
                   oninput={(e) => updateBCell(r, (e.target as HTMLInputElement).value)}
                   aria-invalid={!!cellErrors[`b-${r}`]}
-                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50 {cellErrors[
+                  aria-label="Constraint {r + 1} right-hand side"
+                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] focus:bg-blue-50 {cellErrors[
                     `b-${r}`
                   ]
                     ? 'bg-red-50 text-red-700'
@@ -356,6 +359,7 @@
               value={block.c[j]}
               oninput={(e) => updateCCell(j, (e.target as HTMLInputElement).value)}
               aria-invalid={!!cellErrors[key]}
+              aria-label="Objective coefficient for variable {j + 1}"
               data-cell-c
               class="w-14 rounded border border-gray-300 px-1 py-0.5 text-right text-xs focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] {cellErrors[
                 key
@@ -397,8 +401,9 @@
                   step="any"
                   value={block.bounds[j].lower}
                   oninput={(e) => updateBoundLower(j, (e.target as HTMLInputElement).value)}
+                  aria-label="Lower bound for variable {j + 1}"
                   data-bound-lower
-                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50"
+                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] focus:bg-blue-50"
                 />
               </td>
               <td class="border border-gray-200 p-0">
@@ -407,9 +412,10 @@
                   value={block.bounds[j].upper === null ? '' : block.bounds[j].upper}
                   oninput={(e) => updateBoundUpper(j, (e.target as HTMLInputElement).value)}
                   placeholder="∞"
+                  aria-label="Upper bound for variable {j + 1}"
                   data-bound-upper
                   data-bound-default
-                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50"
+                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] focus:bg-blue-50"
                 />
               </td>
             </tr>

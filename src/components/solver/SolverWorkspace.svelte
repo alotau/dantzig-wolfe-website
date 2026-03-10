@@ -251,7 +251,7 @@
       The interactive solver requires WebAssembly and a modern browser. Compatible browsers: Chrome 89+,
       Firefox 88+, Safari 15.2+, Edge 89+.
     </div>
-  {/if}
+  {:else}
 
   <!-- -----------------------------------------------------------------------
        Header row: title + example loader + clear button
@@ -360,5 +360,7 @@
         </div>
       {/if}
     </div>
+  {/if}
+
   {/if}
 </div>

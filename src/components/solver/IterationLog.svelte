@@ -53,6 +53,8 @@
     data-iteration-log
     aria-label="Iteration log"
     role="table"
+    aria-live="polite"
+    aria-relevant="additions"
   >
     <!-- Header -->
     <div

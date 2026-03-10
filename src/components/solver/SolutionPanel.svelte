@@ -54,12 +54,7 @@
           Variable values
         </p>
         <div class="overflow-auto rounded-md border border-gray-200">
-          <table class="w-full text-sm font-mono border-collapse">
-            <thead>
-              <tr class="bg-gray-50 text-xs text-gray-600">
-                <th class="border-b border-gray-200 px-4 py-2 text-left font-semibold">
-                  Block
-                </th>
+          <table class="w-full text-sm font-mono border-collapse" aria-label="Variable values by block">
                 <th class="border-b border-gray-200 px-4 py-2 text-left font-semibold">
                   Variable
                 </th>
@@ -98,7 +93,7 @@
           Coupling constraint duals (shadow prices)
         </p>
         <div class="overflow-auto rounded-md border border-gray-200">
-          <table class="w-full text-sm font-mono border-collapse">
+          <table class="w-full text-sm font-mono border-collapse" aria-label="Coupling constraint dual values">
             <thead>
               <tr class="bg-gray-50 text-xs text-gray-600">
                 <th class="border-b border-gray-200 px-4 py-2 text-left font-semibold">
