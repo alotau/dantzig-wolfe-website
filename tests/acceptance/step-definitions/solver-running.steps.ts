@@ -23,10 +23,7 @@ async function waitForSolverDone(world: CustomWorld, timeoutMs = 120_000) {
   await world.page.waitForFunction(
     () => {
       const status = document.querySelector('[data-workspace]')?.getAttribute('data-solver-status')
-      return (
-        status !== null &&
-        !['idle', 'loading', 'ready', 'solving'].includes(status)
-      )
+      return status !== null && !['idle', 'loading', 'ready', 'solving'].includes(status)
     },
     undefined,
     { timeout: timeoutMs },
@@ -190,7 +187,9 @@ When<CustomWorld>(
 )
 
 Then<CustomWorld>(/I see a "Solved — Optimal" status message/, async function (this: CustomWorld) {
-  await expect(this.page.locator('[data-status-message]:not([aria-hidden])')).toContainText('Solved — Optimal')
+  await expect(this.page.locator('[data-status-message]:not([aria-hidden])')).toContainText(
+    'Solved — Optimal',
+  )
 })
 
 Then<CustomWorld>(
@@ -255,7 +254,9 @@ When<CustomWorld>('the solver terminates', async function (this: CustomWorld) {
 Then<CustomWorld>(
   /I see a "Solved — Infeasible" status message/,
   async function (this: CustomWorld) {
-    await expect(this.page.locator('[data-status-message]:not([aria-hidden])')).toContainText('Solved — Infeasible')
+    await expect(this.page.locator('[data-status-message]:not([aria-hidden])')).toContainText(
+      'Solved — Infeasible',
+    )
   },
 )
 
@@ -314,7 +315,9 @@ When<CustomWorld>(
 Then<CustomWorld>(
   /I see a "Solved — Unbounded" status message/,
   async function (this: CustomWorld) {
-    await expect(this.page.locator('[data-status-message]:not([aria-hidden])')).toContainText('Solved — Unbounded')
+    await expect(this.page.locator('[data-status-message]:not([aria-hidden])')).toContainText(
+      'Solved — Unbounded',
+    )
   },
 )
 

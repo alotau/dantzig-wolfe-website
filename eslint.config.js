@@ -35,6 +35,6 @@ export default [
     },
   },
   {
-    ignores: ['dist/', 'node_modules/', '.astro/', 'reports/', '.vercel/'],
+    ignores: ['dist/', 'node_modules/', '.astro/', 'reports/', '.vercel/', 'tmp/'],
   },
 ]
