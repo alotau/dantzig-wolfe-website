@@ -145,7 +145,9 @@
         ← Back to list
       </button>
       <h3 class="text-lg font-semibold text-[var(--color-primary)] mb-2">{selectedTerm.term}</h3>
-      <p class="text-sm leading-relaxed text-gray-700" data-glossary-definition>{selectedTerm.shortDef}</p>
+      <p class="text-sm leading-relaxed text-gray-700" data-glossary-definition>
+        {selectedTerm.shortDef}
+      </p>
 
       {#if selectedTerm.relatedTerms.length > 0}
         <div class="mt-4">

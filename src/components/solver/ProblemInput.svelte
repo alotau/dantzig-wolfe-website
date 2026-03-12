@@ -33,6 +33,7 @@
   let subproblems = $state<ParsedSubProblemBlock[]>([])
 
   let nextBlockIndex = $state(1)
+  let objectiveDirection = $state<'min' | 'max'>('min')
 
   // ---------------------------------------------------------------------------
   // Derived: total variable count
@@ -64,7 +65,7 @@
     }
 
     const raw = {
-      objectiveDirection: 'min' as const, // parent can override; default direction
+      objectiveDirection,
       coupling: {
         A: couplingA,
         b: couplingRows.map((r) => r.b),
@@ -157,6 +158,7 @@
 
   // Used externally (SolverWorkspace calls reset())
   export function reset() {
+    objectiveDirection = 'min'
     couplingRows = []
     couplingA = []
     subproblems = []
@@ -165,10 +167,24 @@
 
   // Used externally: load a full problem instance into the form
   export function loadProblem(p: ParsedProblemInstance) {
+    objectiveDirection = p.objectiveDirection
     couplingA = p.coupling.A
     couplingRows = p.coupling.b.map((b, i) => ({ b, sense: p.coupling.senses[i] }))
     subproblems = p.subproblems
     nextBlockIndex = p.subproblems.length + 1
+  }
+
+  // Used only by acceptance tests to force a potentially-mismatched state that
+  // regular UI operations cannot produce (sync logic always keeps dimensions valid).
+  export function _forceState(
+    cA: number[][],
+    cR: Array<{ b: number; sense: 'leq' | 'geq' | 'eq' }>,
+    sps: ParsedSubProblemBlock[],
+  ) {
+    couplingA = cA
+    couplingRows = cR
+    subproblems = sps
+    nextBlockIndex = sps.length + 1
   }
 </script>
 
@@ -260,7 +276,8 @@
                     step="any"
                     value={couplingA[r]?.[c] ?? 0}
                     oninput={(e) => updateCouplingACell(r, c, (e.target as HTMLInputElement).value)}
-                    class="w-14 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50"
+                    aria-label="Coupling row {r + 1}, column {c + 1}"
+                    class="w-14 px-1 py-0.5 text-right focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] focus:bg-blue-50"
                   />
                 </td>
               {/each}
@@ -269,7 +286,8 @@
                 <select
                   value={row.sense}
                   onchange={(e) => updateCouplingSense(r, (e.target as HTMLSelectElement).value)}
-                  class="px-1 py-0.5 bg-transparent focus:outline-none"
+                  aria-label="Coupling constraint {r + 1} sense"
+                  class="px-1 py-0.5 bg-transparent focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
                 >
                   <option value="leq">≤</option>
                   <option value="geq">≥</option>
@@ -283,7 +301,8 @@
                   step="any"
                   value={row.b}
                   oninput={(e) => updateCouplingB(r, (e.target as HTMLInputElement).value)}
-                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:bg-blue-50"
+                  aria-label="Coupling constraint {r + 1} right-hand side"
+                  class="w-16 px-1 py-0.5 text-right focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] focus:bg-blue-50"
                 />
               </td>
               <!-- Remove -->

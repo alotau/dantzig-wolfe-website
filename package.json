@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:acceptance": "npm run build && astro preview --port 4321 & npx wait-on http://localhost:4321 && NODE_OPTIONS='--import tsx' npx cucumber-js; kill %1",
-    "test:acceptance:dry-run": "NODE_OPTIONS='--import tsx' npx cucumber-js --dry-run"
+    "test:acceptance:dry-run": "NODE_OPTIONS='--import tsx' npx cucumber-js --dry-run",
+    "perf:lcp": "NODE_OPTIONS='--import tsx' node tests/perf/lcp.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",

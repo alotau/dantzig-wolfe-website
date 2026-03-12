@@ -1,20 +1,51 @@
 {
   "schemaVersion": 1,
   "info": {
-    "python": "3.12",
-    "pyodide": "0.29.3"
+    "python": "3.13.2",
+    "pyodideVersion": "0.29.3",
+    "platform": "emscripten_4_0_9",
+    "arch": "wasm32"
   },
   "pyodide": {
     "indexURL": "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/"
   },
   "packages": {
-    "dantzig-wolfe-python": {
-      "name": "dantzig-wolfe-python",
-      "packageType": "wheel",
-      "fileName": "dantzig_wolfe_python-0.1.0-py3-none-any.whl",
+    "micropip": {
+      "name": "micropip",
+      "version": "0.11.0",
+      "fileName": "micropip-0.11.0-py3-none-any.whl",
       "installDir": "site",
-      "url": "https://github.com/alotau/dantzig-wolfe-python/releases/download/v0.1.0/dantzig_wolfe_python-0.1.0-py3-none-any.whl",
-      "sha256": "PLACEHOLDER_VERIFY_AT_INSTALL_TIME"
+      "sha256": "0ae422514e45d068b8159eb8ec3b2c3f4cbce2e664e26cb81735dbe4af2377a1"
+    },
+    "numpy": {
+      "name": "numpy",
+      "version": "2.2.5",
+      "fileName": "numpy-2.2.5-cp313-cp313-pyodide_2025_0_wasm32.whl",
+      "installDir": "site",
+      "sha256": "6eaab6a7bb658d71ebe702911a3deab715323642462eb41b65565ca6a7cc23f1"
+    },
+    "scipy": {
+      "name": "scipy",
+      "version": "1.14.1",
+      "fileName": "scipy-1.14.1-cp313-cp313-pyodide_2025_0_wasm32.whl",
+      "installDir": "site",
+      "sha256": "96fbc718e81cf54ac7df7d8a2c24e370fa3c45086e917c3d58752207d85d21af"
+    },
+    "packaging": {
+      "name": "packaging",
+      "version": "24.2",
+      "fileName": "packaging-24.2-py3-none-any.whl",
+      "installDir": "site",
+      "sha256": "c18cde5592cc3d1823e9cc3a9a4fb436b02c15e3f8d7f5f69962f77b1b109da1"
+    },
+    "dantzig-wolfe-python": {
+      "name": "dwsolver",
+      "version": "0.1.0",
+      "packageType": "wheel",
+      "fileName": "dwsolver-0.1.0-py3-none-any.whl",
+      "installDir": "site",
+      "url": "/dwsolver-0.1.0-py3-none-any.whl",
+      "sha256": "e6ad87e41eb5b25ae63dcccb18dedec8900aadd0c178f228e4fd594ad47baba1"
     }
   }
 }

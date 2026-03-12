@@ -129,7 +129,7 @@ const glossaryData = glossaryEntries.map((e) => ({
     </section>
   </div>
 
-  <GlossaryPanel client:only="svelte" terms={glossaryData} slot="default" />
+  <GlossaryPanel client:only="svelte" entries={glossaryData} slot="default" />
 
   <Footer slot="footer" />
 </BaseLayout>

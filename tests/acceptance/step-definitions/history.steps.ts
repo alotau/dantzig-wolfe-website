@@ -22,13 +22,15 @@ Then<CustomWorld>(
   async function () {
     // Expects multiple <section> or <article> elements or headings (h2/h3) on the page
     const sections = this.page.locator('main section, main article, main h2')
-    await expect(sections).toHaveCount(await sections.count())
     expect(await sections.count()).toBeGreaterThanOrEqual(3)
   },
 )
 
 Then<CustomWorld>('I see a section describing the origins of the algorithm', async function () {
-  const heading = this.page.locator('main h2, main h3').filter({ hasText: /origin/i }).first()
+  const heading = this.page
+    .locator('main h2, main h3')
+    .filter({ hasText: /origin/i })
+    .first()
   await expect(heading).toBeVisible()
 })
 

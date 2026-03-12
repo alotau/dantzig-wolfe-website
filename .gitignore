@@ -13,6 +13,7 @@ node_modules/
 
 # Test reports & coverage
 reports/
+cuke-results.json
 coverage/
 
 # macOS & editor noise
@@ -25,3 +26,4 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+tmp/
