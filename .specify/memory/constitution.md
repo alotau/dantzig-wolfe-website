@@ -1,6 +1,29 @@
 <!--
 ## Sync Impact Report
 
+**Version change**: 1.2.1 → 1.2.2
+
+### Amended Principles
+- None.
+
+### Amended Sections
+- Development Workflow: added new "Temporary files" rule requiring all scratch/diagnostic
+  output to be written to the project-local `tmp/` directory rather than the system `/tmp`
+  directory.
+
+### Templates Reviewed
+- `.specify/templates/tasks-template.md` ✅ compatible
+- `.specify/templates/plan-template.md` ✅ compatible
+- `.specify/templates/spec-template.md` ✅ no changes required
+- `.specify/templates/constitution-template.md` ✅ no changes required
+
+### Deferred TODOs
+- None.
+
+---
+
+## Previous Report (v1.2.1 — 2026-03-09)
+
 **Version change**: 1.2.0 → 1.2.1
 
 ### Amended Principles
@@ -227,6 +250,10 @@ and ratified as a constitution amendment before implementation.
 9. **Next task**: Before beginning any subsequent work, create or switch to a new branch
    named `###-short-kebab-description` scoped to that next task. Never reuse a pushed branch
    for unrelated work.
+10. **Temporary files**: All scratch files, diagnostic scripts, and test-run output (e.g.
+    JSON result dumps, analysis scripts, log files) MUST be written to the project-local
+    `tmp/` directory (i.e. `<repo-root>/tmp/`). The system `/tmp` directory MUST NOT be
+    used; doing so requires manual approval from the project owner and is inefficient.
 
 **Constitution Check Gates** (referenced by `plan-template.md`):
 
@@ -263,4 +290,4 @@ project. In any conflict, the constitution takes precedence.
 confirming compliance with all applicable principles. The plan template enforces this gate
 formally at the planning stage.
 
-**Version**: 1.2.1 | **Ratified**: 2026-03-07 | **Last Amended**: 2026-03-09
+**Version**: 1.2.2 | **Ratified**: 2026-03-07 | **Last Amended**: 2026-03-11
