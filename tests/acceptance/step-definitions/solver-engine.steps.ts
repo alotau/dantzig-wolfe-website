@@ -1,6 +1,16 @@
 import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
+import { deflate } from 'pako'
 import type { CustomWorld } from '../support/world.js'
+
+/** Encode a problem object using deflate+URL-safe base64, matching decodeProblem format. */
+function encodeForUrl(problem: object): string {
+  const json = JSON.stringify(problem)
+  const compressed = deflate(json, { level: 6 })
+  let binary = ''
+  for (let i = 0; i < compressed.length; i++) binary += String.fromCharCode(compressed[i])
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -14,6 +24,7 @@ async function waitForReady(world: CustomWorld) {
   await world.page.waitForFunction(
     () =>
       document.querySelector('[data-workspace]')?.getAttribute('data-solver-status') === 'ready',
+    undefined,
     { timeout: SOLVER_READY_TIMEOUT },
   )
 }
@@ -55,9 +66,7 @@ Then<CustomWorld>(
   async function (this: CustomWorld) {
     // Confirmed by READY message having solverPackageVersion set; the
     // data-solver-status="ready" attribute is only set after the package installs.
-    const status = await this.page
-      .locator('[data-workspace]')
-      .getAttribute('data-solver-status')
+    const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
     expect(status).toBe('ready')
   },
 )
@@ -72,9 +81,7 @@ Then<CustomWorld>(
     // No active network call assertion needed beyond verifying no outbound API.
     // (Playwright intercept cannot retroactively check all past requests here,
     // so we assert the architecture property instead.)
-    const status = await this.page
-      .locator('[data-workspace]')
-      .getAttribute('data-solver-status')
+    const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
     expect(status).toBe('ready')
   },
 )
@@ -110,9 +117,7 @@ Then<CustomWorld>(
     // This is an architectural property; in CI the delta may be small.
     // We assert the ready state is reached within a shorter bound (5s vs 120s).
     // Already waited for ready; just verify status is correct.
-    const status = await this.page
-      .locator('[data-workspace]')
-      .getAttribute('data-solver-status')
+    const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
     expect(status).toBe('ready')
   },
 )
@@ -179,9 +184,7 @@ Given<CustomWorld>(
   'the dantzig-wolfe-python solver package is available',
   async function (this: CustomWorld) {
     // Confirmed by ready state — already established in previous Given
-    const status = await this.page
-      .locator('[data-workspace]')
-      .getAttribute('data-solver-status')
+    const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
     expect(status).toBe('ready')
   },
 )
@@ -192,8 +195,11 @@ Given<CustomWorld>(
     // Map feature file names to example select values
     const nameMap: Record<string, string> = {
       'cutting-stock': 'cutting-stock',
+      'Cutting Stock (2-width)': 'cutting-stock',
       'two-block LP': 'two-block-lp',
+      'Two-block LP (Textbook ex. 1)': 'two-block-lp',
       'three-block LP': 'three-block-lp',
+      'Three-block LP (Textbook ex. 2)': 'three-block-lp',
     }
     const value = nameMap[exampleName] ?? exampleName
     await this.page.selectOption('[data-example-select]', value)
@@ -210,6 +216,7 @@ When<CustomWorld>('I run the solver', async function (this: CustomWorld) {
       const s = document.querySelector('[data-workspace]')?.getAttribute('data-solver-status')
       return s !== null && !['loading', 'solving'].includes(s!)
     },
+    undefined,
     { timeout: SOLVE_COMPLETE_TIMEOUT },
   )
 })
@@ -217,9 +224,7 @@ When<CustomWorld>('I run the solver', async function (this: CustomWorld) {
 Then<CustomWorld>(
   /the reported optimal objective value equals (\S+) within a tolerance of (\S+)/,
   async function (this: CustomWorld, expected: string, tolerance: string) {
-    const status = await this.page
-      .locator('[data-workspace]')
-      .getAttribute('data-solver-status')
+    const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
     expect(status).toBe('optimal')
     const objectiveText = await this.page.locator('[data-result-objective]').textContent()
     const actual = parseFloat(objectiveText ?? '')
@@ -228,37 +233,40 @@ Then<CustomWorld>(
   },
 )
 
-Given<CustomWorld>('I enter a problem whose feasible region is empty', async function (this: CustomWorld) {
-  const infeasible = {
-    objectiveDirection: 'min',
-    coupling: { A: [[1, 1]], b: [100], senses: ['geq'] },
-    subproblems: [
-      {
-        index: 1,
-        A: [[1]],
-        b: [3],
-        constraintSenses: ['leq'],
-        c: [1],
-        bounds: [{ lower: 0, upper: 3 }],
-        variableLabels: ['x'],
-      },
-      {
-        index: 2,
-        A: [[1]],
-        b: [3],
-        constraintSenses: ['leq'],
-        c: [1],
-        bounds: [{ lower: 0, upper: 3 }],
-        variableLabels: ['y'],
-      },
-    ],
-  }
-  const encoded = btoa(JSON.stringify(infeasible))
-  await this.page.goto(`${this.baseURL}/solver?p=${encoded}`)
-  await this.page.waitForSelector('[data-workspace]', { timeout: 10_000 })
-  await this.page.locator('[data-solve]:not([disabled])').waitFor({ timeout: 15_000 })
-  await waitForReady(this)
-})
+Given<CustomWorld>(
+  'I enter a problem whose feasible region is empty',
+  async function (this: CustomWorld) {
+    const infeasible = {
+      objectiveDirection: 'min',
+      coupling: { A: [[1, 1]], b: [100], senses: ['geq'] },
+      subproblems: [
+        {
+          index: 1,
+          A: [[1]],
+          b: [3],
+          constraintSenses: ['leq'],
+          c: [1],
+          bounds: [{ lower: 0, upper: 3 }],
+          variableLabels: ['x'],
+        },
+        {
+          index: 2,
+          A: [[1]],
+          b: [3],
+          constraintSenses: ['leq'],
+          c: [1],
+          bounds: [{ lower: 0, upper: 3 }],
+          variableLabels: ['y'],
+        },
+      ],
+    }
+    const encoded = encodeForUrl(infeasible)
+    await this.page.goto(`${this.baseURL}/solver?p=${encoded}`)
+    await this.page.waitForSelector('[data-workspace]', { timeout: 10_000 })
+    await this.page.locator('[data-solve]:not([disabled])').waitFor({ timeout: 15_000 })
+    await waitForReady(this)
+  },
+)
 
 Then<CustomWorld>(
   'the solver reports {string}',
@@ -310,7 +318,7 @@ Given<CustomWorld>(
         },
       ],
     }
-    const encoded = btoa(JSON.stringify(unbounded))
+    const encoded = encodeForUrl(unbounded)
     await this.page.goto(`${this.baseURL}/solver?p=${encoded}`)
     await this.page.waitForSelector('[data-workspace]', { timeout: 10_000 })
     await this.page.locator('[data-solve]:not([disabled])').waitFor({ timeout: 15_000 })
@@ -330,11 +338,16 @@ Then<CustomWorld>(
 Given<CustomWorld>(
   'the solver has produced an optimal solution',
   async function (this: CustomWorld) {
-    // This step assumes the solver ran in "I run the solver" When step
-    const status = await this.page
-      .locator('[data-workspace]')
-      .getAttribute('data-solver-status')
-    expect(status).toBe('optimal')
+    const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
+    if (status === 'optimal') return // Already solved from a previous step
+    // Run the solver if not yet solved
+    await this.page.click('[data-solve]:not([disabled])')
+    await this.page.waitForFunction(
+      () =>
+        document.querySelector('[data-workspace]')?.getAttribute('data-solver-status') === 'optimal',
+      undefined,
+      { timeout: SOLVE_COMPLETE_TIMEOUT },
+    )
   },
 )
 
@@ -344,9 +357,7 @@ Then<CustomWorld>(
     // Complementary slackness is verified via the exported result JSON.
     // We check that the solver reported optimal status (implies comp. slack holds
     // if the solver is implemented correctly per the DW algorithm).
-    const status = await this.page
-      .locator('[data-workspace]')
-      .getAttribute('data-solver-status')
+    const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
     expect(status).toBe('optimal')
   },
 )
@@ -355,9 +366,7 @@ Then<CustomWorld>(
   /for every sub-problem variable the product of the reduced cost and the variable value is zero within tolerance 1e-6/,
   async function (this: CustomWorld) {
     // Same as above — verified via solver correctness
-    const status = await this.page
-      .locator('[data-workspace]')
-      .getAttribute('data-solver-status')
+    const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
     expect(status).toBe('optimal')
   },
 )
@@ -380,7 +389,7 @@ Given<CustomWorld>(
         },
       ],
     }
-    const encoded = btoa(JSON.stringify(singleBlock))
+    const encoded = encodeForUrl(singleBlock)
     await this.page.goto(`${this.baseURL}/solver?p=${encoded}`)
     await this.page.waitForSelector('[data-workspace]', { timeout: 10_000 })
     await this.page.locator('[data-solve]:not([disabled])').waitFor({ timeout: 15_000 })
@@ -391,9 +400,7 @@ Given<CustomWorld>(
 Then<CustomWorld>(
   /the solver produces a solution equivalent to solving the original LP directly/,
   async function (this: CustomWorld) {
-    const status = await this.page
-      .locator('[data-workspace]')
-      .getAttribute('data-solver-status')
+    const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
     expect(status).toBe('optimal')
   },
 )
@@ -401,9 +408,7 @@ Then<CustomWorld>(
 Then<CustomWorld>(
   /the objective value matches the expected result within tolerance (\S+)/,
   async function (this: CustomWorld, _tolerance: string) {
-    const status = await this.page
-      .locator('[data-workspace]')
-      .getAttribute('data-solver-status')
+    const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
     expect(status).toBe('optimal')
     const objectiveText = await this.page.locator('[data-result-objective]').textContent()
     const actual = parseFloat(objectiveText ?? '')
@@ -436,7 +441,7 @@ Given<CustomWorld>(
       },
       subproblems: blocks,
     }
-    const encoded = btoa(JSON.stringify(tenBlock))
+    const encoded = encodeForUrl(tenBlock)
     await this.page.goto(`${this.baseURL}/solver?p=${encoded}`)
     await this.page.waitForSelector('[data-workspace]', { timeout: 10_000 })
     await this.page.locator('[data-solve]:not([disabled])').waitFor({ timeout: 15_000 })
@@ -445,9 +450,7 @@ Given<CustomWorld>(
 )
 
 Then<CustomWorld>('the solver terminates without error', async function (this: CustomWorld) {
-  const status = await this.page
-    .locator('[data-workspace]')
-    .getAttribute('data-solver-status')
+  const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
   expect(['optimal', 'infeasible', 'unbounded']).toContain(status)
 })
 
@@ -455,9 +458,7 @@ Then<CustomWorld>(
   /the reported optimal value satisfies all coupling constraints within tolerance 1e-6/,
   async function (this: CustomWorld) {
     // Verified by the solver algorithm; optimal status means constraints satisfied
-    const status = await this.page
-      .locator('[data-workspace]')
-      .getAttribute('data-solver-status')
+    const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
     expect(status).toBe('optimal')
   },
 )
@@ -485,6 +486,7 @@ Then<CustomWorld>(
         const s = document.querySelector('[data-workspace]')?.getAttribute('data-solver-status')
         return s !== null && !['loading', 'solving'].includes(s!)
       },
+      undefined,
       { timeout: 10_000 },
     )
     const elapsed = Date.now() - start
@@ -517,6 +519,7 @@ Then<CustomWorld>(
         const s = document.querySelector('[data-workspace]')?.getAttribute('data-solver-status')
         return s !== null && !['loading', 'solving'].includes(s!)
       },
+      undefined,
       { timeout: SOLVE_COMPLETE_TIMEOUT },
     )
     const rows = this.page.locator('[data-iteration-log] [data-iteration-row]')
@@ -524,10 +527,13 @@ Then<CustomWorld>(
   },
 )
 
-Then<CustomWorld>('the browser UI remains interactive while solving', async function (this: CustomWorld) {
-  const workspace = this.page.locator('[data-workspace]')
-  await expect(workspace).toBeVisible()
-})
+Then<CustomWorld>(
+  'the browser UI remains interactive while solving',
+  async function (this: CustomWorld) {
+    const workspace = this.page.locator('[data-workspace]')
+    await expect(workspace).toBeVisible()
+  },
+)
 
 Given<CustomWorld>(
   'I am running the solver on a problem that takes more than 3 seconds',
@@ -578,9 +584,7 @@ Then<CustomWorld>(
 
 Then<CustomWorld>('no Pyodide computation is initiated', async function (this: CustomWorld) {
   // Status remains 'idle', 'loading', or 'ready' — never 'solving'
-  const status = await this.page
-    .locator('[data-workspace]')
-    .getAttribute('data-solver-status')
+  const status = await this.page.locator('[data-workspace]').getAttribute('data-solver-status')
   expect(status).not.toBe('solving')
 })
 
@@ -597,124 +601,4 @@ Then<CustomWorld>('the cell is marked invalid', async function (this: CustomWorl
   // a validation error and the Solve button is disabled.
   const solveBtn = this.page.locator('[data-solve]')
   await expect(solveBtn).toBeDisabled()
-})
-
-Given<CustomWorld>('I enter a decomposed LP with exactly one sub-problem block', async function () {
-  return 'pending'
-})
-
-Then<CustomWorld>(
-  /the solver produces a solution equivalent to solving the original LP directly/,
-  async function () {
-    return 'pending'
-  },
-)
-
-Then<CustomWorld>(
-  /the objective value matches the expected result within tolerance (\S+)/,
-  async function (this: CustomWorld, _tolerance: string) {
-    return 'pending'
-  },
-)
-
-Given<CustomWorld>(
-  /I enter a decomposed LP with ten or more sub-problem blocks each with distinct structure/,
-  async function () {
-    return 'pending'
-  },
-)
-
-Then<CustomWorld>('the solver terminates without error', async function () {
-  return 'pending'
-})
-
-Then<CustomWorld>(
-  /the reported optimal value satisfies all coupling constraints within tolerance 1e-6/,
-  async function () {
-    return 'pending'
-  },
-)
-
-// ---------------------------------------------------------------------------
-// Performance (solver-engine-performance.feature)
-// ---------------------------------------------------------------------------
-
-Given<CustomWorld>(
-  /a decomposed LP with at most 5 sub-problem blocks and at most 10 variables per block/,
-  async function () {
-    return 'pending'
-  },
-)
-
-Then<CustomWorld>(
-  /the solver produces a result within 5 seconds of the Pyodide environment being ready/,
-  async function () {
-    return 'pending'
-  },
-)
-
-Given<CustomWorld>('a decomposed LP that requires more than 10 iterations', async function () {
-  return 'pending'
-})
-
-Then<CustomWorld>(
-  /the iteration log updates at least once every 2 seconds throughout the solve/,
-  async function () {
-    return 'pending'
-  },
-)
-
-Then<CustomWorld>('the browser UI remains interactive while solving', async function () {
-  return 'pending'
-})
-
-Given<CustomWorld>(
-  'I am running the solver on a problem that takes more than 3 seconds',
-  async function () {
-    return 'pending'
-  },
-)
-
-Then<CustomWorld>(
-  'I can still scroll the page and interact with non-solver UI elements',
-  async function () {
-    return 'pending'
-  },
-)
-
-Then<CustomWorld>(
-  /the browser does not display an "unresponsive script" warning/,
-  async function () {
-    return 'pending'
-  },
-)
-
-// ---------------------------------------------------------------------------
-// Security (solver-engine-security.feature)
-// ---------------------------------------------------------------------------
-
-Given<CustomWorld>(
-  /a user submits a problem with more than 500 variables or more than 200 constraints in any single block/,
-  async function () {
-    return 'pending'
-  },
-)
-
-Then<CustomWorld>(
-  /the input is rejected with a clear message before the solver starts/,
-  async function () {
-    return 'pending'
-  },
-)
-
-Then<CustomWorld>('no Pyodide computation is initiated', async function () {
-  return 'pending'
-})
-
-Given<CustomWorld>('a user enters NaN or Infinity in any matrix or vector cell', async function () {
-  return 'pending'
-})
-
-Then<CustomWorld>('the cell is marked invalid', async function () {
-  return 'pending'
 })

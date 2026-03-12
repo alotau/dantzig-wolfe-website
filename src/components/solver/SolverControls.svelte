@@ -104,11 +104,7 @@
 
 <!-- Status badge / message -->
 {#if badge.label}
-  <span
-    class="text-sm {badge.cls}"
-    role="status"
-    data-status-message
-  >
+  <span class="text-sm {badge.cls}" role="status" data-status-message>
     {#if status === 'loading' || status === 'solving'}
       <!-- Animated spinner dot -->
       <span class="inline-block mr-1 animate-pulse">●</span>
@@ -148,7 +144,5 @@
 
 <!-- Validation hint when problem is null but user has typed something -->
 {#if problem === null && status === 'idle'}
-  <span class="text-sm text-red-600" role="status">
-    Fix validation errors before solving.
-  </span>
+  <span class="text-sm text-red-600" role="status"> Fix validation errors before solving. </span>
 {/if}

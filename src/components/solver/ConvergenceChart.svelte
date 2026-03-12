@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import type { SolverIteration } from '@/lib/solver/worker-client.js'
 
   // ---------------------------------------------------------------------------
@@ -115,6 +114,6 @@
       No iteration data yet.
     </p>
   {:else}
-    <canvas bind:this={canvasRef} aria-label="Convergence chart" role="img"></canvas>
+    <canvas bind:this={canvasRef} aria-label="Convergence chart"></canvas>
   {/if}
 </div>

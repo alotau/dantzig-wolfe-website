@@ -1,4 +1,11 @@
-import { BeforeAll, Before, After, AfterAll, setWorldConstructor, setDefaultTimeout } from '@cucumber/cucumber'
+import {
+  BeforeAll,
+  Before,
+  After,
+  AfterAll,
+  setWorldConstructor,
+  setDefaultTimeout,
+} from '@cucumber/cucumber'
 import { chromium } from '@playwright/test'
 import { CustomWorld } from './world.js'
 import * as path from 'path'
@@ -6,7 +13,8 @@ import * as fs from 'fs'
 
 setWorldConstructor(CustomWorld)
 
-setDefaultTimeout(15000)
+// 3 minutes: must cover Pyodide CDN load (~60–120 s) plus solver execution
+setDefaultTimeout(180_000)
 
 let sharedBrowser: import('@playwright/test').Browser
 

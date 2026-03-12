@@ -102,9 +102,7 @@ const ITERATIONS: SolverIteration[] = [
 describe('buildExportPayload', () => {
   it('contains all required top-level fields', () => {
     const payload = buildExportPayload(PROBLEM, OPTIMAL_RESULT, ITERATIONS)
-    expect(payload.$schema).toBe(
-      'https://dantzig-wolfe.example/schemas/solution-export/v1',
-    )
+    expect(payload.$schema).toBe('https://dantzig-wolfe.example/schemas/solution-export/v1')
     expect(payload.schemaVersion).toBe('1.0.0')
     expect(typeof payload.exportedAt).toBe('string')
     expect(payload.problem).toBeDefined()

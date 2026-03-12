@@ -4,8 +4,16 @@
   import SolutionPanel from './SolutionPanel.svelte'
   import ConvergenceChart from './ConvergenceChart.svelte'
   import IterationLog from './IterationLog.svelte'
-  import { ProblemInstanceSchema, type ParsedProblemInstance } from '@/lib/solver/problem-schema.js'
-  import { WorkerClient, type SolverIteration, type SolverResult } from '@/lib/solver/worker-client.js'
+  import {
+    ProblemInstanceSchema,
+    type ParsedProblemInstance,
+    type ParsedSubProblemBlock,
+  } from '@/lib/solver/problem-schema.js'
+  import {
+    WorkerClient,
+    type SolverIteration,
+    type SolverResult,
+  } from '@/lib/solver/worker-client.js'
   import { buildExportPayload, downloadJson } from '@/lib/solver/export.js'
   import { buildShareURL, decodeProblem } from '@/lib/sharing/url-codec.js'
 
@@ -47,14 +55,23 @@
   let workerClient = $state<WorkerClient | null>(null)
 
   // Reference to ProblemInput for imperative reset/load calls
-  let problemInputRef: { reset: () => void; loadProblem: (p: ParsedProblemInstance) => void }
+  let problemInputRef = $state<
+    | {
+        reset: () => void
+        loadProblem: (p: ParsedProblemInstance) => void
+        _forceState: (
+          cA: number[][],
+          cR: Array<{ b: number; sense: 'leq' | 'geq' | 'eq' }>,
+          sps: ParsedSubProblemBlock[],
+        ) => void
+      }
+    | undefined
+  >(undefined)
 
   // ---------------------------------------------------------------------------
   // Derived
   // ---------------------------------------------------------------------------
-  let canSolve = $derived(
-    problem !== null && initError === null && solverStatus !== 'solving',
-  )
+  let canSolve = $derived(problem !== null && initError === null && solverStatus !== 'solving')
 
   // ---------------------------------------------------------------------------
   // Lifecycle: initialise WorkerClient and restore persisted problem
@@ -122,6 +139,22 @@
       } catch {
         // sessionStorage unavailable
       }
+    }
+  })
+
+  // ---------------------------------------------------------------------------
+  // Effects: register acceptance-test hook on window
+  // (allows tests to force a dimension-mismatched state that normal UI prevents)
+  // ---------------------------------------------------------------------------
+  $effect(() => {
+    ;(window as unknown as { __dwTestHelpers: unknown }).__dwTestHelpers = {
+      forceInputState(
+        couplingA: number[][],
+        couplingRows: Array<{ b: number; sense: 'leq' | 'geq' | 'eq' }>,
+        subproblems: ParsedSubProblemBlock[],
+      ) {
+        problemInputRef?._forceState(couplingA, couplingRows, subproblems)
+      },
     }
   })
 
@@ -200,7 +233,9 @@
       solverResult = result
       solverStatus = result.status as SolverUiStatus
     } catch (err) {
-      initError = err instanceof Error ? err.message : String(err)
+      const errMsg = err instanceof Error ? err.message : String(err)
+      console.error('[SolverWorkspace] handleSolve caught JS error:', errMsg)
+      initError = errMsg
       solverStatus = 'error'
     }
   }
@@ -234,7 +269,12 @@
      Root workspace element — data-workspace attr for Playwright selectors
      data-solver-status is updated reactively for step definition waits
 ========================================================================== -->
-<div class="mx-auto max-w-5xl px-4 py-8 space-y-6" data-workspace data-solver-status={solverStatus}>
+<div
+  class="mx-auto max-w-5xl px-4 py-8 space-y-6"
+  data-workspace
+  data-solver-status={solverStatus}
+  data-solver-error-message={solverResult?.errorMessage ?? ''}
+>
   <!-- -----------------------------------------------------------------------
        INIT_ERROR: browser-compatibility message (WebAssembly unsupported or
        Pyodide package install failure)
@@ -252,115 +292,109 @@
       Firefox 88+, Safari 15.2+, Edge 89+.
     </div>
   {:else}
-
-  <!-- -----------------------------------------------------------------------
+    <!-- -----------------------------------------------------------------------
        Header row: title + example loader + clear button
   ----------------------------------------------------------------------- -->
-  <div class="flex flex-wrap items-center gap-3">
-    <h1 class="text-2xl font-bold text-[var(--color-text-primary)] flex-1">Interactive Solver</h1>
+    <div class="flex flex-wrap items-center gap-3">
+      <h1 class="text-2xl font-bold text-[var(--color-text-primary)] flex-1">Interactive Solver</h1>
 
-    <!-- Load Example -->
-    <label class="flex items-center gap-2 text-sm">
-      <span class="text-[var(--color-text-secondary)]">Load example:</span>
-      <select
-        value={selectedExample}
-        onchange={handleExampleSelect}
-        data-example-select
-        class="rounded border border-gray-300 px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+      <!-- Load Example -->
+      <label class="flex items-center gap-2 text-sm">
+        <span class="text-[var(--color-text-secondary)]">Load example:</span>
+        <select
+          value={selectedExample}
+          onchange={handleExampleSelect}
+          data-example-select
+          class="rounded border border-gray-300 px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+        >
+          <option value="">— choose —</option>
+          {#each EXAMPLES as ex}
+            <option value={ex.value}>{ex.label}</option>
+          {/each}
+        </select>
+      </label>
+
+      <!-- Clear -->
+      <button
+        type="button"
+        onclick={handleClear}
+        data-action="clear"
+        class="rounded border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-100 transition-colors"
       >
-        <option value="">— choose —</option>
-        {#each EXAMPLES as ex}
-          <option value={ex.value}>{ex.label}</option>
-        {/each}
-      </select>
-    </label>
+        Clear
+      </button>
+    </div>
 
-    <!-- Clear -->
-    <button
-      type="button"
-      onclick={handleClear}
-      data-action="clear"
-      class="rounded border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-100 transition-colors"
-    >
-      Clear
-    </button>
-  </div>
+    <!-- Example description -->
+    {#if exampleDescription}
+      <p
+        class="text-sm text-[var(--color-text-secondary)] border-l-4 border-blue-300 pl-3"
+        data-example-description
+      >
+        {exampleDescription}
+      </p>
+    {:else}
+      <p data-example-description class="hidden" aria-hidden="true"></p>
+    {/if}
 
-  <!-- Example description -->
-  {#if exampleDescription}
-    <p
-      class="text-sm text-[var(--color-text-secondary)] border-l-4 border-blue-300 pl-3"
-      data-example-description
-    >
-      {exampleDescription}
-    </p>
-  {:else}
-    <p data-example-description class="hidden" aria-hidden="true"></p>
-  {/if}
-
-  <!-- -----------------------------------------------------------------------
+    <!-- -----------------------------------------------------------------------
        Problem Input form
   ----------------------------------------------------------------------- -->
-  <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <ProblemInput bind:this={problemInputRef} onchange={handleProblemChange} />
-  </div>
+    <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <ProblemInput bind:this={problemInputRef} onchange={handleProblemChange} />
+    </div>
 
-  <!-- -----------------------------------------------------------------------
+    <!-- -----------------------------------------------------------------------
        Solver controls: Solve / Cancel buttons + status badge
   ----------------------------------------------------------------------- -->
-  <div class="flex items-center gap-4" data-solver-controls>
-    <SolverControls
-      status={solverStatus}
-      {problem}
-      hasResult={solverResult !== null}
-      onsolve={handleSolve}
-      oncancel={handleCancel}
-      onexport={handleExport}
-      onshare={handleShare}
-    />
+    <div class="flex items-center gap-4" data-solver-controls>
+      <SolverControls
+        status={solverStatus}
+        {problem}
+        hasResult={solverResult !== null}
+        onsolve={handleSolve}
+        oncancel={handleCancel}
+        onexport={handleExport}
+        onshare={handleShare}
+      />
 
-    {#if problem === null && hasEnteredData}
-      <span class="text-sm text-red-600" role="status">
-        Fix validation errors before solving.
-      </span>
-    {/if}
-  </div>
+      {#if problem === null && hasEnteredData}
+        <span class="text-sm text-red-600" role="status">
+          Fix validation errors before solving.
+        </span>
+      {/if}
+    </div>
 
-  <!-- -----------------------------------------------------------------------
+    <!-- -----------------------------------------------------------------------
        Iteration log (live during solving; preserved after completion)
   ----------------------------------------------------------------------- -->
-  {#if iterations.length > 0}
-    <div class="space-y-2">
-      <h2 class="text-sm font-semibold text-[var(--color-text-secondary)] uppercase tracking-wide">
-        Iteration Log
-      </h2>
-      <IterationLog {iterations} />
-    </div>
-  {/if}
+    {#if iterations.length > 0}
+      <div class="space-y-2">
+        <h2
+          class="text-sm font-semibold text-[var(--color-text-secondary)] uppercase tracking-wide"
+        >
+          Iteration Log
+        </h2>
+        <IterationLog {iterations} />
+      </div>
+    {/if}
 
-  <!-- -----------------------------------------------------------------------
+    <!-- -----------------------------------------------------------------------
        Results panel (shown after a completed solve)
        Uses SolutionPanel for the summary + ConvergenceChart for the chart.
   ----------------------------------------------------------------------- -->
-  {#if solverResult !== null}
-    <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-6">
-      <SolutionPanel
-        result={solverResult}
-        {problem}
-        iterationCount={iterations.length}
-      />
+    {#if solverResult !== null}
+      <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-6">
+        <SolutionPanel result={solverResult} {problem} iterationCount={iterations.length} />
 
-      <!-- Convergence chart — only meaningful when there are iterations -->
-      {#if iterations.length > 0}
-        <div class="space-y-2">
-          <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">
-            Convergence
-          </p>
-          <ConvergenceChart {iterations} />
-        </div>
-      {/if}
-    </div>
-  {/if}
-
+        <!-- Convergence chart — only meaningful when there are iterations -->
+        {#if iterations.length > 0}
+          <div class="space-y-2">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Convergence</p>
+            <ConvergenceChart {iterations} />
+          </div>
+        {/if}
+      </div>
+    {/if}
   {/if}
 </div>

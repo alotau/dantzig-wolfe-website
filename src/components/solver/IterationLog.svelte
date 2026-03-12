@@ -16,7 +16,7 @@
   // ---------------------------------------------------------------------------
 
   let expandedRow = $state<number | null>(null)
-  let logEl: HTMLDivElement
+  let logEl = $state<HTMLDivElement | undefined>(undefined)
 
   // ---------------------------------------------------------------------------
   // Effects: auto-scroll to bottom when new iterations arrive

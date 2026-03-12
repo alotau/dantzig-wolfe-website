@@ -1,5 +1,6 @@
 dist/
 node_modules/
+.venv/
 .astro/
 .vercel/
 reports/

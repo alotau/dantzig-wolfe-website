@@ -98,13 +98,26 @@ export class WorkerClient {
   init(): Promise<void> {
     if (this.readyPromise) return this.readyPromise
 
+    // Check WebAssembly support in the main thread before creating the worker.
+    // Workers have their own global, so page-level stubs (e.g., in tests) won't
+    // reach the worker — this check ensures graceful error handling.
+    if (typeof WebAssembly === 'undefined') {
+      this.readyPromise = Promise.reject(
+        new Error(
+          'WebAssembly is not supported in this browser. ' +
+            'The interactive solver requires a modern browser with WebAssembly support.',
+        ),
+      )
+      return this.readyPromise
+    }
+
     this.readyPromise = new Promise<void>((resolve, reject) => {
       this.readyResolve = resolve
       this.readyReject = reject
     })
 
     // Create module worker — Vite resolves import.meta.url at build time
-    this.worker = new Worker(new URL('../workers/solver.worker.ts', import.meta.url), {
+    this.worker = new Worker(new URL('../../workers/solver.worker.ts', import.meta.url), {
       type: 'module',
     })
 
@@ -150,7 +163,13 @@ export class WorkerClient {
       this.pendingSolve = { requestId, resolve, reject, onIteration }
     })
 
-    this.worker.postMessage({ type: 'SOLVE', requestId, payload: problem })
+    this.worker.postMessage({
+      type: 'SOLVE',
+      requestId,
+      // Use a plain JSON round-trip to strip any Svelte reactive proxies before
+      // postMessage's structured-clone step (proxies cause DataCloneError).
+      payload: JSON.parse(JSON.stringify(problem)) as ParsedProblemInstance,
+    })
     return resultPromise
   }
 

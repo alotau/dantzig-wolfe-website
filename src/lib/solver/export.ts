@@ -84,22 +84,20 @@ export function buildExportPayload(
 ): ExportPayload {
   const coupling = problem.coupling
 
-  const exportSubproblems: ExportSubproblem[] = problem.subproblems.map(
-    (sp, i) => ({
-      index: i + 1,
-      label: sp.label ?? `Block ${i + 1}`,
-      numVariables: sp.c.length,
-      numConstraints: sp.A.length,
-      A: sp.A,
-      b: sp.b,
-      senses: sp.constraintSenses,
-      c: sp.c,
-      bounds: sp.bounds.map((bd) => ({
-        lower: bd.lower,
-        upper: bd.upper ?? null,
-      })),
-    }),
-  )
+  const exportSubproblems: ExportSubproblem[] = problem.subproblems.map((sp, i) => ({
+    index: i + 1,
+    label: sp.label ?? `Block ${i + 1}`,
+    numVariables: sp.c.length,
+    numConstraints: sp.A.length,
+    A: sp.A,
+    b: sp.b,
+    senses: sp.constraintSenses,
+    c: sp.c,
+    bounds: sp.bounds.map((bd) => ({
+      lower: bd.lower,
+      upper: bd.upper ?? null,
+    })),
+  }))
 
   const exportResult: ExportResult = {
     status: result.status,

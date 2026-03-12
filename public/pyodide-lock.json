@@ -39,13 +39,13 @@
       "sha256": "c18cde5592cc3d1823e9cc3a9a4fb436b02c15e3f8d7f5f69962f77b1b109da1"
     },
     "dantzig-wolfe-python": {
-      "name": "dantzig-wolfe-python",
+      "name": "dwsolver",
       "version": "0.1.0",
       "packageType": "wheel",
-      "fileName": "dantzig_wolfe_python-0.1.0-py3-none-any.whl",
+      "fileName": "dwsolver-0.1.0-py3-none-any.whl",
       "installDir": "site",
-      "url": "https://github.com/alotau/dantzig-wolfe-python/releases/download/v0.1.0/dantzig_wolfe_python-0.1.0-py3-none-any.whl",
-      "sha256": "PLACEHOLDER_VERIFY_AT_INSTALL_TIME"
+      "url": "/dwsolver-0.1.0-py3-none-any.whl",
+      "sha256": "e6ad87e41eb5b25ae63dcccb18dedec8900aadd0c178f228e4fd594ad47baba1"
     }
   }
 }

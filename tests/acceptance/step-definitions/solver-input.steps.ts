@@ -17,14 +17,25 @@ Given<CustomWorld>('I have entered a valid decomposed problem', async function (
   await this.page.goto(`${this.baseURL}/solver`)
   await this.page.waitForSelector('[data-workspace]', { timeout: 10000 })
   // Wait for Svelte client:load hydration before interacting with the select
-  await this.page.waitForFunction(() => {
-    const sel = document.querySelector<HTMLSelectElement>('[data-example-select]')
-    return sel !== null && !sel.disabled
-  }, { timeout: 10000 })
+  await this.page.waitForFunction(
+    () => {
+      const sel = document.querySelector<HTMLSelectElement>('[data-example-select]')
+      return sel !== null && !sel.disabled
+    },
+    undefined,
+    { timeout: 10000 },
+  )
   await this.page.selectOption('[data-example-select]', 'two-block-lp')
   await this.page.waitForSelector('[data-subproblem-block]', { timeout: 5000 })
   // Wait for ProblemInput's onchange effect to propagate (enables the Solve button)
   await this.page.locator('[data-solve]:not([disabled])').waitFor({ timeout: 8000 })
+  // Wait for Pyodide to finish loading so solver tests can click Solve immediately
+  await this.page.waitForFunction(
+    () =>
+      document.querySelector('[data-workspace]')?.getAttribute('data-solver-status') === 'ready',
+    undefined,
+    { timeout: 60_000 },
+  )
 })
 
 // ---------------------------------------------------------------------------
@@ -229,8 +240,11 @@ Then<CustomWorld>('I can modify the loaded data before solving', async function 
 // ---------------------------------------------------------------------------
 
 When<CustomWorld>('I click {string}', async function (label: string) {
+  // The "Solve" button shows "Loading…" while Pyodide initialises; use a long
+  // timeout so the step correctly waits for Pyodide to finish loading.
+  const timeout = label === 'Solve' ? 180_000 : 30_000
   const btn = this.page.getByRole('button', { name: label, exact: true }).first()
-  await btn.waitFor({ state: 'visible' })
+  await btn.waitFor({ state: 'visible', timeout })
   await btn.click()
 })
 
@@ -266,23 +280,58 @@ Then<CustomWorld>(
 // ---------------------------------------------------------------------------
 
 When<CustomWorld>('I attempt to solve a problem with incompatible dimensions', async function () {
-  // Load a valid 2-block example (coupling A has 4 cols, 2 subproblems × 2 vars = 4 total vars)
-  await this.page.waitForFunction(() => {
-    const sel = document.querySelector<HTMLSelectElement>('[data-example-select]')
-    return sel !== null && !sel.disabled
-  }, { timeout: 10000 })
-  await this.page.selectOption('[data-example-select]', 'two-block-lp')
-  // Wait for the problem to load (solve button becomes enabled)
-  await this.page.locator('[data-solve]:not([disabled])').waitFor({ timeout: 8000 })
-  // Now add a third block — totalVars becomes 4+2=6 but coupling still has 4 cols → mismatch
-  const addBlockBtn = this.page.locator('[data-add-block]')
-  if ((await addBlockBtn.count()) > 0) {
-    await addBlockBtn.click()
-    await this.page.waitForSelector('[data-subproblem-block]:nth-of-type(3)', { timeout: 3000 }).catch(() => {
-      // nth-of-type may not match — just wait briefly
-    })
-    await this.page.waitForTimeout(500)
-  }
+  // The UI's syncCouplingColumns() always keeps coupling in sync with totalVars, so a
+  // dimension mismatch cannot be created through normal interactions.  We use a test
+  // hook exposed on window.__dwTestHelpers to inject a deliberately mismatched state.
+  await this.page.waitForFunction(
+    () =>
+      typeof (window as unknown as { __dwTestHelpers?: { forceInputState?: unknown } })
+        .__dwTestHelpers?.forceInputState === 'function',
+    undefined,
+    { timeout: 10_000 },
+  )
+  // Inject 2 sub-problems with 2 variables each (totalVars = 4) but coupling A with 5
+  // columns → triggers the "Dimension mismatch" derived error in ProblemInput.
+  await this.page.evaluate(() => {
+    ;(
+      window as unknown as { __dwTestHelpers: { forceInputState: (...args: unknown[]) => void } }
+    ).__dwTestHelpers.forceInputState(
+      [[1, 0, 0, 0, 0]], // coupling A: 1 row × 5 cols
+      [{ b: 10, sense: 'leq' }],
+      [
+        {
+          index: 1,
+          A: [
+            [1, 0],
+            [0, 1],
+          ],
+          b: [10, 8],
+          constraintSenses: ['leq', 'leq'],
+          c: [1, 2],
+          bounds: [
+            { lower: 0, upper: null },
+            { lower: 0, upper: null },
+          ],
+        },
+        {
+          index: 2,
+          A: [
+            [1, 0],
+            [0, 1],
+          ],
+          b: [10, 8],
+          constraintSenses: ['leq', 'leq'],
+          c: [1, 2],
+          bounds: [
+            { lower: 0, upper: null },
+            { lower: 0, upper: null },
+          ],
+        },
+      ],
+    )
+  })
+  // Allow Svelte reactivity to propagate the derived dimensionError
+  await this.page.waitForTimeout(300)
 })
 
 Then<CustomWorld>(

@@ -38,10 +38,7 @@
         <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">
           Objective value
         </p>
-        <p
-          class="text-3xl font-mono font-bold text-[var(--color-accent)]"
-          data-result-objective
-        >
+        <p class="text-3xl font-mono font-bold text-[var(--color-accent)]" data-result-objective>
           {result.objectiveValue.toFixed(6)}
         </p>
       </div>
@@ -54,13 +51,17 @@
           Variable values
         </p>
         <div class="overflow-auto rounded-md border border-gray-200">
-          <table class="w-full text-sm font-mono border-collapse" aria-label="Variable values by block">
+          <table
+            class="w-full text-sm font-mono border-collapse"
+            aria-label="Variable values by block"
+          >
+            <thead>
+              <tr class="bg-gray-50 text-xs text-gray-600">
+                <th class="border-b border-gray-200 px-4 py-2 text-left font-semibold"> Block </th>
                 <th class="border-b border-gray-200 px-4 py-2 text-left font-semibold">
                   Variable
                 </th>
-                <th class="border-b border-gray-200 px-4 py-2 text-right font-semibold">
-                  Value
-                </th>
+                <th class="border-b border-gray-200 px-4 py-2 text-right font-semibold"> Value </th>
               </tr>
             </thead>
             <tbody>
@@ -71,8 +72,7 @@
                       {problem?.subproblems[blockIdx]?.label ?? `Block ${blockIdx + 1}`}
                     </td>
                     <td class="border-b border-gray-100 px-4 py-1.5">
-                      {problem?.subproblems[blockIdx]?.variableLabels?.[varIdx] ??
-                        `x${varIdx + 1}`}
+                      {problem?.subproblems[blockIdx]?.variableLabels?.[varIdx] ?? `x${varIdx + 1}`}
                     </td>
                     <td class="border-b border-gray-100 px-4 py-1.5 text-right">
                       {val.toFixed(6)}
@@ -93,7 +93,10 @@
           Coupling constraint duals (shadow prices)
         </p>
         <div class="overflow-auto rounded-md border border-gray-200">
-          <table class="w-full text-sm font-mono border-collapse" aria-label="Coupling constraint dual values">
+          <table
+            class="w-full text-sm font-mono border-collapse"
+            aria-label="Coupling constraint dual values"
+          >
             <thead>
               <tr class="bg-gray-50 text-xs text-gray-600">
                 <th class="border-b border-gray-200 px-4 py-2 text-left font-semibold">
@@ -120,7 +123,6 @@
         </div>
       </div>
     {/if}
-
   {:else if result.status === 'infeasible'}
     <div class="space-y-1">
       <span
@@ -130,12 +132,11 @@
         Solved — Infeasible
       </span>
       <p class="text-sm text-gray-700 pt-2" data-infeasibility-explanation>
-        The problem has no feasible solution. The constraints cannot all be
-        satisfied simultaneously. This typically means the coupling constraints
-        require more resources than the sub-problems can collectively provide.
+        The problem has no feasible solution. The constraints cannot all be satisfied
+        simultaneously. This typically means the coupling constraints require more resources than
+        the sub-problems can collectively provide.
       </p>
     </div>
-
   {:else if result.status === 'unbounded'}
     <div class="space-y-1">
       <span
@@ -146,18 +147,15 @@
       </span>
       <p class="text-sm text-gray-700 pt-2" data-unbounded-subproblem>
         {#if result.unboundedSubproblemIndex !== undefined}
-          The problem is unbounded — sub-problem block {result.unboundedSubproblemIndex +
-            1}
+          The problem is unbounded — sub-problem block {result.unboundedSubproblemIndex + 1}
           ({problem?.subproblems[result.unboundedSubproblemIndex]?.label ??
-            `block ${result.unboundedSubproblemIndex + 1}`}) has an unbounded
-          feasible region in the pricing direction.
+            `block ${result.unboundedSubproblemIndex + 1}`}) has an unbounded feasible region in the
+          pricing direction.
         {:else}
-          The problem is unbounded — at least one sub-problem has an unbounded
-          feasible region.
+          The problem is unbounded — at least one sub-problem has an unbounded feasible region.
         {/if}
       </p>
     </div>
-
   {:else if result.status === 'cancelled'}
     <div class="space-y-1">
       <span
@@ -168,11 +166,9 @@
       </span>
       <p class="text-sm text-gray-500 pt-2">
         {iterationCount}
-        {iterationCount !== 1 ? 'iterations' : 'iteration'} completed before
-        cancellation.
+        {iterationCount !== 1 ? 'iterations' : 'iteration'} completed before cancellation.
       </p>
     </div>
-
   {:else if result.status === 'error'}
     <div class="space-y-1">
       <span
@@ -182,7 +178,9 @@
         Solver error
       </span>
       {#if result.errorMessage}
-        <p class="text-sm text-red-700 font-mono pt-2">{result.errorMessage}</p>
+        <p class="text-sm text-red-700 font-mono pt-2" data-solver-error-message>
+          {result.errorMessage}
+        </p>
       {/if}
     </div>
   {/if}

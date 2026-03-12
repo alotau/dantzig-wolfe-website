@@ -64,9 +64,7 @@ export function encodeProblem(instance: ParsedProblemInstance): string | null {
   // Strip description from metadata to save space (per contract)
   const slim: ParsedProblemInstance = {
     ...instance,
-    metadata: instance.metadata
-      ? { ...instance.metadata, description: undefined }
-      : undefined,
+    metadata: instance.metadata ? { ...instance.metadata, description: undefined } : undefined,
   }
 
   const json = JSON.stringify(slim)

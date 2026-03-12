@@ -51,3 +51,7 @@ jobs:
 
       - name: Acceptance tests
         run: NODE_OPTIONS='--import tsx' npx cucumber-js
+
+      # Gate 5 — LCP performance
+      - name: LCP performance check
+        run: npm run perf:lcp
