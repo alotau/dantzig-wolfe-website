@@ -39,7 +39,7 @@
   const isSolving = $derived(status === 'solving')
 
   /** Status badge label and style class */
-  const badge = $derived<{ label: string; cls: string }>(() => {
+  const badge: { label: string; cls: string } = $derived.by(() => {
     switch (status) {
       case 'idle':
         return { label: '', cls: '' }
