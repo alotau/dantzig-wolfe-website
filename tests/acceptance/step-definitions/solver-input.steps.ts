@@ -205,6 +205,63 @@ Then<CustomWorld>(
 // Load pre-built example
 // ---------------------------------------------------------------------------
 
+Given<CustomWorld>('the solver has produced a result for the current problem', async function (this: CustomWorld) {
+  // Load a problem via URL and wait for Pyodide to be ready
+  await this.page.waitForFunction(
+    () => {
+      const sel = document.querySelector<HTMLSelectElement>('[data-example-select]')
+      return sel !== null && !sel.disabled
+    },
+    undefined,
+    { timeout: 10_000 },
+  )
+  await this.page.selectOption('[data-example-select]', { index: 1 })
+  await this.page.waitForSelector('[data-subproblem-block]', { timeout: 5_000 })
+  await this.page.locator('[data-solve]:not([disabled])').waitFor({ timeout: 15_000 })
+  // Wait for Pyodide ready
+  await this.page.waitForFunction(
+    () => document.querySelector('[data-workspace]')?.getAttribute('data-solver-status') === 'ready',
+    undefined,
+    { timeout: 60_000 },
+  )
+  // Run the solver and wait for completion
+  await this.page.click('[data-solve]:not([disabled])')
+  await this.page.waitForFunction(
+    () => {
+      const status = document.querySelector('[data-workspace]')?.getAttribute('data-solver-status')
+      return status !== null && !['idle', 'loading', 'ready', 'solving'].includes(status)
+    },
+    undefined,
+    { timeout: 120_000 },
+  )
+  // Verify a result is actually visible before we proceed
+  await expect(this.page.locator('[data-solution-panel]')).toBeVisible()
+})
+
+When<CustomWorld>('I select a different pre-built example from the examples dropdown', async function (this: CustomWorld) {
+  // Pick the second example (index 2) so it differs from the first
+  const select = this.page.locator('[data-example-select]')
+  await select.selectOption({ index: 2 })
+  await this.page.waitForSelector('[data-subproblem-block]', { timeout: 5_000 })
+})
+
+Then<CustomWorld>('the previous solution and iteration log are no longer visible', async function (this: CustomWorld) {
+  await expect(this.page.locator('[data-solution-panel]')).not.toBeVisible()
+  await expect(this.page.locator('[data-iteration-log]')).not.toBeVisible()
+})
+
+Then<CustomWorld>('the status badge is reset', async function (this: CustomWorld) {
+  // After switching problem the status should be ready (Pyodide still loaded)
+  // and the badge should show "Solver ready", not a previous solve result
+  await this.page.waitForFunction(
+    () => document.querySelector('[data-workspace]')?.getAttribute('data-solver-status') === 'ready',
+    undefined,
+    { timeout: 10_000 },
+  )
+  const badge = this.page.locator('[data-status-message]:not([aria-hidden])')
+  await expect(badge).toContainText('Solver ready')
+})
+
 When<CustomWorld>('I select a pre-built example from the examples dropdown', async function () {
   const select = this.page.locator('[data-example-select]')
   await expect(select).toBeVisible()
