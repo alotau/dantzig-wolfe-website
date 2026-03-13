@@ -1,6 +1,27 @@
 <!--
 ## Sync Impact Report
 
+**Version change**: 1.2.2 → 1.2.3
+
+### Amended Principles
+- None.
+
+### Amended Sections
+- Technology Stack: added production URL `https://dantzigwolfe.com` to the Hosting entry.
+
+### Templates Reviewed
+- `.specify/templates/tasks-template.md` ✅ compatible
+- `.specify/templates/plan-template.md` ✅ compatible
+- `.specify/templates/spec-template.md` ✅ no changes required
+- `.specify/templates/constitution-template.md` ✅ no changes required
+
+### Deferred TODOs
+- None.
+
+---
+
+## Previous Report (v1.2.2 — 2026-03-11)
+
 **Version change**: 1.2.1 → 1.2.2
 
 ### Amended Principles
@@ -223,7 +244,7 @@ non-negotiable and take precedence over brevity or stylistic preference.
 - **CI/CD**: Automated pipeline covering all gates defined in Principle V. The Python solver
   dependency MUST be pinned to an explicit version/commit to ensure reproducible builds.
 - **Hosting**: Vercel (static output mode; `@astrojs/vercel` adapter); no compute backend
-  required unless amended.
+  required unless amended. Production site live at `https://dantzigwolfe.com`.
 - **Versioning**: Semantic versioning (`MAJOR.MINOR.PATCH`) for all released artifacts.
 
 Specific technology choices within these constraints are resolved at the plan stage per
@@ -290,4 +311,4 @@ project. In any conflict, the constitution takes precedence.
 confirming compliance with all applicable principles. The plan template enforces this gate
 formally at the planning stage.
 
-**Version**: 1.2.2 | **Ratified**: 2026-03-07 | **Last Amended**: 2026-03-11
+**Version**: 1.2.3 | **Ratified**: 2026-03-07 | **Last Amended**: 2026-03-12
