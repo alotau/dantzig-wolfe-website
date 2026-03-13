@@ -21,15 +21,15 @@ Built with [Astro 5](https://astro.build), [Svelte 5](https://svelte.dev), [Tail
 
 ## Tech Stack
 
-| Layer          | Technology                                                                                                                                                                                           |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Framework      | [Astro 5](https://astro.build) — static output, content collections, MDX                                                                                                                             |
-| UI components  | [Svelte 5](https://svelte.dev) — runes reactivity (`$state`, `$derived`)                                                                                                                             |
-| Styling        | [Tailwind CSS 4](https://tailwindcss.com) — Vite plugin, `@theme` CSS vars                                                                                                                           |
-| Math rendering | [KaTeX](https://katex.org) — server-side in Astro, `remark-math` + `rehype-katex` in MDX                                                                                                             |
-| Charts         | [Chart.js](https://www.chartjs.org) — convergence visualisation                                                                                                                                      |
+| Layer          | Technology                                                                                                                                                                                                                                                                                |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework      | [Astro 5](https://astro.build) — static output, content collections, MDX                                                                                                                                                                                                                  |
+| UI components  | [Svelte 5](https://svelte.dev) — runes reactivity (`$state`, `$derived`)                                                                                                                                                                                                                  |
+| Styling        | [Tailwind CSS 4](https://tailwindcss.com) — Vite plugin, `@theme` CSS vars                                                                                                                                                                                                                |
+| Math rendering | [KaTeX](https://katex.org) — server-side in Astro, `remark-math` + `rehype-katex` in MDX                                                                                                                                                                                                  |
+| Charts         | [Chart.js](https://www.chartjs.org) — convergence visualisation                                                                                                                                                                                                                           |
 | Solver runtime | [dantzig-wolfe-python](https://github.com/alotau/dantzig-wolfe-python) — solver library, loaded via [Pyodide](https://pyodide.org) (Python/WASM in-browser) + [pako](https://github.com/nodeca/pako); based on the original [dwsolver](https://github.com/alotau/dwsolver) implementation |
-| Deployment     | [Vercel](https://vercel.com) via `@astrojs/vercel`                                                                                                                                                   |
+| Deployment     | [Vercel](https://vercel.com) via `@astrojs/vercel`                                                                                                                                                                                                                                        |
 
 ---
 
