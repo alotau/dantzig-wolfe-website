@@ -18,7 +18,7 @@ Feature: Solver Engine — Correctness
       | Two-block LP (Textbook ex. 1)   | 12.0           |
       | Three-block LP (Textbook ex. 2) | 24.5           |
       | Trick – 2-block LP              | -40.0          |
-      | Lasdon – 2-block LP             | -36.6667       |
+      | Lasdon – 2-block LP             | -36.666667     |
       | Mitchell – 1-block LP           | -5.0           |
       | Bertsimas – 1-block LP          | -21.5          |
 
