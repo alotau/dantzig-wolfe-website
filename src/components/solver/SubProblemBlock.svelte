@@ -239,12 +239,12 @@
                 class="border border-gray-200 px-1 py-1 font-normal text-[var(--color-text-secondary)]"
               >
                 <div class="flex items-center gap-0.5">
-                  <span>x<sub>{j + 1}</sub></span>
+                  <span>{block.variableLabels?.[j] ?? `x${j + 1}`}</span>
                   <button
                     type="button"
                     onclick={() => removeVariable(j)}
                     class="text-gray-300 hover:text-red-500 transition-colors leading-none"
-                    aria-label="Remove variable {j + 1}"
+                    aria-label="Remove variable {block.variableLabels?.[j] ?? j + 1}"
                     data-remove-variable>×</button
                   >
                 </div>
