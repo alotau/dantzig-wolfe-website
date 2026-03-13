@@ -1,0 +1,296 @@
+{
+  "objectiveDirection": "min",
+  "coupling": {
+    "A": [
+      [
+        3.0,
+        2.0,
+        1.0,
+        6.0,
+        5.0,
+        4.0,
+        8.0,
+        5.0,
+        7.0,
+        3.0,
+        4.0,
+        1.0,
+        1.0,
+        2.0
+      ],
+      [
+        1.0,
+        8.0,
+        3.0,
+        7.0,
+        1.0,
+        4.0,
+        5.0,
+        2.0,
+        5.0,
+        3.0,
+        2.0,
+        6.0,
+        3.0,
+        4.0
+      ]
+    ],
+    "b": [
+      64.0,
+      63.0
+    ],
+    "senses": [
+      "eq",
+      "eq"
+    ],
+    "constraintLabels": [
+      "Con1",
+      "Con2"
+    ]
+  },
+  "subproblems": [
+    {
+      "index": 1,
+      "label": "Block 0",
+      "A": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "b": [
+        3.0,
+        4.0,
+        2.0,
+        1.0,
+        4.0
+      ],
+      "constraintSenses": [
+        "eq",
+        "eq",
+        "eq",
+        "eq",
+        "eq"
+      ],
+      "c": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0
+      ],
+      "bounds": [
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        }
+      ],
+      "variableLabels": [
+        "x1",
+        "x2",
+        "x3",
+        "x4",
+        "x5",
+        "x6"
+      ]
+    },
+    {
+      "index": 2,
+      "label": "Block 1",
+      "A": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "b": [
+        4.0,
+        5.0,
+        3.0,
+        3.0,
+        3.0
+      ],
+      "constraintSenses": [
+        "eq",
+        "eq",
+        "eq",
+        "eq",
+        "eq"
+      ],
+      "c": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0
+      ],
+      "bounds": [
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        }
+      ],
+      "variableLabels": [
+        "x7",
+        "x8",
+        "x9",
+        "x10",
+        "x11",
+        "x12"
+      ]
+    },
+    {
+      "index": 3,
+      "label": "Block 2",
+      "A": [
+        [
+          1.0,
+          -1.0
+        ]
+      ],
+      "b": [
+        1.0
+      ],
+      "constraintSenses": [
+        "eq"
+      ],
+      "c": [
+        7.0,
+        -10.0
+      ],
+      "bounds": [
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 65.0
+        }
+      ],
+      "variableLabels": [
+        "x13",
+        "x14"
+      ]
+    }
+  ],
+  "metadata": {
+    "name": "Dantzig and Thapa (1997) \u2014 3-Block LP",
+    "description": "Example 10.5/10.6 from Dantzig and Thapa Linear Programming: Theory and Extensions (p.290-298). 3 subproblems, 2 equality coupling constraints, 14 variables total. Multiple optimal bases exist (objective value non-unique). Demonstrates DW decomposition on a structured LP with all-equality coupling constraints.",
+    "sourceExample": "dantzig-3block"
+  }
+}

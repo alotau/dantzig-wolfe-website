@@ -1,0 +1,103 @@
+{
+  "objectiveDirection": "min",
+  "coupling": {
+    "A": [
+      [
+        2.0,
+        1.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "b": [
+      10.0,
+      3.0
+    ],
+    "senses": [
+      "leq",
+      "leq"
+    ],
+    "constraintLabels": [
+      "Con1",
+      "Con2"
+    ]
+  },
+  "subproblems": [
+    {
+      "index": 1,
+      "label": "Block 0",
+      "A": [
+        [
+          1.0,
+          1.0
+        ],
+        [
+          2.0,
+          1.0
+        ]
+      ],
+      "b": [
+        5.0,
+        8.0
+      ],
+      "constraintSenses": [
+        "leq",
+        "leq"
+      ],
+      "c": [
+        -5.0,
+        -3.0
+      ],
+      "bounds": [
+        {
+          "lower": 0.0,
+          "upper": null
+        },
+        {
+          "lower": 0.0,
+          "upper": null
+        }
+      ],
+      "variableLabels": [
+        "x2",
+        "x3"
+      ]
+    },
+    {
+      "index": 2,
+      "label": "Block 1",
+      "A": [
+        [
+          1.0
+        ]
+      ],
+      "b": [
+        3.0
+      ],
+      "constraintSenses": [
+        "leq"
+      ],
+      "c": [
+        -7.0
+      ],
+      "bounds": [
+        {
+          "lower": 0.0,
+          "upper": null
+        }
+      ],
+      "variableLabels": [
+        "x1"
+      ]
+    }
+  ],
+  "metadata": {
+    "name": "Trick (2002) \u2014 2-Block LP",
+    "description": "DW example from Trick's 'A Consultant's Guide to Solving Large Problems' (mat.gsia.cmu.edu). 2 subproblems, 2 coupling inequality constraints, 3 variables. Minimise: -7x1 - 5x2 - 3x3. Known optimal: x1=3, x2=2, x3=3, obj=-40.",
+    "sourceExample": "trick-2block"
+  }
+}

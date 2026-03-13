@@ -25,6 +25,11 @@
     { value: 'cutting-stock', label: 'Cutting Stock (2-width)' },
     { value: 'two-block-lp', label: 'Two-block LP' },
     { value: 'three-block-lp', label: 'Three-block LP' },
+    { value: 'trick-2block', label: 'Trick – 2-block LP (Trick)' },
+    { value: 'lasdon-2block', label: 'Lasdon – 2-block LP' },
+    { value: 'mitchell-1block', label: 'Mitchell – 1-block LP' },
+    { value: 'bertsimas-1block', label: 'Bertsimas – 1-block LP' },
+    { value: 'dantzig-3block', label: 'Dantzig – 3-block LP' },
   ] as const
 
   // ---------------------------------------------------------------------------
