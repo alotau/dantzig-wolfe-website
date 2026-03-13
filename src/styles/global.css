@@ -5,6 +5,7 @@
   /* Brand colours */
   --color-primary: #1e3a5f; /* Navy — headers, navlinks */
   --color-accent: #0ea5e9; /* Sky blue — interactive elements */
+  --color-accent-hover: #0284c7; /* Sky-600 — hover state for accent elements */
   --color-optimal: #059669; /* Emerald — optimal solutions, success */
   --color-constraint: #ea580c; /* Orange — constraints, warnings */
   --color-surface: #f8fafc; /* Slate-50 — page background */
