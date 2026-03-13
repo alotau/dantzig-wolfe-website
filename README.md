@@ -21,15 +21,15 @@ Built with [Astro 5](https://astro.build), [Svelte 5](https://svelte.dev), [Tail
 
 ## Tech Stack
 
-| Layer          | Technology                                                                                                                                                                                           |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Framework      | [Astro 5](https://astro.build) — static output, content collections, MDX                                                                                                                             |
-| UI components  | [Svelte 5](https://svelte.dev) — runes reactivity (`$state`, `$derived`)                                                                                                                             |
-| Styling        | [Tailwind CSS 4](https://tailwindcss.com) — Vite plugin, `@theme` CSS vars                                                                                                                           |
-| Math rendering | [KaTeX](https://katex.org) — server-side in Astro, `remark-math` + `rehype-katex` in MDX                                                                                                             |
-| Charts         | [Chart.js](https://www.chartjs.org) — convergence visualisation                                                                                                                                      |
-| Solver runtime | [dantzig-wolfe-python](https://github.com/alotau/dantzig-wolfe-python) — solver library, loaded via [Pyodide](https://pyodide.org) (Python/WASM in-browser) + [pako](https://github.com/nodeca/pako) |
-| Deployment     | [Vercel](https://vercel.com) via `@astrojs/vercel`                                                                                                                                                   |
+| Layer          | Technology                                                                                                                                                                                                                                                                                |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework      | [Astro 5](https://astro.build) — static output, content collections, MDX                                                                                                                                                                                                                  |
+| UI components  | [Svelte 5](https://svelte.dev) — runes reactivity (`$state`, `$derived`)                                                                                                                                                                                                                  |
+| Styling        | [Tailwind CSS 4](https://tailwindcss.com) — Vite plugin, `@theme` CSS vars                                                                                                                                                                                                                |
+| Math rendering | [KaTeX](https://katex.org) — server-side in Astro, `remark-math` + `rehype-katex` in MDX                                                                                                                                                                                                  |
+| Charts         | [Chart.js](https://www.chartjs.org) — convergence visualisation                                                                                                                                                                                                                           |
+| Solver runtime | [dantzig-wolfe-python](https://github.com/alotau/dantzig-wolfe-python) — solver library, loaded via [Pyodide](https://pyodide.org) (Python/WASM in-browser) + [pako](https://github.com/nodeca/pako); based on the original [dwsolver](https://github.com/alotau/dwsolver) implementation |
+| Deployment     | [Vercel](https://vercel.com) via `@astrojs/vercel`                                                                                                                                                                                                                                        |
 
 ---
 
@@ -169,6 +169,12 @@ All written content lives in `src/content/` as MDX files and is validated by Zod
 4. Open a pull request against `main`.
 
 Please keep all mathematical content accurate and cite primary sources with DOI where available.
+
+---
+
+## Acknowledgements
+
+The Python solver ([dantzig-wolfe-python](https://github.com/alotau/dantzig-wolfe-python)) is a rewrite of the original [dwsolver](https://github.com/alotau/dwsolver) by the same author, which served as the basis for the new implementation.
 
 ---
 
