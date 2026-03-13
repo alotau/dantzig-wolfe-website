@@ -44,23 +44,13 @@
   // Derived: ordered variable labels across all sub-problems (for coupling header)
   // ---------------------------------------------------------------------------
   let allVarLabels = $derived.by(() => {
-    // Collect raw labels (variableLabel if present, else global-index fallback)
-    const raw: string[] = []
+    const labels: string[] = []
     for (const sp of subproblems) {
       for (let v = 0; v < sp.c.length; v++) {
-        raw.push(sp.variableLabels?.[v] ?? `x${raw.length + 1}`)
+        labels.push(sp.variableLabels?.[v] ?? `x${labels.length + 1}`)
       }
     }
-    // If any label appears more than once the labels are not globally unique
-    // (e.g. two sub-problems both call their variable "Production level").
-    // Fall back to globally-indexed mathematical names so headers are unambiguous.
-    const seen = new Set<string>()
-    const hasDuplicates = raw.some((l) => {
-      if (seen.has(l)) return true
-      seen.add(l)
-      return false
-    })
-    return hasDuplicates ? raw.map((_, i) => `x${i + 1}`) : raw
+    return labels
   })
 
   // ---------------------------------------------------------------------------
