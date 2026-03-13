@@ -15,21 +15,21 @@ Built with [Astro 5](https://astro.build), [Svelte 5](https://svelte.dev), [Tail
   - Multi-Commodity Network Flow (Ford-Fulkerson)
   - Crew Scheduling / Branch-and-Price (Barnhart et al.)
 - **Glossary** — Slide-out panel with filterable definitions; term links throughout content.
-- **Interactive Solver** _(in progress)_ — Enter a block-angular LP in the browser, run Dantzig-Wolfe Decomposition via Pyodide (Python in WebAssembly), and visualise the solution.
+- **Interactive Solver** _(in progress)_ — Enter a block-angular LP in the browser, run Dantzig-Wolfe Decomposition via [dantzig-wolfe-python](https://github.com/alotau/dantzig-wolfe-python) loaded through Pyodide (Python in WebAssembly), and visualise the solution.
 
 ---
 
 ## Tech Stack
 
-| Layer          | Technology                                                                                       |
-| -------------- | ------------------------------------------------------------------------------------------------ |
-| Framework      | [Astro 5](https://astro.build) — static output, content collections, MDX                         |
-| UI components  | [Svelte 5](https://svelte.dev) — runes reactivity (`$state`, `$derived`)                         |
-| Styling        | [Tailwind CSS 4](https://tailwindcss.com) — Vite plugin, `@theme` CSS vars                       |
-| Math rendering | [KaTeX](https://katex.org) — server-side in Astro, `remark-math` + `rehype-katex` in MDX         |
-| Charts         | [Chart.js](https://www.chartjs.org) — convergence visualisation                                  |
-| Solver runtime | [Pyodide](https://pyodide.org) + [pako](https://github.com/nodeca/pako) — Python/WASM in-browser |
-| Deployment     | [Vercel](https://vercel.com) via `@astrojs/vercel`                                               |
+| Layer          | Technology                                                                                                                                                                                           |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework      | [Astro 5](https://astro.build) — static output, content collections, MDX                                                                                                                             |
+| UI components  | [Svelte 5](https://svelte.dev) — runes reactivity (`$state`, `$derived`)                                                                                                                             |
+| Styling        | [Tailwind CSS 4](https://tailwindcss.com) — Vite plugin, `@theme` CSS vars                                                                                                                           |
+| Math rendering | [KaTeX](https://katex.org) — server-side in Astro, `remark-math` + `rehype-katex` in MDX                                                                                                             |
+| Charts         | [Chart.js](https://www.chartjs.org) — convergence visualisation                                                                                                                                      |
+| Solver runtime | [dantzig-wolfe-python](https://github.com/alotau/dantzig-wolfe-python) — solver library, loaded via [Pyodide](https://pyodide.org) (Python/WASM in-browser) + [pako](https://github.com/nodeca/pako) |
+| Deployment     | [Vercel](https://vercel.com) via `@astrojs/vercel`                                                                                                                                                   |
 
 ---
 
