@@ -314,7 +314,10 @@ When<CustomWorld>('I open the examples dropdown', async function () {
 
 Then<CustomWorld>(
   'I see {string} as an available option',
-  async function (this: CustomWorld & { exampleDropdown?: import('@playwright/test').Locator }, label: string) {
+  async function (
+    this: CustomWorld & { exampleDropdown?: import('@playwright/test').Locator },
+    label: string,
+  ) {
     const select = this.exampleDropdown ?? this.page.locator('[data-example-select]')
     const option = select.locator(`option[label="${label}"], option:text("${label}")`)
     await expect(option).toHaveCount(1)

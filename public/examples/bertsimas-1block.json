@@ -1,22 +1,10 @@
 {
   "objectiveDirection": "min",
   "coupling": {
-    "A": [
-      [
-        3.0,
-        2.0,
-        4.0
-      ]
-    ],
-    "b": [
-      17.0
-    ],
-    "senses": [
-      "eq"
-    ],
-    "constraintLabels": [
-      "Con1"
-    ]
+    "A": [[3.0, 2.0, 4.0]],
+    "b": [17.0],
+    "senses": ["eq"],
+    "constraintLabels": ["Con1"]
   },
   "subproblems": [
     {
@@ -25,11 +13,7 @@
       "A": [],
       "b": [],
       "constraintSenses": [],
-      "c": [
-        -4.0,
-        -1.0,
-        -6.0
-      ],
+      "c": [-4.0, -1.0, -6.0],
       "bounds": [
         {
           "lower": 1.0,
@@ -44,11 +28,7 @@
           "upper": 2.0
         }
       ],
-      "variableLabels": [
-        "x1",
-        "x2",
-        "x3"
-      ]
+      "variableLabels": ["x1", "x2", "x3"]
     }
   ],
   "metadata": {
