@@ -117,18 +117,6 @@
     onchange({ ...block, constraintSenses: newSenses })
   }
 
-  function updateCCell(j: number, raw: string) {
-    const key = `c-${j}`
-    const n = parseCell(raw)
-    if (n === null) {
-      setError(key, 'Numeric value required')
-      return
-    }
-    clearError(key)
-    const newC = block.c.map((v, i) => (i === j ? n : v))
-    onchange({ ...block, c: newC })
-  }
-
   function updateBoundLower(j: number, raw: string) {
     const n = parseCell(raw)
     if (n === null) return
@@ -343,38 +331,6 @@
     {#each Object.entries(cellErrors).filter(([k]) => k.startsWith('A-') || k.startsWith('b-')) as [key, msg]}
       <p class="text-red-600 text-xs" data-validation-message>{key}: {msg}</p>
     {/each}
-
-    <!-- Objective cost vector c -->
-    <div class="overflow-x-auto">
-      <p class="text-xs font-medium text-[var(--color-text-secondary)] mb-1">
-        Objective cost vector c
-      </p>
-      <div class="flex gap-1" data-block-c>
-        {#each Array(cols) as _, j}
-          {@const key = `c-${j}`}
-          <div class="flex flex-col items-center gap-0.5">
-            <input
-              type="number"
-              step="any"
-              value={block.c[j]}
-              oninput={(e) => updateCCell(j, (e.target as HTMLInputElement).value)}
-              aria-invalid={!!cellErrors[key]}
-              aria-label="Objective coefficient for variable {j + 1}"
-              data-cell-c
-              class="w-14 rounded border border-gray-300 px-1 py-0.5 text-right text-xs focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] {cellErrors[
-                key
-              ]
-                ? 'border-red-400 bg-red-50'
-                : ''}"
-            />
-            {#if cellErrors[key]}
-              <span class="text-red-500 text-xs" data-validation-message>{cellErrors[key]}</span>
-            {/if}
-            <span class="text-xs text-[var(--color-text-secondary)]">c<sub>{j + 1}</sub></span>
-          </div>
-        {/each}
-      </div>
-    </div>
 
     <!-- Variable bounds -->
     <div class="overflow-x-auto">

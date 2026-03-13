@@ -56,6 +56,11 @@
   })
 
   // ---------------------------------------------------------------------------
+  // Derived: flat objective cost vector across all sub-problems
+  // ---------------------------------------------------------------------------
+  let allC = $derived(subproblems.flatMap((sp) => sp.c))
+
+  // ---------------------------------------------------------------------------
   // Derived: dimension error
   // ---------------------------------------------------------------------------
   let dimensionError = $derived.by<string | null>(() => {
@@ -171,6 +176,22 @@
     }
   }
 
+  function updateGlobalC(globalIdx: number, raw: string) {
+    const n = parseFloat(raw)
+    if (isNaN(n) || !isFinite(n)) return
+    let offset = 0
+    for (let i = 0; i < subproblems.length; i++) {
+      const sp = subproblems[i]
+      if (globalIdx < offset + sp.c.length) {
+        const j = globalIdx - offset
+        const newC = sp.c.map((v, k) => (k === j ? n : v))
+        updateBlock(i, { ...sp, c: newC })
+        return
+      }
+      offset += sp.c.length
+    }
+  }
+
   // Used externally (SolverWorkspace calls reset())
   export function reset() {
     objectiveDirection = 'min'
@@ -217,8 +238,7 @@
       Add <em>coupling constraints</em> — these link the sub-problem blocks (the A₀x = b₀ part).
     </li>
     <li>
-      Add one or more <em>sub-problem blocks</em> — each block has its own constraint matrix, RHS, and
-      objective cost vector.
+      Add one or more <em>sub-problem blocks</em> — each block has its own constraint matrix and RHS.
     </li>
     <li>
       The column count of the coupling matrix must equal the total variable count across all blocks.
@@ -237,6 +257,80 @@
     for definitions of block-angular LP, coupling constraints, master problem, and more.
   </p>
 </div>
+
+<!-- -------------------------------------------------------------------------
+     Objective function
+------------------------------------------------------------------------- -->
+<section class="mb-8" aria-labelledby="objective-heading">
+  <div class="flex items-center gap-3 mb-3">
+    <h2 id="objective-heading" class="text-lg font-semibold text-[var(--color-text-primary)]">
+      Objective Function
+    </h2>
+    <div
+      class="flex rounded border border-gray-300 overflow-hidden text-sm"
+      data-objective-direction
+    >
+      <button
+        type="button"
+        onclick={() => (objectiveDirection = 'min')}
+        class="px-3 py-1 transition-colors {objectiveDirection === 'min'
+          ? 'bg-[var(--color-accent)] text-white'
+          : 'hover:bg-gray-100'}"
+        aria-pressed={objectiveDirection === 'min'}
+      >
+        Min
+      </button>
+      <button
+        type="button"
+        onclick={() => (objectiveDirection = 'max')}
+        class="px-3 py-1 border-l border-gray-300 transition-colors {objectiveDirection === 'max'
+          ? 'bg-[var(--color-accent)] text-white'
+          : 'hover:bg-gray-100'}"
+        aria-pressed={objectiveDirection === 'max'}
+      >
+        Max
+      </button>
+    </div>
+  </div>
+
+  {#if subproblems.length === 0}
+    <p class="text-sm text-[var(--color-text-secondary)] italic">
+      Add sub-problem blocks below to define the objective cost vector.
+    </p>
+  {:else}
+    <div class="overflow-x-auto" data-objective-c>
+      <table class="text-xs border-collapse w-full">
+        <thead>
+          <tr class="bg-gray-50">
+            {#each allVarLabels as label}
+              <th
+                class="border border-gray-200 px-2 py-1 font-normal text-[var(--color-text-secondary)] tabular-nums"
+              >
+                {label}
+              </th>
+            {/each}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {#each allC as cVal, colIdx}
+              <td class="border border-gray-200 p-0">
+                <input
+                  type="number"
+                  step="any"
+                  value={cVal}
+                  oninput={(e) => updateGlobalC(colIdx, (e.target as HTMLInputElement).value)}
+                  aria-label="Objective coefficient for variable {allVarLabels[colIdx]}"
+                  class="w-14 px-1 py-0.5 text-right focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] focus:bg-blue-50"
+                />
+              </td>
+            {/each}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  {/if}
+</section>
 
 <!-- -------------------------------------------------------------------------
      Coupling constraints section
