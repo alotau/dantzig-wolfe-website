@@ -344,7 +344,8 @@ Given<CustomWorld>(
     await this.page.click('[data-solve]:not([disabled])')
     await this.page.waitForFunction(
       () =>
-        document.querySelector('[data-workspace]')?.getAttribute('data-solver-status') === 'optimal',
+        document.querySelector('[data-workspace]')?.getAttribute('data-solver-status') ===
+        'optimal',
       undefined,
       { timeout: SOLVE_COMPLETE_TIMEOUT },
     )

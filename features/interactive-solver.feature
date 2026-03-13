@@ -40,6 +40,12 @@ Feature: Interactive Solver — Problem Input
     And a description of the example is displayed alongside the input
     And I can modify the loaded data before solving
 
+  Scenario: Loading a new example clears any previous solution
+    Given the solver has produced a result for the current problem
+    When I select a different pre-built example from the examples dropdown
+    Then the previous solution and iteration log are no longer visible
+    And the status badge is reset
+
   Scenario: Clear the workspace
     When I click "Clear"
     Then all input fields are reset to empty

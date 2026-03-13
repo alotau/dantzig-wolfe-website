@@ -172,6 +172,11 @@
     if (!value) return
     selectedExample = value
     exampleDescription = ''
+    iterations = []
+    solverResult = null
+    if (solverStatus !== 'loading' && solverStatus !== 'solving') {
+      solverStatus = workerClient ? 'ready' : 'idle'
+    }
 
     try {
       const res = await fetch(`/examples/${value}.json`)
