@@ -41,6 +41,21 @@
   let totalVars = $derived(subproblems.reduce((s, sp) => s + sp.c.length, 0))
 
   // ---------------------------------------------------------------------------
+  // Derived: ordered variable labels across all sub-problems (for coupling header)
+  // ---------------------------------------------------------------------------
+  let allVarLabels = $derived.by(() => {
+    const labels: string[] = []
+    let globalIdx = 0
+    for (const sp of subproblems) {
+      for (let v = 0; v < sp.c.length; v++) {
+        labels.push(sp.variableLabels?.[v] ?? `x${globalIdx + 1}`)
+        globalIdx++
+      }
+    }
+    return labels
+  })
+
+  // ---------------------------------------------------------------------------
   // Derived: dimension error
   // ---------------------------------------------------------------------------
   let dimensionError = $derived.by<string | null>(() => {
@@ -254,11 +269,11 @@
       <table class="text-xs border-collapse w-full">
         <thead>
           <tr class="bg-gray-50">
-            {#each Array(totalVars) as _, j}
+            {#each allVarLabels as label}
               <th
                 class="border border-gray-200 px-2 py-1 font-normal text-[var(--color-text-secondary)] tabular-nums"
               >
-                x<sub>{j + 1}</sub>
+                {label}
               </th>
             {/each}
             <th class="border border-gray-200 px-2 py-1 font-normal">≤/≥/=</th>
