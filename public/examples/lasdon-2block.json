@@ -1,0 +1,115 @@
+{
+  "objectiveDirection": "min",
+  "coupling": {
+    "A": [
+      [
+        1.0,
+        2.0,
+        2.0,
+        1.0
+      ]
+    ],
+    "b": [
+      40.0
+    ],
+    "senses": [
+      "leq"
+    ],
+    "constraintLabels": [
+      "Con1"
+    ]
+  },
+  "subproblems": [
+    {
+      "index": 1,
+      "label": "Block 0",
+      "A": [
+        [
+          1.0,
+          3.0
+        ],
+        [
+          2.0,
+          1.0
+        ]
+      ],
+      "b": [
+        30.0,
+        20.0
+      ],
+      "constraintSenses": [
+        "leq",
+        "leq"
+      ],
+      "c": [
+        -1.0,
+        -1.0
+      ],
+      "bounds": [
+        {
+          "lower": 0.0,
+          "upper": null
+        },
+        {
+          "lower": 0.0,
+          "upper": null
+        }
+      ],
+      "variableLabels": [
+        "x1",
+        "x2"
+      ]
+    },
+    {
+      "index": 2,
+      "label": "Block 1",
+      "A": [
+        [
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "b": [
+        10.0,
+        10.0,
+        15.0
+      ],
+      "constraintSenses": [
+        "leq",
+        "leq",
+        "leq"
+      ],
+      "c": [
+        -2.0,
+        -1.0
+      ],
+      "bounds": [
+        {
+          "lower": 0.0,
+          "upper": null
+        },
+        {
+          "lower": 0.0,
+          "upper": null
+        }
+      ],
+      "variableLabels": [
+        "y1",
+        "y2"
+      ]
+    }
+  ],
+  "metadata": {
+    "name": "Lasdon (1970) \u2014 2-Block LP",
+    "description": "Example 3.5 from Lasdon's Optimization Theory for Large Systems (p.155-160). 2 subproblems, 1 coupling inequality constraint, 4 variables. Minimise: -x1 - x2 - 2y1 - y2. Known optimal: x1~8.33, x2~3.33, y1=10, y2=5, obj~-36.67.",
+    "sourceExample": "lasdon-2block"
+  }
+}

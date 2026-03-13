@@ -1,0 +1,59 @@
+{
+  "objectiveDirection": "min",
+  "coupling": {
+    "A": [
+      [
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "b": [
+      3.0
+    ],
+    "senses": [
+      "eq"
+    ],
+    "constraintLabels": [
+      "Con1"
+    ]
+  },
+  "subproblems": [
+    {
+      "index": 1,
+      "label": "Block 0",
+      "A": [],
+      "b": [],
+      "constraintSenses": [],
+      "c": [
+        1.0,
+        -1.0,
+        -2.0
+      ],
+      "bounds": [
+        {
+          "lower": 0.0,
+          "upper": 2.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 1.0
+        },
+        {
+          "lower": 0.0,
+          "upper": 2.0
+        }
+      ],
+      "variableLabels": [
+        "x1",
+        "x2",
+        "x3"
+      ]
+    }
+  ],
+  "metadata": {
+    "name": "Mitchell \u2014 Bounds-Only Subproblem",
+    "description": "DW decomposition example from Mitchell (rpi.edu). 1 subproblem defined entirely by variable bounds (no local inequality constraints), 1 equality coupling constraint, 3 variables. Minimise: x1 - x2 - 2x3 s.t. x1+x2+x3=3. Known optimal: x1=0, x2=1, x3=2, obj=-5.",
+    "sourceExample": "mitchell-1block"
+  }
+}
