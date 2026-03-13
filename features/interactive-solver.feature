@@ -40,6 +40,14 @@ Feature: Interactive Solver — Problem Input
     And a description of the example is displayed alongside the input
     And I can modify the loaded data before solving
 
+  Scenario: Reference examples from published literature are available in the dropdown
+    When I open the examples dropdown
+    Then I see "Trick – 2-block LP" as an available option
+    And I see "Lasdon – 2-block LP" as an available option
+    And I see "Mitchell – 1-block LP" as an available option
+    And I see "Bertsimas – 1-block LP" as an available option
+    And I see "Dantzig – 3-block LP" as an available option
+
   Scenario: Loading a new example clears any previous solution
     Given the solver has produced a result for the current problem
     When I select a different pre-built example from the examples dropdown
