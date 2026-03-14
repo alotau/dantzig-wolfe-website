@@ -139,9 +139,7 @@
 
         {#if boundBlocks.length > 0}
           <div data-infeasibility-explanation>
-            <p class="text-sm font-semibold text-gray-700 mb-1">
-              Variable bound conflicts
-            </p>
+            <p class="text-sm font-semibold text-gray-700 mb-1">Variable bound conflicts</p>
             <ul class="text-sm text-gray-700 space-y-0.5 list-disc list-inside">
               {#each boundBlocks as blk}
                 {#each blk.boundViolations as vname}
@@ -164,11 +162,18 @@
               <table class="text-xs border-collapse w-full">
                 <thead>
                   <tr class="bg-gray-50">
-                    <th class="border border-gray-200 px-2 py-1 text-left font-semibold">Constraint</th>
-                    <th class="border border-gray-200 px-2 py-1 text-center font-semibold">Sense</th>
+                    <th class="border border-gray-200 px-2 py-1 text-left font-semibold"
+                      >Constraint</th
+                    >
+                    <th class="border border-gray-200 px-2 py-1 text-center font-semibold">Sense</th
+                    >
                     <th class="border border-gray-200 px-2 py-1 text-right font-semibold">RHS</th>
-                    <th class="border border-gray-200 px-2 py-1 text-right font-semibold">Min achievable</th>
-                    <th class="border border-gray-200 px-2 py-1 text-right font-semibold">Max achievable</th>
+                    <th class="border border-gray-200 px-2 py-1 text-right font-semibold"
+                      >Min achievable</th
+                    >
+                    <th class="border border-gray-200 px-2 py-1 text-right font-semibold"
+                      >Max achievable</th
+                    >
                   </tr>
                 </thead>
                 <tbody>
@@ -178,7 +183,9 @@
                       <td class="border border-gray-200 px-2 py-1 text-center font-mono">
                         {row.sense === 'leq' ? '≤' : row.sense === 'geq' ? '≥' : '='}
                       </td>
-                      <td class="border border-gray-200 px-2 py-1 text-right font-mono">{row.rhs}</td>
+                      <td class="border border-gray-200 px-2 py-1 text-right font-mono"
+                        >{row.rhs}</td
+                      >
                       <td class="border border-gray-200 px-2 py-1 text-right font-mono">
                         {row.minAchievable !== undefined ? row.minAchievable.toFixed(4) : '−∞'}
                       </td>
@@ -196,9 +203,9 @@
         {#if boundBlocks.length === 0 && violatedRows.length === 0}
           <p class="text-sm text-gray-700" data-infeasibility-explanation>
             The problem has no feasible solution. No simple bound conflict was detected — the
-            infeasibility arises from the interplay of coupling constraints and sub-problem
-            feasible regions. Check that the coupling right-hand sides are consistent with what
-            the sub-problems can collectively achieve.
+            infeasibility arises from the interplay of coupling constraints and sub-problem feasible
+            regions. Check that the coupling right-hand sides are consistent with what the
+            sub-problems can collectively achieve.
           </p>
         {/if}
       {:else}
