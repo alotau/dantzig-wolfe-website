@@ -267,6 +267,18 @@ Then<CustomWorld>(
   },
 )
 
+Then<CustomWorld>(
+  'the infeasibility diagnostic details the violated coupling constraints',
+  async function (this: CustomWorld) {
+    await expect(
+      this.page.locator('[data-infeasibility-diagnostic-table]'),
+    ).toBeVisible()
+    await expect(
+      this.page.locator('[data-infeasibility-diagnostic-row]').first(),
+    ).toBeVisible()
+  },
+)
+
 // ---------------------------------------------------------------------------
 // Unbounded
 // ---------------------------------------------------------------------------

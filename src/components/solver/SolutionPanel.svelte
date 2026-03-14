@@ -159,7 +159,7 @@
               Coupling constraints provably violated at variable bounds
             </p>
             <div class="overflow-x-auto">
-              <table class="text-xs border-collapse w-full">
+              <table class="text-xs border-collapse w-full" data-infeasibility-diagnostic-table>
                 <thead>
                   <tr class="bg-gray-50">
                     <th class="border border-gray-200 px-2 py-1 text-left font-semibold"
@@ -178,7 +178,7 @@
                 </thead>
                 <tbody>
                   {#each violatedRows as row}
-                    <tr class="bg-amber-50">
+                    <tr class="bg-amber-50" data-infeasibility-diagnostic-row>
                       <td class="border border-gray-200 px-2 py-1">{row.label}</td>
                       <td class="border border-gray-200 px-2 py-1 text-center font-mono">
                         {row.sense === 'leq' ? '≤' : row.sense === 'geq' ? '≥' : '='}

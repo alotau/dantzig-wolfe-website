@@ -1,104 +1,90 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Initial Feature Files
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
-
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
+**Branch**: `002-initial-feature-files` | **Date**: 2026-03-07 | **Spec**: [features/](../../features/)  
+**Input**: Six Gherkin feature files in `/features/` (authoritative spec per Principle I)
 
 ## Summary
 
-[Extract from feature spec: primary requirement + technical approach from research]
+Establish a canonical per-feature specification scaffold under `specs/` and implement the
+full initial set of website features described in the Gherkin specification files. The site
+teaches and demonstrates Dantzig-Wolfe Decomposition through a history section, a structured
+technical lesson, worked examples from literature, and an interactive solver. The solver runs
+the `dantzig-wolfe-python` package entirely in the user's browser via Pyodide (Python on
+WebAssembly in a Web Worker). No server-side computation. The site uses Astro (island
+architecture) with Svelte interactive islands, Tailwind CSS, and KaTeX for mathematical
+notation.
 
 ## Technical Context
 
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
-
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: TypeScript 5 / Node 20  
+**Primary Dependencies**: Astro 5, Svelte 5, Tailwind CSS v4, Pyodide 0.29, KaTeX, Playwright, Cucumber.js 11, Vitest 3  
+**Storage**: Static files (Astro SSG) + URL-encoded problem state for sharing; no server-side storage  
+**Testing**: Cucumber.js + Playwright (acceptance), Vitest (unit)  
+**Target Platform**: Browser (evergreen) + Vercel static hosting  
+**Project Type**: Static educational web application  
+**Performance Goals**: LCP < 2.5 s on fast 3G; solver initialises within 10 s on a modern laptop  
+**Constraints**: All computation must run client-side (no server); shareable URLs must round-trip losslessly; WCAG 2.1 AA colour contrast  
+**Scale/Scope**: Single-user interactive tool; no auth; no database
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- Purely additive front-end feature — no breaking changes to existing routes.
+- Solver communication isolated behind a Web Worker; no server-side attack surface introduced.
+- All user-supplied input validated with Zod before entering the solver.
+
+Result: Approved.
 
 ## Project Structure
 
 ### Documentation (this feature)
 
 ```text
-specs/[###-feature]/
-├── plan.md              # This file (/speckit.plan command output)
-├── research.md          # Phase 0 output (/speckit.plan command)
-├── data-model.md        # Phase 1 output (/speckit.plan command)
-├── quickstart.md        # Phase 1 output (/speckit.plan command)
-├── contracts/           # Phase 1 output (/speckit.plan command)
-└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+specs/
+└── 002-initial-feature-files/
+    ├── plan.md          # Implementation plan (this file)
+    ├── research.md      # Phase 0: background research
+    ├── data-model.md    # Phase 1: entities and relationships
+    ├── quickstart.md    # Phase 1: onboarding guide
+    ├── contracts/       # Phase 1: API/message-protocol contracts
+    └── tasks.md         # Phase 2: implementation task list
 ```
 
-### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
+### Source Code (implemented layout)
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── components/
+│   ├── content/         # MDX prose components (Callout, Citation, MathBlock, TermLink)
+│   ├── examples/        # Example card + filter
+│   ├── layout/          # BaseLayout, NavBar, Footer, GlossaryPanel
+│   └── solver/          # SolverPanel, SolutionPanel, IterationLog, ProblemEditor
+├── content/             # Astro content collections
+│   ├── examples/        # Worked-example MDX files
+│   ├── glossary/        # Term definitions
+│   ├── history/         # History section MDX
+│   └── lessons/         # Technical lesson MDX
+├── lib/
+│   ├── math/            # Matrix utilities
+│   ├── sharing/         # URL codec for problem sharing
+│   └── solver/          # Worker client, problem schema (Zod), type exports
+├── pages/               # Astro page routes (index, solver, history, examples, lesson)
+├── styles/              # global.css (Tailwind v4 + brand tokens)
+└── workers/
+    └── solver.worker.ts # Pyodide Web Worker
 
 tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+├── acceptance/          # Cucumber + Playwright end-to-end tests
+├── perf/                # LCP timing
+└── unit/                # Vitest unit tests
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: Island architecture — static shell rendered at build time; Svelte
+islands (`client:only="svelte"`) for the interactive solver and glossary panel.
 
 ## Complexity Tracking
 
-> **Fill ONLY if Constitution Check has violations that must be justified**
-
 | Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+|-----------|------------|--------------------------------------|
+| None      | N/A        | Feature is purely additive.          |

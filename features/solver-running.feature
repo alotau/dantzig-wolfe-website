@@ -36,6 +36,7 @@ Feature: Interactive Solver — Running the Solver
     When the solver terminates
     Then I see a "Solved — Infeasible" status message
     And a brief explanation of what infeasibility means in this context is shown
+    And the infeasibility diagnostic details the violated coupling constraints
 
   Scenario: Solver detects an unbounded problem
     Given I have entered a problem that is unbounded

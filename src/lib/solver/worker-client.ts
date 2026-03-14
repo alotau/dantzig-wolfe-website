@@ -7,7 +7,7 @@
  * Message protocol: specs/002-initial-feature-files/contracts/solver-worker-contract.md
  */
 
-import type { ParsedProblemInstance } from './problem-schema.js'
+import type { ParsedProblemInstance, ConstraintSense } from './problem-schema.js'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -33,7 +33,7 @@ export interface InfeasibilityDiagnostic {
   coupling: Array<{
     index: number
     label: string
-    sense: string
+    sense: ConstraintSense
     rhs: number
     violated: boolean
     minAchievable?: number
