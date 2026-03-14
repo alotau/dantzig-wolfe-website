@@ -1,41 +1,37 @@
-# Implementation Plan: Dantzig-Wolfe Decomposition Website
+# Implementation Plan: [FEATURE]
 
-**Branch**: `002-initial-feature-files` | **Date**: 2026-03-07 | **Spec**: [features/](../../features/)  
-**Input**: Six Gherkin feature files in `/features/` (authoritative spec per Principle I)
+**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
+**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+
+**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
 
 ## Summary
 
-Build a static, client-side educational website that teaches Dantzig-Wolfe Decomposition
-through a history section, a structured technical lesson, worked examples from literature,
-and an interactive solver. The solver runs the `dantzig-wolfe-python` package entirely in
-the user's browser via Pyodide (Python on WebAssembly in a Web Worker). No server-side
-computation. The site uses Astro (island architecture) with Svelte interactive islands,
-Tailwind CSS, and KaTeX for mathematical notation.
+[Extract from feature spec: primary requirement + technical approach from research]
 
 ## Technical Context
 
-**Language/Version**: TypeScript 5.x (site); Python 3.12 (via Pyodide 0.29.x in-browser)  
-**Primary Dependencies**: Astro 5.x, Svelte 5.x, Tailwind CSS 4.x, Pyodide 0.29.x, KaTeX, Chart.js, Cucumber.js, Playwright  
-**Storage**: None (server-side); browser `sessionStorage` for solver state; URL query params for problem sharing  
-**Testing**: Vitest (unit), Cucumber.js + Playwright (BDD acceptance)  
-**Target Platform**: Modern browsers (WebAssembly support required for solver); static content degrades gracefully without JS  
-**Project Type**: Static web application (Astro SSG) + client-side WASM runtime  
-**Performance Goals**: Solver worker ready ≤5s (cached Pyodide), static pages ≤1s LCP, iteration log updates ≤2s during solve  
-**Constraints**: Zero server-side computation; offline-capable static content; WCAG 2.1 AA accessibility; mobile-responsive  
-**Scale/Scope**: ~6 pages, ~30 components, 6 feature files, ~50 Gherkin scenarios
+<!--
+  ACTION REQUIRED: Replace the content in this section with the technical details
+  for the project. The structure here is presented in advisory capacity to guide
+  the iteration process.
+-->
+
+**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
+**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
+**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
+**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
+**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
+**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]  
+**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
+**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
+**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- [x] **Principle I — Specification-First**: Six Gherkin `.feature` files exist in `/features/` covering all site areas. ✅
-- [x] **Principle II — Client-Side Computation**: Pyodide Web Worker architecture confirmed; solver runs entirely in browser; no compute server. ✅
-- [x] **Principle III — Test-First via BDD**: Cucumber.js + Playwright selected; failing step definitions must be committed before implementation PRs. ✅
-- [x] **Principle IV — Branch-Protection**: Work is on `002-initial-feature-files`; `main` is up to date. ✅
-- [x] **Principle V — Security & Quality Gates**: GitHub Actions pipeline will run npm audit → ESLint → Vitest → Cucumber+Playwright in sequence. ✅
-- [x] **Principle VI — Pedagogical Clarity**: Content MDX files subject to domain-review gate; KaTeX for all math notation. ✅
-
-**Pyodide bundle strategy** (gate from constitution v1.1.0): Pyodide loaded from jsDelivr CDN in a dedicated Web Worker; `dantzig-wolfe-python` installed via `micropip` from a pinned GitHub release wheel URL; lockfile (`pyodide-lock.json` extension) committed to repo for reproducibility. See `research.md` §2.
+[Gates determined based on constitution file]
 
 ## Project Structure
 
@@ -60,98 +56,49 @@ specs/[###-feature]/
 -->
 
 ```text
+# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── pages/
-│   ├── index.astro              # Home page
-│   ├── history.astro            # Algorithm history
-│   ├── lesson/
-│   │   └── index.astro          # Technical lesson (single-page, section anchors)
-│   ├── examples/
-│   │   ├── index.astro          # Examples index with filter
-│   │   └── [slug].astro         # Individual example detail page
-│   ├── solver.astro             # Interactive solver page
-│   └── glossary.astro           # Glossary page
-├── components/
-│   ├── layout/
-│   │   ├── NavBar.astro
-│   │   ├── Footer.astro
-│   │   └── GlossaryPanel.svelte  # Accessible slide-in panel (island)
-│   ├── solver/
-│   │   ├── SolverWorkspace.svelte   # Root solver island
-│   │   ├── ProblemInput.svelte      # Coupling constraints + sub-problem inputs
-│   │   ├── SubProblemBlock.svelte   # Single sub-problem block editor
-│   │   ├── SolverControls.svelte    # Solve / Cancel / Clear / Export / Share
-│   │   ├── IterationLog.svelte      # Live scrolling log
-│   │   ├── SolutionPanel.svelte     # Final result display
-│   │   └── ConvergenceChart.svelte  # Chart.js chart island
-│   ├── content/
-│   │   ├── MathBlock.astro          # KaTeX display math wrapper
-│   │   ├── InlineMath.astro         # KaTeX inline math wrapper
-│   │   ├── Citation.astro           # Formatted literature citation
-│   │   ├── Callout.astro            # Info / warning / definition callout box
-│   │   └── TermLink.astro           # Inline glossary link
-│   └── examples/
-│       ├── ExampleCard.astro        # Summary card for examples index
-│       └── ExampleFilter.svelte     # Client-side filter island
-├── content/                         # Astro content collections
-│   ├── config.ts                    # Content collection schemas
-│   ├── history/
-│   │   └── *.mdx                    # History section MDX articles
-│   ├── lessons/
-│   │   └── *.mdx                    # Lesson section MDX articles
-│   ├── examples/
-│   │   └── *.mdx                    # Worked example MDX files
-│   └── glossary/
-│       └── *.mdx                    # Glossary entry MDX files
-├── workers/
-│   └── solver.worker.ts             # Pyodide Web Worker (loads solver package)
-├── lib/
-│   ├── solver/
-│   │   ├── worker-client.ts         # Typed wrapper: postMessage ↔ Promise
-│   │   └── problem-schema.ts        # Zod schemas for ProblemInstance validation
-│   ├── math/
-│   │   └── matrix-utils.ts          # Dimension validation, matrix helpers
-│   └── sharing/
-│       └── url-codec.ts             # Encode/decode problem to/from URL params
-└── styles/
-    └── global.css                   # Tailwind base + CSS custom properties
+├── models/
+├── services/
+├── cli/
+└── lib/
 
 tests/
-├── unit/                            # Vitest
-│   ├── lib/
-│   │   ├── problem-schema.test.ts
-│   │   ├── matrix-utils.test.ts
-│   │   └── url-codec.test.ts
-│   └── workers/
-│       └── solver-messages.test.ts
-└── acceptance/                      # Cucumber.js + Playwright
-    ├── step-definitions/
-    │   ├── navigation.steps.ts
-    │   ├── solver-input.steps.ts
-    │   ├── solver-run.steps.ts
-    │   ├── solver-output.steps.ts
-    │   ├── lesson.steps.ts
-    │   ├── examples.steps.ts
-    │   ├── history.steps.ts
-    │   └── glossary.steps.ts
-    └── support/
-        ├── world.ts                 # Cucumber World with Playwright browser
-        └── hooks.ts                 # Before/After hooks: launch/close browser
+├── contract/
+├── integration/
+└── unit/
 
-features/                            # Gherkin feature files (authoritative spec)
-├── history.feature
-├── technical-lesson.feature
-├── literature-examples.feature
-├── interactive-solver.feature
-├── solver-engine.feature
-└── site-navigation.feature
+# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
+backend/
+├── src/
+│   ├── models/
+│   ├── services/
+│   └── api/
+└── tests/
 
-public/
-└── pyodide-lock.json                # Pinned Pyodide + dantzig-wolfe-python lockfile
+frontend/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   └── services/
+└── tests/
+
+# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
+api/
+└── [same as backend above]
+
+ios/ or android/
+└── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
-**Structure Decision**: Single static web application (Astro SSG). No backend. All source under `src/`. Tests under `tests/`. Feature files under `features/` (already established). The Pyodide Web Worker (`src/workers/solver.worker.ts`) runs off the main thread; Svelte islands handle reactive UI. Content is authored in MDX under `src/content/` using Astro content collections.
+**Structure Decision**: [Document the selected structure and reference the real
+directories captured above]
 
 ## Complexity Tracking
 
-> No Constitution Check violations. All principles satisfied without exception.
+> **Fill ONLY if Constitution Check has violations that must be justified**
+
+| Violation | Why Needed | Simpler Alternative Rejected Because |
+|-----------|------------|-------------------------------------|
+| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |

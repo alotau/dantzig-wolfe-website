@@ -44,6 +44,18 @@ interface SolverResult {
   solveTimeMs: number
   errorMessage?: string
   unboundedSubproblemIndex?: number
+  infeasibilityDiagnostic?: {
+    blocks: Array<{ index: number; label: string; boundViolations: string[] }>
+    coupling: Array<{
+      index: number
+      label: string
+      sense: string
+      rhs: number
+      violated: boolean
+      minAchievable?: number
+      maxAchievable?: number
+    }>
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -264,6 +276,74 @@ try:
         out["primalSolution"] = {"variableValues": vv_by_block, "couplingSlacks": slacks}
     if res.solver_info.get("message"):
         out["errorMessage"] = res.solver_info["message"]
+
+    if st == "infeasible":
+        # Build flat list of (lower, upper) for every variable across all sub-problems
+        all_bounds_flat = []
+        for sp in raw["subproblems"]:
+            for b in sp["bounds"]:
+                lo = float(b.get("lower") or 0)
+                hi = float(b["upper"]) if b.get("upper") is not None else None
+                all_bounds_flat.append((lo, hi))
+
+        # Per-block bound-violation check
+        diag_blocks = []
+        for sp in raw["subproblems"]:
+            violations = []
+            vlabels = sp.get("variableLabels") or []
+            for j, b in enumerate(sp["bounds"]):
+                lo = float(b.get("lower") or 0)
+                hi = b.get("upper")
+                if hi is not None and lo > float(hi) + 1e-9:
+                    vname = vlabels[j] if j < len(vlabels) else f"var_{j+1}"
+                    violations.append(vname)
+            diag_blocks.append({
+                "index": sp["index"],
+                "label": sp.get("label") or f"Block {sp['index']}",
+                "boundViolations": violations
+            })
+
+        # Per-coupling-row range analysis against variable bounds
+        clabels = coup.get("constraintLabels") or []
+        diag_coupling = []
+        for r_idx, (row, rhs, sense) in enumerate(zip(cA, coup["b"], coup["senses"])):
+            min_lhs = 0.0
+            min_lhs_finite = True
+            max_lhs = 0.0
+            max_lhs_finite = True
+            for c_idx, (lo, hi) in enumerate(all_bounds_flat):
+                a = float(row[c_idx]) if c_idx < len(row) else 0.0
+                if a >= 0:
+                    min_lhs += a * lo
+                    if hi is not None:
+                        max_lhs += a * hi
+                    else:
+                        max_lhs_finite = False
+                else:
+                    if hi is not None:
+                        min_lhs += a * hi
+                    else:
+                        min_lhs_finite = False
+                    max_lhs += a * lo
+            violated = False
+            if sense == "leq" and min_lhs_finite and min_lhs > float(rhs) + 1e-8:
+                violated = True
+            elif sense == "geq" and max_lhs_finite and max_lhs < float(rhs) - 1e-8:
+                violated = True
+            elif sense == "eq":
+                if min_lhs_finite and min_lhs > float(rhs) + 1e-8:
+                    violated = True
+                elif max_lhs_finite and max_lhs < float(rhs) - 1e-8:
+                    violated = True
+            label = clabels[r_idx] if r_idx < len(clabels) else f"Constraint {r_idx + 1}"
+            entry = {"index": r_idx, "label": label, "sense": sense, "rhs": float(rhs), "violated": violated}
+            if min_lhs_finite:
+                entry["minAchievable"] = min_lhs
+            if max_lhs_finite:
+                entry["maxAchievable"] = max_lhs
+            diag_coupling.append(entry)
+
+        out["infeasibilityDiagnostic"] = {"blocks": diag_blocks, "coupling": diag_coupling}
 except Exception as _err:
     out = {"status": "error", "errorMessage": f"{type(_err).__name__}: {_err}\\n{traceback.format_exc()}"}
 
@@ -305,6 +385,10 @@ json.dumps(out)
     }
     if (raw.unboundedSubproblemIndex != null) {
       result.unboundedSubproblemIndex = Number(raw.unboundedSubproblemIndex)
+    }
+    if (raw.infeasibilityDiagnostic != null) {
+      result.infeasibilityDiagnostic =
+        raw.infeasibilityDiagnostic as SolverResult['infeasibilityDiagnostic']
     }
 
     // dwsolver.solve() runs synchronously and doesn't stream per-iteration data.

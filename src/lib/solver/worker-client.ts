@@ -24,6 +24,23 @@ export interface SolverIteration {
 
 export type SolverStatus = 'optimal' | 'infeasible' | 'unbounded' | 'cancelled' | 'error'
 
+export interface InfeasibilityDiagnostic {
+  blocks: Array<{
+    index: number
+    label: string
+    boundViolations: string[]
+  }>
+  coupling: Array<{
+    index: number
+    label: string
+    sense: string
+    rhs: number
+    violated: boolean
+    minAchievable?: number
+    maxAchievable?: number
+  }>
+}
+
 export interface SolverResult {
   status: SolverStatus
   objectiveValue?: number
@@ -33,6 +50,7 @@ export interface SolverResult {
   solveTimeMs: number
   errorMessage?: string
   unboundedSubproblemIndex?: number
+  infeasibilityDiagnostic?: InfeasibilityDiagnostic
 }
 
 // Internal worker message shapes
