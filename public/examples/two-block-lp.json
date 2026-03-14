@@ -24,7 +24,7 @@
         { "lower": 0, "upper": null },
         { "lower": 0, "upper": null }
       ],
-      "variableLabels": ["Product 1", "Product 2"]
+      "variableLabels": ["plant_a_product_1", "plant_a_product_2"]
     },
     {
       "index": 2,
@@ -40,7 +40,7 @@
         { "lower": 0, "upper": null },
         { "lower": 0, "upper": null }
       ],
-      "variableLabels": ["Product 1", "Product 2"]
+      "variableLabels": ["plant_b_product_1", "plant_b_product_2"]
     }
   ],
   "metadata": {

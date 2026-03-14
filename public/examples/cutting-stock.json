@@ -22,7 +22,7 @@
         { "lower": 0, "upper": null },
         { "lower": 0, "upper": null }
       ],
-      "variableLabels": ["Pattern [2×w4]", "Pattern [1×w4, 1×w6]", "Pattern [1×w6]"]
+      "variableLabels": ["m1_pattern_2xw4", "m1_pattern_1xw4_1xw6", "m1_pattern_1xw6"]
     },
     {
       "index": 2,
@@ -36,7 +36,7 @@
         { "lower": 0, "upper": null },
         { "lower": 0, "upper": null }
       ],
-      "variableLabels": ["Pattern [2×w4]", "Pattern [1×w4, 1×w6]", "Pattern [1×w6]"]
+      "variableLabels": ["m2_pattern_2xw4", "m2_pattern_1xw4_1xw6", "m2_pattern_1xw6"]
     }
   ],
   "metadata": {
