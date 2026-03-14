@@ -154,6 +154,22 @@ interface SolverResult {
   solveTimeMs: number;             // Wall-clock time (browser)
   errorMessage?: string;            // Present when status === 'error'
   unboundedSubproblemIndex?: number; // Present when status === 'unbounded'
+  infeasibilityDiagnostic?: {      // Present when status === 'infeasible' (best-effort)
+    blocks: Array<{
+      index: number;               // Sub-problem index (1-based)
+      label: string;               // Display label for the sub-problem
+      boundViolations: string[];   // Variable names where lower > upper
+    }>;
+    coupling: Array<{
+      index: number;               // Coupling constraint index (0-based)
+      label: string;               // Display label for the constraint
+      sense: ConstraintSense;      // 'leq' | 'geq' | 'eq'
+      rhs: number;                 // Right-hand side value
+      violated: boolean;           // True if constraint is provably infeasible at bounds
+      minAchievable?: number;      // Smallest achievable LHS at variable bounds
+      maxAchievable?: number;      // Largest achievable LHS at variable bounds
+    }>;
+  };
 }
 ```
 
