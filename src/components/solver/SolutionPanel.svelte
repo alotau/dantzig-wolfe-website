@@ -124,18 +124,90 @@
       </div>
     {/if}
   {:else if result.status === 'infeasible'}
-    <div class="space-y-1">
+    <div class="space-y-4">
       <span
         class="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-800"
         data-solution-status
       >
         Solved — Infeasible
       </span>
-      <p class="text-sm text-gray-700 pt-2" data-infeasibility-explanation>
-        The problem has no feasible solution. The constraints cannot all be satisfied
-        simultaneously. This typically means the coupling constraints require more resources than
-        the sub-problems can collectively provide.
-      </p>
+
+      {#if result.infeasibilityDiagnostic}
+        {@const diag = result.infeasibilityDiagnostic}
+        {@const boundBlocks = diag.blocks.filter((b) => b.boundViolations.length > 0)}
+        {@const violatedRows = diag.coupling.filter((c) => c.violated)}
+
+        {#if boundBlocks.length > 0}
+          <div data-infeasibility-explanation>
+            <p class="text-sm font-semibold text-gray-700 mb-1">
+              Variable bound conflicts
+            </p>
+            <ul class="text-sm text-gray-700 space-y-0.5 list-disc list-inside">
+              {#each boundBlocks as blk}
+                {#each blk.boundViolations as vname}
+                  <li>
+                    <span class="font-mono">{vname}</span> in sub-problem {blk.index} ({blk.label})
+                    — lower bound exceeds upper bound
+                  </li>
+                {/each}
+              {/each}
+            </ul>
+          </div>
+        {/if}
+
+        {#if violatedRows.length > 0}
+          <div data-infeasibility-explanation>
+            <p class="text-sm font-semibold text-gray-700 mb-1">
+              Coupling constraints provably violated at variable bounds
+            </p>
+            <div class="overflow-x-auto">
+              <table class="text-xs border-collapse w-full">
+                <thead>
+                  <tr class="bg-gray-50">
+                    <th class="border border-gray-200 px-2 py-1 text-left font-semibold">Constraint</th>
+                    <th class="border border-gray-200 px-2 py-1 text-center font-semibold">Sense</th>
+                    <th class="border border-gray-200 px-2 py-1 text-right font-semibold">RHS</th>
+                    <th class="border border-gray-200 px-2 py-1 text-right font-semibold">Min achievable</th>
+                    <th class="border border-gray-200 px-2 py-1 text-right font-semibold">Max achievable</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {#each violatedRows as row}
+                    <tr class="bg-amber-50">
+                      <td class="border border-gray-200 px-2 py-1">{row.label}</td>
+                      <td class="border border-gray-200 px-2 py-1 text-center font-mono">
+                        {row.sense === 'leq' ? '≤' : row.sense === 'geq' ? '≥' : '='}
+                      </td>
+                      <td class="border border-gray-200 px-2 py-1 text-right font-mono">{row.rhs}</td>
+                      <td class="border border-gray-200 px-2 py-1 text-right font-mono">
+                        {row.minAchievable !== undefined ? row.minAchievable.toFixed(4) : '−∞'}
+                      </td>
+                      <td class="border border-gray-200 px-2 py-1 text-right font-mono">
+                        {row.maxAchievable !== undefined ? row.maxAchievable.toFixed(4) : '+∞'}
+                      </td>
+                    </tr>
+                  {/each}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        {/if}
+
+        {#if boundBlocks.length === 0 && violatedRows.length === 0}
+          <p class="text-sm text-gray-700" data-infeasibility-explanation>
+            The problem has no feasible solution. No simple bound conflict was detected — the
+            infeasibility arises from the interplay of coupling constraints and sub-problem
+            feasible regions. Check that the coupling right-hand sides are consistent with what
+            the sub-problems can collectively achieve.
+          </p>
+        {/if}
+      {:else}
+        <p class="text-sm text-gray-700" data-infeasibility-explanation>
+          The problem has no feasible solution. The constraints cannot all be satisfied
+          simultaneously. This typically means the coupling constraints require more resources than
+          the sub-problems can collectively provide.
+        </p>
+      {/if}
     </div>
   {:else if result.status === 'unbounded'}
     <div class="space-y-1">
