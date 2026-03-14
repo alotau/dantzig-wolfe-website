@@ -12,14 +12,16 @@ import Callout from '../../components/content/Callout.astro'
 ## Column Generation and Its Origins
 
 One of the most important legacies of Dantzig-Wolfe Decomposition is the technique of
+
 <TermLink term="column generation" />, which has since become a foundational tool across integer
 programming and combinatorial optimisation.
 
 ### Pricing Sub-Problems as the Conceptual Origin
 
 In Dantzig-Wolfe's original formulation, the algorithm iterates between a
-<TermLink term="master problem" /> and a set of <TermLink term="pricing sub-problem" />s.
-At each iteration, the sub-problems are solved using the <TermLink term="dual variables" /> from
+
+<TermLink term="master problem" /> and a set of <TermLink term="pricing sub-problem" />
+s. At each iteration, the sub-problems are solved using the <TermLink term="dual variables" /> from
 the master problem to determine whether any new column (extreme point) can improve the master
 objective. This is determined by computing the <TermLink term="reduced cost" /> of candidate
 columns.

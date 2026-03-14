@@ -19,6 +19,7 @@ simplex to problems with a particular geometry.
 ### Block-Angular Structure
 
 Many real-world LP formulations exhibit <TermLink term="block-angular LP" /> structure: a set of
+
 <TermLink term="coupling constraints" /> linking otherwise independent sub-problems. This arises
 naturally in multi-divisional planning, transportation networks, and scheduling problems.
 
@@ -29,6 +30,7 @@ naturally in multi-divisional planning, transportation networks, and scheduling 
 </Callout>
 
 Dantzig-Wolfe exploits this structure by representing feasible solutions to each sub-problem as
+
 <TermLink term="extreme point" />s (or extreme rays) of the sub-problem's feasible region. The
 <TermLink term="master problem" /> then selects a convex combination of these extreme points that
 satisfies the coupling constraints and minimises the objective.
