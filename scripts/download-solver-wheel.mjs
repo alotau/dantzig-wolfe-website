@@ -7,20 +7,26 @@
  * Source of truth: public/pyodide-lock.json
  */
 
-import { readFile, access, unlink } from 'node:fs/promises'
+import { readFile, access, unlink, rename } from 'node:fs/promises'
 import { createReadStream, createWriteStream } from 'node:fs'
 import { pipeline } from 'node:stream/promises'
 import { Readable } from 'node:stream'
 import { createHash } from 'node:crypto'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, join, resolve } from 'node:path'
 
 const __filename = fileURLToPath(import.meta.url)
-const PROJECT_ROOT = resolve(dirname(__filename), '..')
+// SOLVER_WHEEL_PROJECT_ROOT can be set in tests to point to a temporary directory.
+const PROJECT_ROOT = process.env.SOLVER_WHEEL_PROJECT_ROOT
+  ? resolve(process.env.SOLVER_WHEEL_PROJECT_ROOT)
+  : resolve(dirname(__filename), '..')
 const LOCK_FILE = join(PROJECT_ROOT, 'public', 'pyodide-lock.json')
 const PUBLIC_DIR = join(PROJECT_ROOT, 'public')
 
-const GITHUB_RELEASE_BASE = 'https://github.com/alotau/dantzig-wolfe-python/releases/download'
+// SOLVER_WHEEL_BASE_URL can be overridden in tests to inject a failing URL.
+const GITHUB_RELEASE_BASE =
+  process.env.SOLVER_WHEEL_BASE_URL ??
+  'https://github.com/alotau/dantzig-wolfe-python/releases/download'
 
 // ── T007: readWheelManifest ──────────────────────────────────────────────────
 
@@ -75,8 +81,21 @@ async function downloadWheel(url, destPath) {
       `[solver-wheel] Download failed: ${response.status} ${response.statusText} — ${url}`,
     )
   }
+  if (!response.body) {
+    throw new Error(`[solver-wheel] Empty response body while downloading ${url}`)
+  }
   const dest = createWriteStream(destPath)
-  await pipeline(Readable.fromWeb(response.body), dest)
+  try {
+    await pipeline(Readable.fromWeb(response.body), dest)
+  } catch (err) {
+    dest.destroy()
+    try {
+      await unlink(destPath)
+    } catch {
+      // Ignore cleanup errors
+    }
+    throw err
+  }
 }
 
 // ── T013: computeSha256 ──────────────────────────────────────────────────────────
@@ -102,6 +121,7 @@ export async function main() {
   try {
     const { version, fileName, sha256 } = await readWheelManifest()
     const destPath = join(PUBLIC_DIR, fileName)
+    const tempPath = `${destPath}.tmp`
     const url = constructDownloadUrl(version, fileName)
 
     // T009: skip if already present
@@ -118,13 +138,30 @@ export async function main() {
       return
     }
 
-    console.log(`[solver-wheel] Downloading ${fileName} from ${url} …`)
-    await downloadWheel(url, destPath)
+    // Clean up any stale temp file from a previous failed run
+    try {
+      await unlink(tempPath)
+    } catch {
+      // Ignore — stale temp may not exist
+    }
 
-    // T014: verify SHA-256 checksum
-    const actualHash = await computeSha256(destPath)
+    console.log(`[solver-wheel] Downloading ${fileName} from ${url} …`)
+    try {
+      await downloadWheel(url, tempPath)
+    } catch (downloadErr) {
+      // Belt-and-suspenders: ensure temp file is removed
+      try {
+        await unlink(tempPath)
+      } catch {
+        // Ignore cleanup errors
+      }
+      throw downloadErr
+    }
+
+    // T014: verify SHA-256 checksum of the downloaded temp file
+    const actualHash = await computeSha256(tempPath)
     if (actualHash !== sha256) {
-      await unlink(destPath)
+      await unlink(tempPath)
       process.stderr.write(
         `[solver-wheel] Checksum mismatch!\n  expected: ${sha256}\n  actual:   ${actualHash}\n`,
       )
@@ -132,6 +169,8 @@ export async function main() {
       return
     }
 
+    // Atomically move the verified wheel into place
+    await rename(tempPath, destPath)
     console.log(`[solver-wheel] Downloaded and verified ${fileName}.`)
     process.exit(0)
   } catch (err) {
@@ -141,6 +180,6 @@ export async function main() {
 }
 
 // Run main() only when executed directly (not when imported by tests)
-if (process.argv[1] === __filename) {
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   main()
 }

@@ -65,7 +65,6 @@ npx playwright install --with-deps chromium  # First-time Playwright setup
 
 ## Recent Changes
 - 004-solver-wheel-ci: Added Node.js 22 (pinned in `ci.yml`); TypeScript via Vitest for tests + Node.js built-ins only (`fetch`, `crypto`, `fs/promises`) — no new npm packages
-- 004-solver-wheel-ci: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - 003-kofi-donate-button: Added TypeScript 5 / Astro 5 / Svelte 5; Node 20 + No new dependencies — static HTML only
 
 
