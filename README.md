@@ -108,6 +108,12 @@ Serves the production build locally.
 
 ---
 
+## Architecture
+
+A full system diagram — covering SSG pages, Svelte island hydration boundaries, the Web Worker/Pyodide solver, the `postMessage` protocol, URL sharing, and deployment topology — is in [docs/architecture.md](docs/architecture.md).
+
+---
+
 ## Testing
 
 ### Unit tests (Vitest)
