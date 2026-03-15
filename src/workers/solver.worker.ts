@@ -63,6 +63,7 @@ interface SolverResult {
 // ---------------------------------------------------------------------------
 
 const DEFAULT_INDEX_URL = 'https://cdn.jsdelivr.net/pyodide/v0.29.3/full/'
+// Mirrors the `url` field in public/pyodide-lock.json — keep in sync when bumping the wheel version.
 const DEFAULT_DW_WHEEL_URL = '/dwsolver-0.1.0-py3-none-any.whl'
 
 // ---------------------------------------------------------------------------

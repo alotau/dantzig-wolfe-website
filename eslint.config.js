@@ -35,6 +35,16 @@ export default [
     },
   },
   {
+    // Node.js scripts — fetch, console, process are Node globals
+    files: ['scripts/**/*.mjs', 'scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        fetch: 'readonly',
+      },
+    },
+  },
+  {
     ignores: ['dist/', 'node_modules/', '.astro/', 'reports/', '.vercel/', 'tmp/'],
   },
 ]

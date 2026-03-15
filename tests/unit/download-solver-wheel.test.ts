@@ -21,10 +21,11 @@ interface WheelManifest {
 // Dynamic import so that a missing module produces a clear failure per test
 // rather than crashing the entire file at load time.
 async function loadModule() {
-  const mod = await import('../../../scripts/download-solver-wheel.mjs')
+  const mod = await import('../../scripts/download-solver-wheel.mjs')
   return mod as {
     readWheelManifest: () => Promise<WheelManifest>
     constructDownloadUrl: (version: string, fileName: string) => string
+    main: () => Promise<void>
   }
 }
 
@@ -99,7 +100,8 @@ describe('skip-if-present guard', () => {
   })
 
   it('exits 0 without calling fetch when wheel file already exists', async () => {
-    vi.mock('node:fs/promises', () => ({
+    vi.resetModules()
+    vi.doMock('node:fs/promises', () => ({
       readFile: vi.fn().mockResolvedValue(
         JSON.stringify({
           packages: {
@@ -118,7 +120,8 @@ describe('skip-if-present guard', () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch')
     const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as never)
 
-    await loadModule()
+    const { main } = await loadModule()
+    await main()
 
     expect(fetchSpy).not.toHaveBeenCalled()
     expect(exitSpy).toHaveBeenCalledWith(0)

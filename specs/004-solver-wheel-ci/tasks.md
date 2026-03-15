@@ -45,12 +45,12 @@
 
 **Independent Test**: Delete wheel (`rm public/dwsolver-*.whl`), run `npm run build`, confirm wheel appears in `public/` and site build succeeds.
 
-- [ ] T007 [US1] Create `scripts/download-solver-wheel.mjs` and implement `readWheelManifest()` — reads `public/pyodide-lock.json`, extracts `packages['dantzig-wolfe-python']` entry, returns `{ version, fileName, sha256 }`, throws with clear message if file unreadable or entry missing
-- [ ] T008 [US1] Implement `constructDownloadUrl(version, fileName)` in `scripts/download-solver-wheel.mjs` — returns `https://github.com/alotau/dantzig-wolfe-python/releases/download/v${version}/${fileName}`
-- [ ] T009 [US1] Implement skip-if-present guard in `scripts/download-solver-wheel.mjs` — check if `public/${fileName}` exists using `fs.access()`; if present, print `[solver-wheel] Found ${fileName} — skipping download.` to stdout and `process.exit(0)`
-- [ ] T010 [US1] Implement `downloadWheel(url, destPath)` in `scripts/download-solver-wheel.mjs` — `fetch(url)`, assert `response.ok` (throw with URL + status if not), stream `response.body` to `destPath` using `pipeline()` from `node:stream/promises`
-- [ ] T011 [US1] Implement `main()` entry point in `scripts/download-solver-wheel.mjs` — calls `readWheelManifest()`, `constructDownloadUrl()`, skip-if-present guard, `downloadWheel()`, prints `[solver-wheel] Downloaded ${fileName}.` on success, catches and re-throws errors with `[solver-wheel]` prefix to stderr then `process.exit(1)`
-- [ ] T012 [US1] Add `"prebuild": "node scripts/download-solver-wheel.mjs"` to the `scripts` object in `package.json` (after the `"build"` entry)
+- [X] T007 [US1] Create `scripts/download-solver-wheel.mjs` and implement `readWheelManifest()`
+- [X] T008 [US1] Implement `constructDownloadUrl(version, fileName)` in `scripts/download-solver-wheel.mjs`
+- [X] T009 [US1] Implement skip-if-present guard in `scripts/download-solver-wheel.mjs`
+- [X] T010 [US1] Implement `downloadWheel(url, destPath)` in `scripts/download-solver-wheel.mjs`
+- [X] T011 [US1] Implement `main()` entry point in `scripts/download-solver-wheel.mjs`
+- [X] T012 [US1] Add `"prebuild": "node scripts/download-solver-wheel.mjs"` to the `scripts` object in `package.json`
 
 **Checkpoint**: Delete wheel, run `npm run build` — wheel downloads, Astro build completes, site serves solver page; US1 unit tests in T005 for happy-path cases now pass (GREEN)
 
@@ -62,9 +62,9 @@
 
 **Independent Test**: Set expected SHA-256 to a wrong value in test, run download script, confirm exit code 1 and stderr contains expected/actual hashes.
 
-- [ ] T013 [US2] Implement `computeSha256(filePath)` in `scripts/download-solver-wheel.mjs` — uses `node:crypto` `createHash('sha256')` with `createReadStream(filePath)` via `pipeline()`; returns hex digest string
-- [ ] T014 [US2] Integrate checksum verification into `main()` in `scripts/download-solver-wheel.mjs` — after `downloadWheel()` completes, call `computeSha256(destPath)` and compare to `manifest.sha256`; if mismatch: delete downloaded file, print `[solver-wheel] Checksum mismatch! expected: ${manifest.sha256} actual: ${actual}` to stderr, `process.exit(1)`; print `[solver-wheel] Downloaded and verified ${fileName}.` on success
-- [ ] T015 [US2] Add HTTP and network error handling in `downloadWheel()` in `scripts/download-solver-wheel.mjs` — check `!response.ok` before streaming and throw `Download failed: ${response.status} ${response.statusText} — ${url}`; catch `fetch` rejections (DNS/network) and rethrow with `Network error downloading ${url}: ${err.message}`
+- [X] T013 [US2] Implement `computeSha256(filePath)` in `scripts/download-solver-wheel.mjs`
+- [X] T014 [US2] Integrate checksum verification into `main()` in `scripts/download-solver-wheel.mjs`
+- [X] T015 [US2] Add HTTP and network error handling in `downloadWheel()` in `scripts/download-solver-wheel.mjs`
 
 **Checkpoint**: US2 unit tests from T005 now pass (GREEN): checksum mismatch → exit 1 with correct message, fetch failure → exit 1 with correct message; US1 tests remain green
 
@@ -76,7 +76,7 @@
 
 **Independent Test**: US3 unit test in T005 for `constructDownloadUrl()` with version `0.2.0` passes automatically once T008 is done correctly (validates dynamic derivation without extra implementation).
 
-- [ ] T016 [P] [US3] Update `DEFAULT_DW_WHEEL_URL` fallback constant in `src/workers/solver.worker.ts` — change hardcoded value `/dwsolver-0.1.0-py3-none-any.whl` to a comment-annotated constant noting it mirrors the `url` field in `public/pyodide-lock.json` and must be kept in sync when the version is updated there
+- [X] T016 [P] [US3] Update `DEFAULT_DW_WHEEL_URL` fallback constant in `src/workers/solver.worker.ts`
 
 **Checkpoint**: All US3 unit tests (URL construction with bumped version) pass; worker fallback constant updated and consistent with pyodide-lock.json
 
