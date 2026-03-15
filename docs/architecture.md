@@ -41,10 +41,10 @@ graph TB
         end
 
         subgraph Lib["src/lib (shared utilities)"]
-            WC["worker-client.ts\nWorkerClient class"]
-            PS["problem-schema.ts\nZod validators"]
-            UC["url-codec.ts\nURL sharing codec"]
-            EX["export.ts\nJSON export"]
+            WC["solver/worker-client.ts\nWorkerClient class"]
+            PS["solver/problem-schema.ts\nZod validators"]
+            UC["sharing/url-codec.ts\nURL sharing codec"]
+            EX["sharing/export.ts\nJSON export"]
         end
 
         subgraph Worker["Web Worker — solver.worker.ts"]
