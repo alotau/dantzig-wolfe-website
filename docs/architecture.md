@@ -68,7 +68,7 @@ graph TB
 
     subgraph Content["Astro Content Collections (src/content/)"]
         CH["history/*.mdx"]
-        CG["glossary/*.yaml"]
+        CG["glossary/*.mdx"]
         CE["examples/*.mdx"]
         CL["lessons/*.mdx"]
     end
