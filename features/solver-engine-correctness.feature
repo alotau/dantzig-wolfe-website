@@ -21,6 +21,8 @@ Feature: Solver Engine — Correctness
       | Lasdon – 2-block LP             | -36.666667     |
       | Mitchell – 1-block LP           | -5.0           |
       | Bertsimas – 1-block LP          | -21.5          |
+      | Bertsimas – 2-block LP          | -21.5          |
+      | Bertsimas – 3-block LP          | -21.5          |
 
   Scenario: Infeasible problem is correctly identified
     Given I enter a problem whose feasible region is empty

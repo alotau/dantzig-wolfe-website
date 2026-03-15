@@ -1,0 +1,50 @@
+{
+  "objectiveDirection": "min",
+  "coupling": {
+    "A": [[3.0, 2.0, 4.0]],
+    "b": [17.0],
+    "senses": ["eq"],
+    "constraintLabels": ["Con1"]
+  },
+  "subproblems": [
+    {
+      "index": 1,
+      "label": "Block 0",
+      "A": [],
+      "b": [],
+      "constraintSenses": [],
+      "c": [-4.0],
+      "bounds": [
+        {
+          "lower": 1.0,
+          "upper": 2.0
+        }
+      ],
+      "variableLabels": ["x1"]
+    },
+    {
+      "index": 2,
+      "label": "Block 1",
+      "A": [],
+      "b": [],
+      "constraintSenses": [],
+      "c": [-1.0, -6.0],
+      "bounds": [
+        {
+          "lower": 1.0,
+          "upper": 2.0
+        },
+        {
+          "lower": 1.0,
+          "upper": 2.0
+        }
+      ],
+      "variableLabels": ["x2", "x3"]
+    }
+  ],
+  "metadata": {
+    "name": "Bertsimas and Tsitsiklis (1997) \u2014 2-Block LP",
+    "description": "Example 6.2 from Bertsimas and Tsitsiklis Introduction to Linear Optimization (p.245-246), decomposed into 2 subproblems: Block 0 = {x1}, Block 1 = {x2, x3}. 1 equality coupling constraint. Minimise: -4x1 - x2 - 6x3 s.t. 3x1+2x2+4x3=17. Known optimal: x1=2, x2=1.5, x3=2, obj=-21.5.",
+    "sourceExample": "bertsimas-2block"
+  }
+}
