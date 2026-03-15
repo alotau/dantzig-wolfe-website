@@ -65,9 +65,7 @@ Given(
   'the solver wheel file is already present in {string}',
   function (this: CustomWorld, _dir: string) {
     const w = this as WheelWorld
-    const lock = JSON.parse(
-      readFileSync(join(w.wsTmpDir, 'public', 'pyodide-lock.json'), 'utf8'),
-    )
+    const lock = JSON.parse(readFileSync(join(w.wsTmpDir, 'public', 'pyodide-lock.json'), 'utf8'))
     const fileName: string = lock.packages['dantzig-wolfe-python'].fileName
     writeFileSync(join(w.wsTmpDir, 'public', fileName), 'placeholder')
   },
@@ -119,9 +117,7 @@ When('the download script runs', function (this: CustomWorld) {
 
 Then('the wheel is downloaded from the GitHub release URL', function (this: CustomWorld) {
   const w = this as WheelWorld
-  const lock = JSON.parse(
-    readFileSync(join(w.wsTmpDir, 'public', 'pyodide-lock.json'), 'utf8'),
-  )
+  const lock = JSON.parse(readFileSync(join(w.wsTmpDir, 'public', 'pyodide-lock.json'), 'utf8'))
   const fileName: string = lock.packages['dantzig-wolfe-python'].fileName
   expect(existsSync(join(w.wsTmpDir, 'public', fileName))).toBe(true)
 })
@@ -130,9 +126,7 @@ Then(
   "the downloaded file's SHA-256 matches the expected checksum",
   async function (this: CustomWorld) {
     const w = this as WheelWorld
-    const lock = JSON.parse(
-      readFileSync(join(w.wsTmpDir, 'public', 'pyodide-lock.json'), 'utf8'),
-    )
+    const lock = JSON.parse(readFileSync(join(w.wsTmpDir, 'public', 'pyodide-lock.json'), 'utf8'))
     const { fileName, sha256: expectedSha256 } = lock.packages['dantzig-wolfe-python']
     const hash = createHash('sha256')
     await pipeline(createReadStream(join(w.wsTmpDir, 'public', fileName)), hash)
@@ -162,9 +156,7 @@ Then('stderr contains {string}', function (this: CustomWorld, text: string) {
 
 Then('stderr contains the expected checksum', function (this: CustomWorld) {
   const w = this as WheelWorld
-  const lock = JSON.parse(
-    readFileSync(join(w.wsTmpDir, 'public', 'pyodide-lock.json'), 'utf8'),
-  )
+  const lock = JSON.parse(readFileSync(join(w.wsTmpDir, 'public', 'pyodide-lock.json'), 'utf8'))
   const expectedSha256: string = lock.packages['dantzig-wolfe-python'].sha256
   expect(w.wsResult.stderr.toString()).toContain(expectedSha256)
 })

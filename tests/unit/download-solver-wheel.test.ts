@@ -217,9 +217,7 @@ describe('checksum mismatch', () => {
       }),
     )
 
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(Buffer.from('dummy wheel bytes')),
-    )
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(Buffer.from('dummy wheel bytes')))
     const stderrOutput: string[] = []
     vi.spyOn(process.stderr, 'write').mockImplementation((chunk: string | Uint8Array) => {
       stderrOutput.push(typeof chunk === 'string' ? chunk : new TextDecoder().decode(chunk))
