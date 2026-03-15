@@ -27,3 +27,6 @@ Thumbs.db
 *.log
 npm-debug.log*
 tmp/
+
+# Solver wheel — downloaded at build time from GitHub releases; never commit the binary
+public/dwsolver-*.whl

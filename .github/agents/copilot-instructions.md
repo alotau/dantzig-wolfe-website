@@ -4,6 +4,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-07
 
 ## Active Technologies
 - TypeScript 5 / Astro 5 / Svelte 5; Node 20 + No new dependencies — static HTML only (003-kofi-donate-button)
+- Node.js 22 (pinned in `ci.yml`); TypeScript via Vitest for tests + Node.js built-ins only (`fetch`, `crypto`, `fs/promises`) — no new npm packages (004-solver-wheel-ci)
+- Filesystem — `public/dwsolver-*.whl` (downloaded at build time, gitignored) (004-solver-wheel-ci)
 
 - **Frontend**: Astro 5.x (SSG, island architecture), Svelte 5.x (interactive islands), Tailwind CSS 4.x
 - **Solver runtime**: Pyodide 0.29.x (Python 3.12 on WASM in-browser Web Worker)
@@ -62,9 +64,10 @@ npx playwright install --with-deps chromium  # First-time Playwright setup
 - **No server-side computation** — the solver runs only in the browser via Pyodide
 
 ## Recent Changes
+- 004-solver-wheel-ci: Added Node.js 22 (pinned in `ci.yml`); TypeScript via Vitest for tests + Node.js built-ins only (`fetch`, `crypto`, `fs/promises`) — no new npm packages
+- 004-solver-wheel-ci: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - 003-kofi-donate-button: Added TypeScript 5 / Astro 5 / Svelte 5; Node 20 + No new dependencies — static HTML only
 
-- 002-initial-feature-files: Initial site plan — Astro/Svelte/Pyodide stack selected; full project structure, data model, and worker contract defined
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
