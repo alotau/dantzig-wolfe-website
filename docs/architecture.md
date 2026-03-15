@@ -161,21 +161,21 @@ User input (ProblemInput)
 
 ## Directory Reference
 
-| Path | Purpose |
-|------|---------|
-| `src/pages/` | Astro route pages (SSG) |
-| `src/components/layout/` | BaseLayout, NavBar, Footer, GlossaryPanel |
-| `src/components/content/` | MDX prose components (Callout, Citation, MathBlock, TermLink, InlineMath) |
-| `src/components/solver/` | Interactive solver UI (SolverWorkspace and sub-components) |
-| `src/components/examples/` | ExampleCard, ExampleFilter |
-| `src/content/` | Astro content collections (MDX + YAML) |
-| `src/lib/solver/` | worker-client, problem-schema (Zod), export |
-| `src/lib/sharing/` | URL codec for shareable problem links |
-| `src/lib/math/` | Matrix/vector utilities |
-| `src/workers/` | solver.worker.ts (Pyodide Web Worker) |
-| `src/styles/` | global.css — Tailwind v4 `@theme` brand tokens |
-| `public/` | Static assets — .whl solver package, example JSON, pyodide-lock.json |
-| `features/` | Gherkin acceptance scenarios (authoritative spec) |
-| `tests/acceptance/` | Cucumber + Playwright step definitions |
-| `tests/unit/` | Vitest unit tests |
-| `specs/` | SpecKit design artefacts (plan, data-model, contracts, tasks) |
+| Path                       | Purpose                                                                   |
+| -------------------------- | ------------------------------------------------------------------------- |
+| `src/pages/`               | Astro route pages (SSG)                                                   |
+| `src/components/layout/`   | BaseLayout, NavBar, Footer, GlossaryPanel                                 |
+| `src/components/content/`  | MDX prose components (Callout, Citation, MathBlock, TermLink, InlineMath) |
+| `src/components/solver/`   | Interactive solver UI (SolverWorkspace and sub-components)                |
+| `src/components/examples/` | ExampleCard, ExampleFilter                                                |
+| `src/content/`             | Astro content collections (MDX + YAML)                                    |
+| `src/lib/solver/`          | worker-client, problem-schema (Zod), export                               |
+| `src/lib/sharing/`         | URL codec for shareable problem links                                     |
+| `src/lib/math/`            | Matrix/vector utilities                                                   |
+| `src/workers/`             | solver.worker.ts (Pyodide Web Worker)                                     |
+| `src/styles/`              | global.css — Tailwind v4 `@theme` brand tokens                            |
+| `public/`                  | Static assets — .whl solver package, example JSON, pyodide-lock.json      |
+| `features/`                | Gherkin acceptance scenarios (authoritative spec)                         |
+| `tests/acceptance/`        | Cucumber + Playwright step definitions                                    |
+| `tests/unit/`              | Vitest unit tests                                                         |
+| `specs/`                   | SpecKit design artefacts (plan, data-model, contracts, tasks)             |
