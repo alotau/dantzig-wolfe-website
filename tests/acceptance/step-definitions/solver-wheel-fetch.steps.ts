@@ -1,5 +1,5 @@
 import { Given, When, Then, After } from '@cucumber/cucumber'
-import { spawnSync } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import { mkdtempSync, mkdirSync, writeFileSync, existsSync, readFileSync, rmSync } from 'node:fs'
 import { createReadStream } from 'node:fs'
 import { pipeline } from 'node:stream/promises'
@@ -16,10 +16,16 @@ import type { CustomWorld } from '../support/world.js'
 // Per-scenario state — stored on the World instance at runtime.
 // ---------------------------------------------------------------------------
 
+interface WheelResult {
+  status: number | null
+  stdout: Buffer
+  stderr: Buffer
+}
+
 interface WheelWorld extends CustomWorld {
   wsTmpDir: string
   wsExtraEnv: Record<string, string>
-  wsResult: ReturnType<typeof spawnSync>
+  wsResult: WheelResult
   wsServer?: Server
 }
 
@@ -97,18 +103,30 @@ Given('the GitHub release URL returns a 404 error', async function (this: Custom
 // When
 // ---------------------------------------------------------------------------
 
-When('the download script runs', function (this: CustomWorld) {
+When('the download script runs', async function (this: CustomWorld) {
   const w = this as WheelWorld
-  w.wsResult = spawnSync(
-    process.execPath,
-    [resolve(process.cwd(), 'scripts', 'download-solver-wheel.mjs')],
-    {
-      env: { ...process.env, SOLVER_WHEEL_PROJECT_ROOT: w.wsTmpDir, ...w.wsExtraEnv },
-      cwd: process.cwd(),
-      encoding: 'buffer',
-      timeout: 60_000,
-    },
-  )
+  w.wsResult = await new Promise<WheelResult>((resolvePromise, rejectPromise) => {
+    const child = spawn(
+      process.execPath,
+      [resolve(process.cwd(), 'scripts', 'download-solver-wheel.mjs')],
+      {
+        env: { ...process.env, SOLVER_WHEEL_PROJECT_ROOT: w.wsTmpDir, ...w.wsExtraEnv },
+        cwd: process.cwd(),
+      },
+    )
+    const stdoutChunks: Buffer[] = []
+    const stderrChunks: Buffer[] = []
+    child.stdout.on('data', (d: Buffer) => stdoutChunks.push(d))
+    child.stderr.on('data', (d: Buffer) => stderrChunks.push(d))
+    child.on('error', rejectPromise)
+    child.on('close', (status) => {
+      resolvePromise({
+        status,
+        stdout: Buffer.concat(stdoutChunks),
+        stderr: Buffer.concat(stderrChunks),
+      })
+    })
+  })
 })
 
 // ---------------------------------------------------------------------------
