@@ -56,6 +56,18 @@ Feature: Interactive Solver — Problem Input
     Then the previous solution and iteration log are no longer visible
     And the status badge is reset
 
+  Scenario: Dismiss the instructions panel
+    Given I arrive at the Interactive Solver for the first time
+    Then I see instructions explaining the expected decomposed problem format
+    When I click the dismiss button on the instructions panel
+    Then the instructions panel is no longer visible
+    And the workspace remains usable for entering problem data
+
+  Scenario: Instructions remain hidden after page reload when previously dismissed
+    Given I have previously dismissed the instructions panel
+    When I reload the Interactive Solver page
+    Then the instructions panel is not shown
+
   Scenario: Clear the workspace
     When I click "Clear"
     Then all input fields are reset to empty

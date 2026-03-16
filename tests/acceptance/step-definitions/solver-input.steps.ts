@@ -43,7 +43,10 @@ Given<CustomWorld>('I have entered a valid decomposed problem', async function (
 // ---------------------------------------------------------------------------
 
 When<CustomWorld>('I arrive at the Interactive Solver for the first time', async function () {
-  await this.page.evaluate(() => sessionStorage.removeItem('dw-problem'))
+  await this.page.evaluate(() => {
+    sessionStorage.removeItem('dw-problem')
+    localStorage.removeItem('dw-instructions-dismissed')
+  })
   await this.page.reload()
   await this.page.waitForSelector('[data-workspace]', { timeout: 10000 })
 })
@@ -476,4 +479,38 @@ Then<CustomWorld>('the solver does not start while any cell is invalid', async f
   if ((await solveBtn.count()) > 0) {
     await expect(solveBtn).toBeDisabled()
   }
+})
+
+// ---------------------------------------------------------------------------
+// Collapsible / dismissible instructions panel
+// ---------------------------------------------------------------------------
+
+When<CustomWorld>('I click the dismiss button on the instructions panel', async function () {
+  await this.page.click('[data-dismiss-instructions]')
+})
+
+Then<CustomWorld>('the instructions panel is no longer visible', async function () {
+  await expect(this.page.locator('[data-instructions]')).not.toBeVisible()
+})
+
+Then<CustomWorld>('the workspace remains usable for entering problem data', async function () {
+  await expect(this.page.locator('[data-workspace]')).toBeVisible()
+  // The "Add Sub-problem block" button should still be present and interactive
+  await expect(this.page.locator('[data-add-block]')).toBeVisible()
+})
+
+Given<CustomWorld>('I have previously dismissed the instructions panel', async function () {
+  await this.page.goto(`${this.baseURL}/solver`)
+  await this.page.waitForSelector('[data-workspace]', { timeout: 10000 })
+  // Persist the dismissed preference via localStorage
+  await this.page.evaluate(() => localStorage.setItem('dw-instructions-dismissed', '1'))
+})
+
+When<CustomWorld>('I reload the Interactive Solver page', async function () {
+  await this.page.reload()
+  await this.page.waitForSelector('[data-workspace]', { timeout: 10000 })
+})
+
+Then<CustomWorld>('the instructions panel is not shown', async function () {
+  await expect(this.page.locator('[data-instructions]')).not.toBeVisible()
 })
