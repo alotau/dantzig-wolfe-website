@@ -29,6 +29,8 @@
     { value: 'lasdon-2block', label: 'Lasdon – 2-block LP' },
     { value: 'mitchell-1block', label: 'Mitchell – 1-block LP' },
     { value: 'bertsimas-1block', label: 'Bertsimas – 1-block LP' },
+    { value: 'bertsimas-2block', label: 'Bertsimas – 2-block LP' },
+    { value: 'bertsimas-3block', label: 'Bertsimas – 3-block LP' },
     { value: 'dantzig-3block', label: 'Dantzig – 3-block LP' },
   ] as const
 

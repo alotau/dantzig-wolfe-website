@@ -46,6 +46,8 @@ Feature: Interactive Solver — Problem Input
     And I see "Lasdon – 2-block LP" as an available option
     And I see "Mitchell – 1-block LP" as an available option
     And I see "Bertsimas – 1-block LP" as an available option
+    And I see "Bertsimas – 2-block LP" as an available option
+    And I see "Bertsimas – 3-block LP" as an available option
     And I see "Dantzig – 3-block LP" as an available option
 
   Scenario: Loading a new example clears any previous solution
