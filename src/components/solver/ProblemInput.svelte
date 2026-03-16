@@ -300,6 +300,7 @@
       <button
         type="button"
         class="underline cursor-pointer"
+        data-open-glossary
         onclick={() => window.dispatchEvent(new CustomEvent('open-glossary', { detail: {} }))}
         aria-label="Open Glossary panel for definitions"
       >
