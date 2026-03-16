@@ -7,6 +7,7 @@
     type ConstraintSense,
   } from '@/lib/solver/problem-schema.js'
   import { createEmptyMatrix } from '@/lib/math/matrix-utils.js'
+  import { onMount } from 'svelte'
 
   // ---------------------------------------------------------------------------
   // Props
@@ -39,9 +40,19 @@
   // State: instructions panel visibility (persisted in localStorage)
   // ---------------------------------------------------------------------------
   const INSTRUCTIONS_KEY = 'dw-instructions-dismissed'
-  let instructionsDismissed = $state(
-    typeof localStorage !== 'undefined' && localStorage.getItem(INSTRUCTIONS_KEY) === '1',
-  )
+  // Initialize to SSR-safe default; updated on client in onMount
+  let instructionsDismissed = $state(false)
+
+  onMount(() => {
+    try {
+      const stored = localStorage.getItem(INSTRUCTIONS_KEY)
+      if (stored === '1') {
+        instructionsDismissed = true
+      }
+    } catch {
+      // localStorage unavailable
+    }
+  })
 
   function dismissInstructions() {
     instructionsDismissed = true
