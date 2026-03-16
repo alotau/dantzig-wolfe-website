@@ -36,6 +36,23 @@
   let objectiveDirection = $state<'min' | 'max'>('min')
 
   // ---------------------------------------------------------------------------
+  // State: instructions panel visibility (persisted in localStorage)
+  // ---------------------------------------------------------------------------
+  const INSTRUCTIONS_KEY = 'dw-instructions-dismissed'
+  let instructionsDismissed = $state(
+    typeof localStorage !== 'undefined' && localStorage.getItem(INSTRUCTIONS_KEY) === '1',
+  )
+
+  function dismissInstructions() {
+    instructionsDismissed = true
+    try {
+      localStorage.setItem(INSTRUCTIONS_KEY, '1')
+    } catch {
+      // localStorage unavailable
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Derived: total variable count
   // ---------------------------------------------------------------------------
   let totalVars = $derived(subproblems.reduce((s, sp) => s + sp.c.length, 0))
@@ -225,36 +242,62 @@
 <!-- -------------------------------------------------------------------------
      Instructions / help panel
      data-instructions: Playwright selector
+     Hidden when the user has previously dismissed it (stored in localStorage)
 ------------------------------------------------------------------------- -->
-<div
-  class="mb-6 rounded-lg border border-blue-100 bg-blue-50 px-5 py-4 text-sm text-blue-900"
-  data-instructions
->
-  <p class="font-semibold mb-1">How to enter a Dantzig-Wolfe decomposed LP</p>
-  <ol class="list-decimal list-inside space-y-1 text-blue-800">
-    <li>
-      Add <em>coupling constraints</em> — these link the sub-problem blocks (the A₀x = b₀ part).
-    </li>
-    <li>
-      Add one or more <em>sub-problem blocks</em> — each block has its own constraint matrix and RHS.
-    </li>
-    <li>
-      The column count of the coupling matrix must equal the total variable count across all blocks.
-    </li>
-  </ol>
-  <p class="mt-2 text-xs text-blue-700">
-    Unfamiliar with a term?
-    <button
-      type="button"
-      class="underline cursor-pointer"
-      onclick={() => window.dispatchEvent(new CustomEvent('open-glossary', { detail: {} }))}
-      aria-label="Open Glossary panel for definitions"
-    >
-      Open the Glossary
-    </button>
-    for definitions of block-angular LP, coupling constraints, master problem, and more.
-  </p>
-</div>
+{#if !instructionsDismissed}
+  <div
+    class="mb-6 rounded-lg border border-blue-100 bg-blue-50 px-5 py-4 text-sm text-blue-900"
+    data-instructions
+  >
+    <div class="flex items-start justify-between gap-3">
+      <p class="font-semibold mb-1">How to enter a Dantzig-Wolfe decomposed LP</p>
+      <button
+        type="button"
+        onclick={dismissInstructions}
+        data-dismiss-instructions
+        class="shrink-0 rounded p-1 text-blue-600 hover:bg-blue-100 transition-colors"
+        aria-label="Dismiss instructions"
+        title="Dismiss instructions"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="size-4"
+          aria-hidden="true"
+        >
+          <path
+            d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"
+          />
+        </svg>
+      </button>
+    </div>
+    <ol class="list-decimal list-inside space-y-1 text-blue-800">
+      <li>
+        Add <em>coupling constraints</em> — these link the sub-problem blocks (the A₀x = b₀ part).
+      </li>
+      <li>
+        Add one or more <em>sub-problem blocks</em> — each block has its own constraint matrix and RHS.
+      </li>
+      <li>
+        The column count of the coupling matrix must equal the total variable count across all
+        blocks.
+      </li>
+    </ol>
+    <p class="mt-2 text-xs text-blue-700">
+      Unfamiliar with a term?
+      <button
+        type="button"
+        class="underline cursor-pointer"
+        onclick={() => window.dispatchEvent(new CustomEvent('open-glossary', { detail: {} }))}
+        aria-label="Open Glossary panel for definitions"
+      >
+        Open the Glossary
+      </button>
+      for definitions of block-angular LP, coupling constraints, master problem, and more.
+    </p>
+  </div>
+{/if}
 
 <!-- -------------------------------------------------------------------------
      Objective function
