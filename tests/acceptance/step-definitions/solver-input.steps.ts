@@ -45,7 +45,7 @@ Given<CustomWorld>('I have entered a valid decomposed problem', async function (
 When<CustomWorld>('I arrive at the Interactive Solver for the first time', async function () {
   await this.page.evaluate(() => {
     sessionStorage.removeItem('dw-problem')
-    localStorage.removeItem('dw-instructions-dismissed')
+    localStorage.removeItem('dw-instructions-collapsed')
   })
   await this.page.reload()
   await this.page.waitForSelector('[data-workspace]', { timeout: 10000 })
@@ -482,15 +482,19 @@ Then<CustomWorld>('the solver does not start while any cell is invalid', async f
 })
 
 // ---------------------------------------------------------------------------
-// Collapsible / dismissible instructions panel
+// Collapsible instructions panel
 // ---------------------------------------------------------------------------
 
-When<CustomWorld>('I click the dismiss button on the instructions panel', async function () {
-  await this.page.click('[data-dismiss-instructions]')
+When<CustomWorld>('I click the toggle on the instructions panel', async function () {
+  await this.page.click('[data-instructions] summary')
 })
 
-Then<CustomWorld>('the instructions panel is no longer visible', async function () {
-  await expect(this.page.locator('[data-instructions]')).not.toBeVisible()
+Then<CustomWorld>('the instructions content is collapsed and no longer visible', async function () {
+  await expect(this.page.locator('[data-instructions-content]')).not.toBeVisible()
+})
+
+Then<CustomWorld>('the instructions panel header is still visible', async function () {
+  await expect(this.page.locator('[data-instructions] summary')).toBeVisible()
 })
 
 Then<CustomWorld>('the workspace remains usable for entering problem data', async function () {
@@ -499,11 +503,13 @@ Then<CustomWorld>('the workspace remains usable for entering problem data', asyn
   await expect(this.page.locator('[data-add-block]')).toBeVisible()
 })
 
-Given<CustomWorld>('I have previously dismissed the instructions panel', async function () {
+Given<CustomWorld>('the instructions panel is collapsed', async function () {
   await this.page.goto(`${this.baseURL}/solver`)
   await this.page.waitForSelector('[data-workspace]', { timeout: 10000 })
-  // Persist the dismissed preference via localStorage
-  await this.page.evaluate(() => localStorage.setItem('dw-instructions-dismissed', '1'))
+  // Persist the collapsed state via localStorage
+  await this.page.evaluate(() => localStorage.setItem('dw-instructions-collapsed', '1'))
+  await this.page.reload()
+  await this.page.waitForSelector('[data-workspace]', { timeout: 10000 })
 })
 
 When<CustomWorld>('I reload the Interactive Solver page', async function () {
@@ -511,6 +517,6 @@ When<CustomWorld>('I reload the Interactive Solver page', async function () {
   await this.page.waitForSelector('[data-workspace]', { timeout: 10000 })
 })
 
-Then<CustomWorld>('the instructions panel is not shown', async function () {
-  await expect(this.page.locator('[data-instructions]')).not.toBeVisible()
+Then<CustomWorld>('the instructions content is expanded and visible again', async function () {
+  await expect(this.page.locator('[data-instructions-content]')).toBeVisible()
 })

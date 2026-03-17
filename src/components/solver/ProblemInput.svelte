@@ -37,27 +37,32 @@
   let objectiveDirection = $state<'min' | 'max'>('min')
 
   // ---------------------------------------------------------------------------
-  // State: instructions panel visibility (persisted in localStorage)
+  // State: instructions panel collapsed state (persisted in localStorage)
   // ---------------------------------------------------------------------------
-  const INSTRUCTIONS_KEY = 'dw-instructions-dismissed'
+  const INSTRUCTIONS_KEY = 'dw-instructions-collapsed'
   // Initialize to SSR-safe default; updated on client in onMount
-  let instructionsDismissed = $state(false)
+  let instructionsOpen = $state(true)
 
   onMount(() => {
     try {
       const stored = localStorage.getItem(INSTRUCTIONS_KEY)
       if (stored === '1') {
-        instructionsDismissed = true
+        instructionsOpen = false
       }
     } catch {
       // localStorage unavailable
     }
   })
 
-  function dismissInstructions() {
-    instructionsDismissed = true
+  function handleInstructionsToggle(e: Event) {
+    const details = e.currentTarget as HTMLDetailsElement
+    instructionsOpen = details.open
     try {
-      localStorage.setItem(INSTRUCTIONS_KEY, '1')
+      if (details.open) {
+        localStorage.removeItem(INSTRUCTIONS_KEY)
+      } else {
+        localStorage.setItem(INSTRUCTIONS_KEY, '1')
+      }
     } catch {
       // localStorage unavailable
     }
@@ -251,38 +256,38 @@
 </script>
 
 <!-- -------------------------------------------------------------------------
-     Instructions / help panel
+     Instructions / help panel — collapsible via <details>
      data-instructions: Playwright selector
-     Hidden when the user has previously dismissed it (stored in localStorage)
+     Collapsed state persisted in localStorage
 ------------------------------------------------------------------------- -->
-{#if !instructionsDismissed}
-  <div
-    class="mb-6 rounded-lg border border-blue-100 bg-blue-50 px-5 py-4 text-sm text-blue-900"
-    data-instructions
+<details
+  class="mb-6 rounded-lg border border-blue-100 bg-blue-50 text-sm text-blue-900"
+  data-instructions
+  open={instructionsOpen}
+  ontoggle={handleInstructionsToggle}
+>
+  <summary
+    class="flex cursor-pointer list-none items-center justify-between px-5 py-3 font-semibold select-none"
+    data-instructions-summary
   >
-    <div class="flex items-start justify-between gap-3">
-      <p class="font-semibold mb-1">How to enter a Dantzig-Wolfe decomposed LP</p>
-      <button
-        type="button"
-        onclick={dismissInstructions}
-        data-dismiss-instructions
-        class="shrink-0 rounded p-1 text-blue-600 hover:bg-blue-100 transition-colors"
-        aria-label="Dismiss instructions"
-        title="Dismiss instructions"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          class="size-4"
-          aria-hidden="true"
-        >
-          <path
-            d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"
-          />
-        </svg>
-      </button>
-    </div>
+    <span>How to enter a Dantzig-Wolfe decomposed LP</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      class="size-4 shrink-0 text-blue-500 transition-transform {instructionsOpen
+        ? 'rotate-180'
+        : ''}"
+      aria-hidden="true"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+        clip-rule="evenodd"
+      />
+    </svg>
+  </summary>
+  <div class="px-5 pb-4" data-instructions-content>
     <ol class="list-decimal list-inside space-y-1 text-blue-800">
       <li>
         Add <em>coupling constraints</em> — these link the sub-problem blocks (the A₀x = b₀ part).
@@ -309,7 +314,7 @@
       for definitions of block-angular LP, coupling constraints, master problem, and more.
     </p>
   </div>
-{/if}
+</details>
 
 <!-- -------------------------------------------------------------------------
      Objective function

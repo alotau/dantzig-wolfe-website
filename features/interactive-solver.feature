@@ -56,17 +56,23 @@ Feature: Interactive Solver — Problem Input
     Then the previous solution and iteration log are no longer visible
     And the status badge is reset
 
-  Scenario: Dismiss the instructions panel
+  Scenario: Collapse the instructions panel
     Given I arrive at the Interactive Solver for the first time
     Then I see instructions explaining the expected decomposed problem format
-    When I click the dismiss button on the instructions panel
-    Then the instructions panel is no longer visible
+    When I click the toggle on the instructions panel
+    Then the instructions content is collapsed and no longer visible
+    And the instructions panel header is still visible
     And the workspace remains usable for entering problem data
 
-  Scenario: Instructions remain hidden after page reload when previously dismissed
-    Given I have previously dismissed the instructions panel
+  Scenario: Expand the instructions panel after collapsing
+    Given the instructions panel is collapsed
+    When I click the toggle on the instructions panel
+    Then the instructions content is expanded and visible again
+
+  Scenario: Instructions stay collapsed after page reload when previously collapsed
+    Given the instructions panel is collapsed
     When I reload the Interactive Solver page
-    Then the instructions panel is not shown
+    Then the instructions content is collapsed and no longer visible
 
   Scenario: Clear the workspace
     When I click "Clear"
